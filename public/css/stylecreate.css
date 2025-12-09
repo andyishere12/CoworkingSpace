@@ -1,0 +1,54 @@
+/* --- Styling Khusus Form Member --- */
+
+/* Memastikan label terlihat lebih jelas */
+.form-group label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+/* Mengatur input field agar terlihat rapi (mungkin sedikit lebih tinggi dari default) */
+.form-control, .custom-file-label {
+    height: 40px; /* Tinggi input yang konsisten */
+    border-radius: 6px; /* Sudut lebih melengkung */
+    border: 1px solid #e0e0e0;
+    box-shadow: none; /* Hapus bayangan default Bootstrap */
+    font-size: 0.9rem;
+}
+
+/* Mengatur input group (untuk Tanggal Lahir) */
+.input-group-text {
+    background-color: #f8f9fa; /* Latar belakang icon kalender */
+    border-left: none;
+    border-radius: 0 6px 6px 0;
+    border: 1px solid #e0e0e0;
+}
+
+/* Styling tombol Capture from Webcam (warna biru muda) */
+.btn-info {
+    background-color: #00bfff; /* Warna biru muda yang khas */
+    border-color: #00bfff;
+    color: white;
+    border-radius: 6px;
+    padding: 8px 15px;
+    font-weight: 500;
+    transition: background-color 0.3s;
+}
+
+.btn-info:hover {
+    background-color: #0099cc;
+    border-color: #0099cc;
+}
+
+/* Khusus untuk textarea agar tingginya normal */
+textarea.form-control {
+    height: auto;
+    min-height: 100px; /* Tinggi minimum untuk Address dan Interests */
+}
+
+/* Mengatur tampilan input radio Activity Type */
+.form-check-inline {
+    margin-right: 1.5rem;
+    font-size: 0.9rem;
+}

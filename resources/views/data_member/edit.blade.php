@@ -124,7 +124,6 @@
                                         <option value="Mentor" {{ $data_member->type == 'Mentor' ? 'selected' : '' }}>Mentor</option>
                                         <option value="Oficial" {{ $data_member->type == 'Oficial' ? 'selected' : '' }}>Oficial</option>
                                         <option value="Tegal Greate Seal" {{ $data_member->type == 'Tegal Greate Seal' ? 'selected' : '' }}>Tegal Greate Seal</option>
-                                        <option value="Student" {{ $data_member->type == 'Student' ? 'selected' : '' }}>Student</option>
                                     </select>
                                 </div>
 

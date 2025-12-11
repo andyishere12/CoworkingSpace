@@ -107,7 +107,7 @@
               </a>
             </li>
             <li class="nav-item" >
-              <a href="{{ route('member.index') }}"class="nav-link active">
+              <a href="{{ route('data_member.index') }}"class="nav-link active">
                 <i class="nav-icon fas fa-users"></i>
                 <p>Members</p>
               </a>

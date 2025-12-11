@@ -12,18 +12,14 @@ Route::get('/', function () {
 
 Route::post('/login', [LoginController::class, 'handleLogin'])->name('login');
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard'); 
+Route::middleware('auth')->group(function () {
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-Route::resource('data_member',DataMemberController::class);
-
-Route::resource('member', DataMemberController::class);
-
-
-// Route::get('/data_member/{id}', [DataMemberController::class, 'show'])->name('data_member.show');
+Route::resource('data_member', DataMemberController::class);
+});
 
 
 
 
-// Route::get('/data_member/{data_member}', [DataMemberController::class, 'show'])
-//     ->name('data_member.show');
+
 

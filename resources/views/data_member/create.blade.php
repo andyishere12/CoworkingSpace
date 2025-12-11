@@ -43,7 +43,7 @@
                                         <label for="photo">Photo</label>
                                         <div class="d-flex align-items-center mb-2">
                                             <div class="custom-file mr-3" style="width: 200px;">
-                                                <input type="file" class="custom-file-input" id="photo" name="foto">
+                                                <input  accept="image/*" type="file" class="custom-file-input" id="photo" name="foto">
                                                 <label class="custom-file-label" for="photo">Choose File</label>
                                             </div>
                                             {{-- Placeholder for "No file chosen" (Bootstrap 4/5 handles this with
@@ -64,7 +64,7 @@
                                         <label for="birth_date">Birth Date</label>
                                         <div class="input-group">
                                             <input type="date" class="form-control" id="birth_date" name="tanggal_lahir"
-                                                placeholder="dd/mm/yyyy">
+                                                placeholder="mm/dd/yyyy">
                                             <div class="input-group-append">
                                                 <span class="input-group-text"><i
                                                         class="fas fa-calendar-alt"></i></span>
@@ -120,7 +120,6 @@
                                             <option value="Mentor">Mentor</option>
                                             <option value="Oficial">Oficial</option>
                                             <option value="Tegal Greate Seal">Tegal Greate Seal</option>
-                                            <option value="Student">Student</option>
                                         </select>
                                     </div>
 

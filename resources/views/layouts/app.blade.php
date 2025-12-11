@@ -352,7 +352,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="/member" class="nav-link">
+              <a href="{{ route('data_member.index') }}" class="nav-link">
                 <i class="nav-icon fas fa-users"></i>
                 <p>Members</p>
               </a>

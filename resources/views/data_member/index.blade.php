@@ -2,7 +2,7 @@
 
 <head>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  
+  <link rel="stylesheet" href={{ asset('css/stylemodal.css') }}>
 </head>
 <div class="content-wrapper">
   <div class="content-header">
@@ -70,7 +70,8 @@
                       <div class="d-flex justify-content-center gap-2">
                         {{-- Tombol Detail --}}
                         <button class="btn btn-sm btn-info btn-detail" data-id="{{ $r->id }}" data-nama="{{ $r->nama }}"
-                          data-type="{{ $r->type }}"  data-status="{{ $r->status }}" data-foto="{{ asset('uploads/foto/' . $r->foto) }}">
+                          data-type="{{ $r->type }}" data-status="{{ $r->status }}"
+                          data-foto="{{ asset('uploads/foto/' . $r->foto) }}">
                           Detail
                         </button>
 
@@ -108,27 +109,53 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
 
-     <div class="modal-body text-center">
+      <div class="modal-body text-center">
 
-        {{-- Foto bundar (Tampil di atas) --}}
-        <div class="mb-4 d-flex justify-content-center">
-          <img id="modalFoto" src="" alt="" class="rounded-circle shadow"
-            style="width: 100px; height: 100px; object-fit: cover;">
-        </div>
+        <div class="mb-4 d-flex justify-content-center">
+          <img id="modalFoto" src="" alt="" class="rounded-circle shadow"
+            style="width: 150px; height: 150px; object-fit: cover;">
+        </div>
 
-        {{-- QR Code (Tampil di bawah data) --}}
-        <div class="d-flex justify-content-center">
-          <div id="qrcode" class="border p-2 rounded"> {{-- Tambah border dan padding agar lebih jelas --}}
-          </div>
-        </div>
-        {{-- Data Anggota --}}
-        <p class="mb-1"><strong>Nama:</strong> <span id="modalNama"></span></p>
-        <p class="mb-1"><strong>Type:</strong> <span id="modalType"></span></p>
-        <p class="mb-1 mb-4"><strong>Status:</strong> <span id="modalStatus"></span></p> {{-- Tambah margin bawah sedikit --}}
 
-      </div>
+        <div class="qr-box mb-3">
+          <div class="d-flex justify-content-center">
+            <div id="qrcode" class="border p-2 rounded"></div>
+          </div>
+        </div>
+
+        <div class="watermark-overlay">
+          <div id="modaFoto" class="mb-4 d-flex justify-content-center">
+            <img class="wewe" style="width: 100px; height: 100px;">
+          </div>
+        </div>
+
+        <div class="text-center mt-3">
+
+          <div class="info-card p-3 mt-3 mx-auto">
+            <div class="info-row">
+              <span class="label">Nama</span>
+              <span class="value" id="modalNama"></span>
+            </div>
+
+            <div class="info-row">
+              <span class="label">Type</span>
+              <span class="value" id="modalType"></span>
+            </div>
+
+            <div class="info-row">
+              <span class="label">Status</span>
+              <span class="value" id="modalStatus"></span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
 
       <div class="modal-footer bg-light">
+        <button type="button" class="btn btn-success" id="btnDownload">
+          Download
+        </button>
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
           Tutup
         </button>
@@ -142,11 +169,28 @@
 @include('layouts.footer')
 
 {{-- Script untuk modal & QR code --}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <script>
+  // Tombol Download
+$('#btnDownload').click(function () {
+
+    // Bagian yang ingin dijadikan gambar
+    const modalBody = document.querySelector('#detailModal .modal-body');
+
+    html2canvas(modalBody, { scale: 2 }).then(canvas => {
+        // Convert ke file download
+        const link = document.createElement('a');
+        link.download = 'member_detail.png';
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+    });
+});
+
   $(document).on('click', '.btn-detail', function () {
     var nama = $(this).data('nama');
     var type = $(this).data('type');
@@ -166,8 +210,8 @@
     // Generate QR code di atas foto
     new QRCode(document.getElementById("qrcode"), {
       text: nama + ' | ' + type,
-      width: 100,
-      height: 100,
+      width: 170,
+      height: 170,
       colorDark: "#000000",
       colorLight: "transparent",
       correctLevel: QRCode.CorrectLevel.H
@@ -177,5 +221,7 @@
     var myModal = new bootstrap.Modal(document.getElementById('detailModal'));
     myModal.show();
   });
+
+  
 
 </script>

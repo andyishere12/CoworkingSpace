@@ -13,7 +13,7 @@
   <!-- Theme style   -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/css/adminlte.min.css">
 
-  <link rel="stylesheet" href={{ asset('css/stylemember.css') }}>
+  <link rel="stylesheet" href="{{ asset('css/stylemember.css') }}">
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -119,13 +119,13 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="#" class="nav-link">
+              <a href="{{ route('room.index') }}" class="nav-link {{ request()->routeIs('room.*') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-door-open"></i>
                 <p>Rooms</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="#" class="nav-link">
+              <a href="{{ route('event.index') }}" class="nav-link {{ request()->routeIs('event.*') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-calendar"></i>
                 <p>Events</p>
               </a>

@@ -364,13 +364,13 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="#" class="nav-link">
+              <a href="{{ route('room.index') }}" class="nav-link">
                 <i class="nav-icon fas fa-door-open"></i>
                 <p>Rooms</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="#" class="nav-link">
+              <a href="{{ route('event.index') }}" class="nav-link">
                 <i class="nav-icon fas fa-calendar"></i>
                 <p>Events</p>
               </a>

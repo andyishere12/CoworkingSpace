@@ -4,17 +4,18 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="{{ asset('css/stylemodal.css') }}">
 </head>
+
 <div class="content-wrapper">
   <div class="content-header">
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1 class="m-0">Reservasi</h1>
+          <h1 class="m-0">Event</h1>
         </div>
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="#">Home</a></li>
-            <li class="breadcrumb-item active">Reservasi</li>
+            <li class="breadcrumb-item active">Event</li>
           </ol>
         </div>
       </div>
@@ -26,8 +27,8 @@
 
       {{-- Tombol aksi --}}
       <div class="d-flex gap-2 mb-3">
-        <a href="{{ route('reservasi.create') }}" class="btn btn-info">
-          <i class="fas fa-plus mr-1"></i> Create Reservasi
+        <a href="{{ route('event.create') }}" class="btn btn-info">
+          <i class="fas fa-plus mr-1"></i> Create Event
         </a>
         <a href="" class="btn btn-warning">
           <i class="fas fa-file-excel mr-1"></i> Import Excel
@@ -38,7 +39,7 @@
       <div class="card shadow-sm">
         <div class="card-body">
           <p class="text-muted mb-3">
-            Menampilkan {{ count($allreservasi ?? []) }} item
+            Menampilkan {{ count($events ?? []) }} item
           </p>
 
           <div class="table-responsive">
@@ -46,44 +47,42 @@
               <thead style="background-color: #f8f9fa;">
                 <tr class="text-secondary" style="font-size: 0.8rem; text-transform: uppercase;">
                   <th>ID</th>
-                  <th>RUANGAN</th>
-                  <th>INSTITUSI</th>
-                  <th>PURPOSE</th>
-                  <th>START TIME</th>
-                  <th>END TIME</th>
+                  <th>TITLE</th>
+                  <th>DESCRIPTION</th>
+                  <th>START DATE</th>
+                  <th>END DATE</th>
                   <th>STATUS</th>
                   <th>ACTIONS</th>
                 </tr>
               </thead>
 
               <tbody>
-                @forelse ($allreservasi  as $r)
+                @forelse ($events as $event)
                   <tr>
-                    <td>{{ $r->id ?? 'N/A' }}</td>
-                    <td>{{ $r->ruangan ?? 'N/A' }}</td>
-                    <td>{{ $r->institusi ?? 'N/A' }}</td>
-                    <td>{{ $r->purpose ?? 'N/A' }}</td>
-                    <td>{{ $r->waktu_mulai ?? 'N/A' }}</td>
-                    <td>{{ $r->waktu_selesai ?? 'N/A' }}</td>
+                    <td>{{ $event->id ?? 'N/A' }}</td>
+                    <td>{{ $event->title ?? 'N/A' }}</td>
+                    <td>{{ $event->description ?? 'N/A' }}</td>
+                    <td>{{ $event->start_date ?? 'N/A' }}</td>
+                    <td>{{ $event->end_date ?? 'N/A' }}</td>
                     <td>
                       <span class="badge badge-success px-2 py-1">
-                        {{ $r->status ?? 'N/A' }}
+                        {{ $event->status ?? 'N/A' }}
                       </span>
                     </td>
                     <td>
                       <div class="d-flex justify-content-center gap-2">
                         {{-- Tombol Show --}}
-                        <a href="{{ route('reservasi.show', $r->id) }}" class="btn btn-sm btn-info">
+                        <a href="{{ route('event.show', $event->id) }}" class="btn btn-sm btn-info">
                           Show
                         </a>
 
                         {{-- Tombol Edit --}}
-                        <a href="{{ route('reservasi.edit', $r->id) }}" class="btn btn-sm btn-warning">
+                        <a href="{{ route('event.edit', $event->id) }}" class="btn btn-sm btn-warning">
                           Edit
                         </a>
 
                         {{-- Hapus --}}
-                        <form action="{{ route('reservasi.destroy', $r->id) }}" method="POST"
+                        <form action="{{ route('event.destroy', $event->id) }}" method="POST"
                           onsubmit="return confirm('Hapus data?')" style="display: inline;">
                           @csrf
                           @method('DELETE')
@@ -94,7 +93,7 @@
                   </tr>
                 @empty
                   <tr>
-                    <td colspan="8" class="text-center">Tidak ada data reservasi.</td>
+                    <td colspan="7" class="text-center">Tidak ada data event.</td>
                   </tr>
                 @endforelse
               </tbody>

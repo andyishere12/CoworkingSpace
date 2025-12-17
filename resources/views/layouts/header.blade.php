@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome-free/5.15.4/css/all.min.css">
   <!-- Theme style   -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/css/adminlte.min.css">
-  
+
   <link rel="stylesheet" href={{ asset('css/stylemember.css') }}>
 </head>
 
@@ -89,7 +89,7 @@
         <nav class="mt-2">
           <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
             <li class="nav-item">
-              <a href="/dashboard" class="nav-link">
+              <a href="/dashboard" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-tachometer-alt"></i>
                 <p>Dashboard</p>
               </a>
@@ -106,14 +106,14 @@
                 <p>Attendance</p>
               </a>
             </li>
-            <li class="nav-item" >
-              <a href="{{ route('data_member.index') }}"class="nav-link active">
+            <li class="nav-item">
+              <a href="{{ route('data_member.index') }}" class="nav-link {{ request()->routeIs('data_member.*') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-users"></i>
                 <p>Members</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="#" class="nav-link">
+              <a href="{{ route('reservasi.index') }}" class="nav-link {{ request()->routeIs('reservasi.*') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-bookmark"></i>
                 <p>Reservations</p>
               </a>
@@ -147,10 +147,8 @@
                 <i class="nav-icon fas fa-user"></i>
                 <p>Profile</p>
               </a>
-            </li> 
+            </li>
           </ul>
         </nav>
       </div>
     </aside>
-
-   

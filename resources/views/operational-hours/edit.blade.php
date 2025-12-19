@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dashboard - Trackingspace</title>
+  <title>Update Operational Hours - Trackingspace</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/css/adminlte.min.css">
@@ -66,51 +66,22 @@
       background-color: rgba(255,255,255,0.15);
       color: white;
     }
-    .stat-card {
-      border-radius: 15px;
-      padding: 25px;
+    .day-row {
+      border-bottom: 1px solid #e9ecef;
+      padding: 20px 0;
+    }
+    .day-row:last-child {
+      border-bottom: none;
+    }
+    .btn-cyan {
+      background-color: #06b6d4;
+      border-color: #06b6d4;
       color: white;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      transition: transform 0.3s ease;
     }
-    .stat-card:hover {
-      transform: translateY(-5px);
-    }
-    .stat-card .stat-icon {
-      position: absolute;
-      right: 20px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 60px;
-      opacity: 0.3;
-    }
-    .stat-card h3 {
-      font-size: 36px;
-      font-weight: 700;
-      margin-bottom: 5px;
-    }
-    .stat-card p {
-      font-size: 14px;
-      opacity: 0.9;
-      margin-bottom: 0;
-    }
-    .stat-card small {
-      font-size: 12px;
-      opacity: 0.8;
-    }
-    .bg-cyan {
-      background: linear-gradient(135deg, #00BCD4 0%, #00ACC1 100%);
-    }
-    .bg-lime {
-      background: linear-gradient(135deg, #8BC34A 0%, #7CB342 100%);
-    }
-    .bg-orange-gradient {
-      background: linear-gradient(135deg, #FF9800 0%, #FF6F00 100%);
-    }
-    .bg-red-gradient {
-      background: linear-gradient(135deg, #F44336 0%, #D32F2F 100%);
+    .btn-cyan:hover {
+      background-color: #0891b2;
+      border-color: #0891b2;
+      color: white;
     }
   </style>
 </head>
@@ -131,7 +102,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a href="{{ route('dashboard') }}" class="nav-link active">
+          <a href="{{ route('dashboard') }}" class="nav-link">
             <i class="fas fa-chart-line"></i> Dashboard
           </a>
         </li>
@@ -166,7 +137,7 @@
         <nav class="mt-2">
           <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
             <li class="nav-item">
-              <a href="{{ route('dashboard') }}" class="nav-link active">
+              <a href="{{ route('dashboard') }}" class="nav-link">
                 <i class="nav-icon fas fa-tachometer-alt"></i>
                 <p>Dashboard</p>
               </a>
@@ -208,7 +179,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="{{ route('operational-hours.index') }}" class="nav-link">
+              <a href="{{ route('operational-hours.index') }}" class="nav-link active">
                 <i class="nav-icon fas fa-clock"></i>
                 <p>Open Hours</p>
               </a>
@@ -236,12 +207,13 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1 class="m-0">Dashboard</h1>
+              <h1 class="m-0">Update All Operational Hours</h1>
             </div>
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
                 <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
-                <li class="breadcrumb-item active">Dashboard</li>
+                <li class="breadcrumb-item"><a href="{{ route('operational-hours.index') }}">Operational Hours</a></li>
+                <li class="breadcrumb-item active">Update All</li>
               </ol>
             </div>
           </div>
@@ -250,54 +222,68 @@
 
       <section class="content">
         <div class="container-fluid">
-          <div class="row">
-            <div class="col-lg-3 col-6">
-              <div class="stat-card bg-cyan">
-                <div class="stat-icon">
-                  <i class="fas fa-users"></i>
-                </div>
-                <div>
-                  <h3>150</h3>
-                  <p>Members</p>
-                  <small>Total Registered</small>
-                </div>
-              </div>
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title font-weight-bold">Update All Operational Hours</h3>
             </div>
-            <div class="col-lg-3 col-6">
-              <div class="stat-card bg-lime">
-                <div class="stat-icon">
-                  <i class="fas fa-bookmark"></i>
+            <div class="card-body">
+              <form action="{{ route('operational-hours.update-all') }}" method="POST">
+                @csrf
+                @method('PUT')
+
+                @foreach($operationalHours as $hour)
+                <div class="row day-row align-items-center">
+                  <div class="col-md-2">
+                    <strong style="font-size: 15px;">{{ $hour->day }}</strong>
+                  </div>
+                  <div class="col-md-4">
+                    <label class="text-muted small mb-1">Open Time</label>
+                    <input 
+                      type="time" 
+                      name="hours[{{ $hour->id }}][open_time]" 
+                      class="form-control time-input-{{ $hour->id }}"
+                      value="{{ $hour->open_time }}"
+                      {{ $hour->is_closed ? 'disabled' : '' }}
+                    >
+                  </div>
+                  <div class="col-md-4">
+                    <label class="text-muted small mb-1">Close Time</label>
+                    <input 
+                      type="time" 
+                      name="hours[{{ $hour->id }}][close_time]" 
+                      class="form-control time-input-{{ $hour->id }}"
+                      value="{{ $hour->close_time }}"
+                      {{ $hour->is_closed ? 'disabled' : '' }}
+                    >
+                  </div>
+                  <div class="col-md-2">
+                    <div class="custom-control custom-checkbox mt-4">
+                      <input 
+                        type="checkbox" 
+                        class="custom-control-input" 
+                        name="hours[{{ $hour->id }}][is_closed]"
+                        id="closed_{{ $hour->id }}"
+                        value="1"
+                        {{ $hour->is_closed ? 'checked' : '' }}
+                        onchange="toggleTimeInputs({{ $hour->id }})"
+                      >
+                      <label class="custom-control-label" for="closed_{{ $hour->id }}">
+                        Is Closed
+                      </label>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <h3>53</h3>
-                  <p>Reservations</p>
-                  <small>This Month</small>
+                @endforeach
+
+                <div class="mt-4">
+                  <button type="submit" class="btn btn-cyan px-4">
+                    <i class="fas fa-save"></i> Save All
+                  </button>
+                  <a href="{{ route('operational-hours.index') }}" class="btn btn-secondary px-4">
+                    <i class="fas fa-times"></i> Cancel
+                  </a>
                 </div>
-              </div>
-            </div>
-            <div class="col-lg-3 col-6">
-              <div class="stat-card bg-orange-gradient">
-                <div class="stat-icon">
-                  <i class="fas fa-door-open"></i>
-                </div>
-                <div>
-                  <h3>44</h3>
-                  <p>Rooms</p>
-                  <small>Available</small>
-                </div>
-              </div>
-            </div>
-            <div class="col-lg-3 col-6">
-              <div class="stat-card bg-red-gradient">
-                <div class="stat-icon">
-                  <i class="fas fa-calendar"></i>
-                </div>
-                <div>
-                  <h3>65</h3>
-                  <p>Events</p>
-                  <small>Upcoming</small>
-                </div>
-              </div>
+              </form>
             </div>
           </div>
         </div>
@@ -315,5 +301,19 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/js/adminlte.min.js"></script>
+
+  <script>
+    function toggleTimeInputs(id) {
+      const checkbox = document.getElementById('closed_' + id);
+      const timeInputs = document.querySelectorAll('.time-input-' + id);
+      
+      timeInputs.forEach(input => {
+        input.disabled = checkbox.checked;
+        if (checkbox.checked) {
+          input.value = '00:00';
+        }
+      });
+    }
+  </script>
 </body>
 </html>

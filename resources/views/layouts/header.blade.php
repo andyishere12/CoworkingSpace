@@ -131,7 +131,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="#" class="nav-link">
+              <a href="{{ route('operational-hours.index') }}" class="nav-link {{ request()->routeIs('operational-hours.*') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-clock"></i>
                 <p>Open Hours</p>
               </a>

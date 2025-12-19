@@ -1,83 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Dashboard - Trackingspace</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/css/adminlte.min.css">
-  
+
   <style>
     body {
       font-family: 'Source Sans Pro', sans-serif;
       background-color: #f4f6f9;
     }
+
     .main-sidebar {
       background: linear-gradient(180deg, #6C3FB5 0%, #8B5FD6 100%) !important;
     }
+
     .brand-link {
       background: transparent !important;
-      border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
       padding: 20px 15px;
     }
+
     .brand-link .brand-text {
       color: white !important;
       font-weight: 600;
       font-size: 20px;
     }
+
     .user-panel {
-      border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
       text-align: center;
       display: block !important;
       padding: 25px 10px !important;
     }
+
     .user-panel .image {
       display: inline-block;
       float: none !important;
       margin: 0 auto 15px;
     }
+
     .user-panel .image img {
       width: 80px;
       height: 80px;
-      border: 3px solid rgba(255,255,255,0.3);
+      border: 3px solid rgba(255, 255, 255, 0.3);
     }
+
     .user-panel .info {
       display: block;
       padding: 0;
       margin: 0;
     }
+
     .user-panel .info a {
       color: white !important;
       font-size: 16px;
       font-weight: 500;
     }
-    .sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link {
-      color: rgba(255,255,255,0.8);
+
+    .sidebar-dark-primary .nav-sidebar>.nav-item>.nav-link {
+      color: rgba(255, 255, 255, 0.8);
       padding: 12px 15px;
       margin: 4px 10px;
       border-radius: 8px;
     }
-    .sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link:hover {
-      background-color: rgba(255,255,255,0.1);
+
+    .sidebar-dark-primary .nav-sidebar>.nav-item>.nav-link:hover {
+      background-color: rgba(255, 255, 255, 0.1);
       color: white;
     }
-    .sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link.active {
-      background-color: rgba(255,255,255,0.15);
+
+    .sidebar-dark-primary .nav-sidebar>.nav-item>.nav-link.active {
+      background-color: rgba(255, 255, 255, 0.15);
       color: white;
     }
+
     .stat-card {
       border-radius: 15px;
       padding: 25px;
       color: white;
       position: relative;
       overflow: hidden;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
       transition: transform 0.3s ease;
     }
+
     .stat-card:hover {
       transform: translateY(-5px);
     }
+
     .stat-card .stat-icon {
       position: absolute;
       right: 20px;
@@ -86,29 +102,36 @@
       font-size: 60px;
       opacity: 0.3;
     }
+
     .stat-card h3 {
       font-size: 36px;
       font-weight: 700;
       margin-bottom: 5px;
     }
+
     .stat-card p {
       font-size: 14px;
       opacity: 0.9;
       margin-bottom: 0;
     }
+
     .stat-card small {
       font-size: 12px;
       opacity: 0.8;
     }
+
     .bg-cyan {
       background: linear-gradient(135deg, #00BCD4 0%, #00ACC1 100%);
     }
+
     .bg-lime {
       background: linear-gradient(135deg, #8BC34A 0%, #7CB342 100%);
     }
+
     .bg-orange-gradient {
       background: linear-gradient(135deg, #FF9800 0%, #FF6F00 100%);
     }
+
     .bg-red-gradient {
       background: linear-gradient(135deg, #F44336 0%, #D32F2F 100%);
     }
@@ -126,7 +149,7 @@
       </ul>
       <ul class="navbar-nav ml-auto">
         <li class="nav-item">
-          <a href="{{ route('dashboard') }}" class="nav-link">
+         <a href="{{ route('scan') }}" class="nav-link">
             <i class="fas fa-home"></i> Home
           </a>
         </li>
@@ -141,9 +164,15 @@
           </a>
         </li>
         <li class="nav-item">
-          <a href="#" class="nav-link">
-            <i class="fas fa-sign-out-alt"></i> Logout (admin)
-          </a>
+          <form action="{{ route('logout') }}" method="POST" class="m-0">
+            @csrf
+            <button type="submit" class="nav-link btn btn-link text-danger w-100 text-start">
+              <div class="nav-icon-box d-inline-block me-2">
+                <i class="fas fa-sign-out-alt"></i>
+              </div>
+              Logout (admin)
+            </button>
+          </form>
         </li>
       </ul>
     </nav>
@@ -151,13 +180,15 @@
     <!-- Sidebar -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
       <a href="{{ route('dashboard') }}" class="brand-link">
-        <img src="https://adminlte.io/themes/v3/dist/img/AdminLTELogo.png" alt="Logo" class="brand-image img-circle elevation-3">
+        <img src="https://adminlte.io/themes/v3/dist/img/AdminLTELogo.png" alt="Logo"
+          class="brand-image img-circle elevation-3">
         <span class="brand-text">Trackingspace</span>
       </a>
       <div class="sidebar">
         <div class="user-panel mt-3 pb-3 mb-3">
           <div class="image">
-            <img src="https://adminlte.io/themes/v3/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User">
+            <img src="https://adminlte.io/themes/v3/dist/img/user2-160x160.jpg" class="img-circle elevation-2"
+              alt="User">
           </div>
           <div class="info">
             <a href="#">admin</a>
@@ -240,7 +271,6 @@
             </div>
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
                 <li class="breadcrumb-item active">Dashboard</li>
               </ol>
             </div>
@@ -316,4 +346,5 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/js/adminlte.min.js"></script>
 </body>
+
 </html>

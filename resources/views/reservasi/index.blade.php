@@ -5,7 +5,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Reservasi - Trackingspace</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/css/adminlte.min.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -94,7 +95,7 @@
       </ul>
       <ul class="navbar-nav ml-auto">
         <li class="nav-item">
-          <a href="{{ route('dashboard') }}" class="nav-link">
+          <a href="{{ route('scan') }}" class="nav-link">
             <i class="fas fa-home"></i> Home
           </a>
         </li>
@@ -109,9 +110,15 @@
           </a>
         </li>
         <li class="nav-item">
-          <a href="#" class="nav-link">
-            <i class="fas fa-sign-out-alt"></i> Logout (admin)
-          </a>
+          <form action="{{ route('logout') }}" method="POST" class="m-0">
+            @csrf
+            <button type="submit" class="nav-link btn btn-link text-danger w-100 text-start">
+              <div class="nav-icon-box d-inline-block me-2">
+                <i class="fas fa-sign-out-alt"></i>
+              </div>
+              Logout (admin)
+            </button>
+          </form>
         </li>
       </ul>
     </nav>
@@ -119,13 +126,15 @@
     <!-- Sidebar -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
       <a href="{{ route('dashboard') }}" class="brand-link">
-        <img src="https://adminlte.io/themes/v3/dist/img/AdminLTELogo.png" alt="Logo" class="brand-image img-circle elevation-3">
+        <img src="https://adminlte.io/themes/v3/dist/img/AdminLTELogo.png" alt="Logo"
+          class="brand-image img-circle elevation-3">
         <span class="brand-text">Trackingspace</span>
       </a>
       <div class="sidebar">
         <div class="user-panel mt-3 pb-3 mb-3">
           <div class="image">
-            <img src="https://adminlte.io/themes/v3/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User">
+            <img src="https://adminlte.io/themes/v3/dist/img/user2-160x160.jpg" class="img-circle elevation-2"
+              alt="User">
           </div>
           <div class="info">
             <a href="#">admin</a>
@@ -208,7 +217,7 @@
             </div>
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
                 <li class="breadcrumb-item active">Reservasi</li>
               </ol>
             </div>
@@ -253,44 +262,44 @@
 
                   <tbody>
                     @forelse ($allreservasi as $r)
-                    <tr>
-                      <td>{{ $r->id ?? 'N/A' }}</td>
-                      <td>{{ $r->ruangan ?? 'N/A' }}</td>
-                      <td>{{ $r->institusi ?? 'N/A' }}</td>
-                      <td>{{ $r->purpose ?? 'N/A' }}</td>
-                      <td>{{ $r->waktu_mulai ?? 'N/A' }}</td>
-                      <td>{{ $r->waktu_selesai ?? 'N/A' }}</td>
-                      <td>
-                        <span class="badge badge-success px-2 py-1">
-                          {{ $r->status ?? 'N/A' }}
-                        </span>
-                      </td>
-                      <td>
-                        <div class="d-flex justify-content-center gap-2">
-                          {{-- Tombol Show --}}
-                          <a href="{{ route('reservasi.show', $r->id) }}" class="btn btn-sm btn-info">
-                            Show
-                          </a>
+                      <tr>
+                        <td>{{ $r->id ?? 'N/A' }}</td>
+                        <td>{{ $r->ruangan ?? 'N/A' }}</td>
+                        <td>{{ $r->institusi ?? 'N/A' }}</td>
+                        <td>{{ $r->purpose ?? 'N/A' }}</td>
+                        <td>{{ $r->waktu_mulai ?? 'N/A' }}</td>
+                        <td>{{ $r->waktu_selesai ?? 'N/A' }}</td>
+                        <td>
+                          <span class="badge badge-success px-2 py-1">
+                            {{ $r->status ?? 'N/A' }}
+                          </span>
+                        </td>
+                        <td>
+                          <div class="d-flex justify-content-center gap-2">
+                            {{-- Tombol Show --}}
+                            <a href="{{ route('reservasi.show', $r->id) }}" class="btn btn-sm btn-info">
+                              Show
+                            </a>
 
-                          {{-- Tombol Edit --}}
-                          <a href="{{ route('reservasi.edit', $r->id) }}" class="btn btn-sm btn-warning">
-                            Edit
-                          </a>
+                            {{-- Tombol Edit --}}
+                            <a href="{{ route('reservasi.edit', $r->id) }}" class="btn btn-sm btn-warning">
+                              Edit
+                            </a>
 
-                          {{-- Hapus --}}
-                          <form action="{{ route('reservasi.destroy', $r->id) }}" method="POST"
-                            onsubmit="return confirm('Hapus data?')" style="display: inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button class="btn btn-sm btn-danger" type="submit">Hapus</button>
-                          </form>
-                        </div>
-                      </td>
-                    </tr>
+                            {{-- Hapus --}}
+                            <form action="{{ route('reservasi.destroy', $r->id) }}" method="POST"
+                              onsubmit="return confirm('Hapus data?')" style="display: inline;">
+                              @csrf
+                              @method('DELETE')
+                              <button class="btn btn-sm btn-danger" type="submit">Hapus</button>
+                            </form>
+                          </div>
+                        </td>
+                      </tr>
                     @empty
-                    <tr>
-                      <td colspan="8" class="text-center">Tidak ada data reservasi.</td>
-                    </tr>
+                      <tr>
+                        <td colspan="8" class="text-center">Tidak ada data reservasi.</td>
+                      </tr>
                     @endforelse
                   </tbody>
                 </table>

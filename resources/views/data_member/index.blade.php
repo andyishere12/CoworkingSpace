@@ -114,7 +114,7 @@
       </ul>
       <ul class="navbar-nav ml-auto">
         <li class="nav-item">
-          <a href="{{ route('dashboard') }}" class="nav-link">
+         <a href="{{ route('scan') }}" class="nav-link">
             <i class="fas fa-home"></i> Home
           </a>
         </li>
@@ -128,10 +128,16 @@
             <i class="fas fa-users"></i> <span class="badge badge-danger">0</span> Active
           </a>
         </li>
-        <li class="nav-item">
-          <a href="#" class="nav-link">
-            <i class="fas fa-sign-out-alt"></i> Logout (admin)
-          </a>
+         <li class="nav-item">
+          <form action="{{ route('logout') }}" method="POST" class="m-0">
+            @csrf
+            <button type="submit" class="nav-link btn btn-link text-danger w-100 text-start">
+              <div class="nav-icon-box d-inline-block me-2">
+                <i class="fas fa-sign-out-alt"></i>
+              </div>
+              Logout (admin)
+            </button>
+          </form>
         </li>
       </ul>
     </nav>
@@ -228,7 +234,7 @@
             </div>
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
                 <li class="breadcrumb-item active">Members Admin</li>
               </ol>
             </div>

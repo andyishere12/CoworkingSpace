@@ -72,10 +72,33 @@
       border-style: solid;
     }
 
-    .scan-frame::before { top: -2px; left: -2px; border-width: 4px 0 0 4px; border-top-left-radius: 12px; }
-    .scan-frame::after { top: -2px; right: -2px; border-width: 4px 4px 0 0; border-top-right-radius: 12px; }
-    .scan-corner-bl { bottom: -2px; left: -2px; border-width: 0 0 4px 4px; border-bottom-left-radius: 12px; }
-    .scan-corner-br { bottom: -2px; right: -2px; border-width: 0 4px 4px 0; border-bottom-right-radius: 12px; }
+    .scan-frame::before {
+      top: -2px;
+      left: -2px;
+      border-width: 4px 0 0 4px;
+      border-top-left-radius: 12px;
+    }
+
+    .scan-frame::after {
+      top: -2px;
+      right: -2px;
+      border-width: 4px 4px 0 0;
+      border-top-right-radius: 12px;
+    }
+
+    .scan-corner-bl {
+      bottom: -2px;
+      left: -2px;
+      border-width: 0 0 4px 4px;
+      border-bottom-left-radius: 12px;
+    }
+
+    .scan-corner-br {
+      bottom: -2px;
+      right: -2px;
+      border-width: 0 4px 4px 0;
+      border-bottom-right-radius: 12px;
+    }
 
     .laser {
       position: absolute;
@@ -88,9 +111,17 @@
     }
 
     @keyframes scanAnim {
-      0% { top: 0; }
-      50% { top: 100%; }
-      100% { top: 0; }
+      0% {
+        top: 0;
+      }
+
+      50% {
+        top: 100%;
+      }
+
+      100% {
+        top: 0;
+      }
     }
   </style>
 </head>
@@ -106,12 +137,14 @@
     </div>
 
     <div class="flex items-center gap-2">
-      <a href="#" class="flex items-center gap-2 px-4 py-2 text-gray-600 bg-purple-main text-white rounded-lg shadow-md shadow-purple-100 font-medium">
+      <a href="#"
+        class="flex items-center gap-2 px-4 py-2 text-gray-600 bg-purple-main text-white rounded-lg shadow-md shadow-purple-100 font-medium">
         <i data-lucide="home" class="w-5 h-5"></i>
         <span>Home</span>
       </a>
-      
-      <a href="/dashboard" class="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 rounded-lg transition-all font-medium">
+
+      <a href="/dashboard"
+        class="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 rounded-lg transition-all font-medium">
         <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
         <span>Dashboard</span>
       </a>
@@ -122,11 +155,15 @@
         <i data-lucide="users" class="w-5 h-5"></i>
         <span id="active-count">0</span> Active
       </div>
-
-      <button class="flex items-center gap-2 px-4 py-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all font-medium ml-2">
+      <form action="{{ route('logout') }}" method="POST" class="m-0">
+        @csrf
+        <button
+        class="flex items-center gap-2 px-4 py-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all font-medium ml-2">
         <i data-lucide="log-out" class="w-5 h-5"></i>
         <span>Logout (admin)</span>
       </button>
+      </form>
+     
     </div>
   </nav>
 
@@ -152,8 +189,12 @@
         </div>
 
         <div class="mt-4 space-y-2">
-          <button id="btnOn" class="w-full bg-purple-main text-white py-3 rounded-lg font-bold shadow-lg shadow-purple-200 uppercase tracking-wide">START CAMERA</button>
-          <button id="btnOff" class="hidden w-full bg-red-500 text-white py-3 rounded-lg font-bold shadow-lg uppercase tracking-wide">DISABLE CAMERA</button>
+          <button id="btnOn"
+            class="w-full bg-purple-main text-white py-3 rounded-lg font-bold shadow-lg shadow-purple-200 uppercase tracking-wide">START
+            CAMERA</button>
+          <button id="btnOff"
+            class="hidden w-full bg-red-500 text-white py-3 rounded-lg font-bold shadow-lg uppercase tracking-wide">DISABLE
+            CAMERA</button>
         </div>
         <p id="notif" class="text-center mt-3 text-sm font-bold h-6 transition-all duration-300"></p>
         <p class="text-center text-xs text-gray-400 mt-2">Siap melakukan scan</p>
@@ -162,7 +203,8 @@
 
     <div class="col-span-12 md:col-span-6">
       <div class="card p-4 min-h-[500px]">
-        <div class="flex items-center gap-2 mb-4 text-purple-main font-semibold border-b pb-2 uppercase tracking-wider text-sm">
+        <div
+          class="flex items-center gap-2 mb-4 text-purple-main font-semibold border-b pb-2 uppercase tracking-wider text-sm">
           <i data-lucide="users" class="w-5 h-5"></i> Active Members
         </div>
         <div id="hasil" class="grid grid-cols-1 gap-3">
@@ -173,7 +215,8 @@
 
     <div class="col-span-12 md:col-span-3 space-y-4">
       <div class="card p-4">
-        <div class="flex items-center gap-2 mb-4 text-purple-main font-semibold border-b pb-2 uppercase tracking-wider text-sm">
+        <div
+          class="flex items-center gap-2 mb-4 text-purple-main font-semibold border-b pb-2 uppercase tracking-wider text-sm">
           <i data-lucide="calendar" class="w-5 h-5"></i> Upcoming Events
         </div>
         <div class="py-10 text-center">
@@ -181,7 +224,8 @@
         </div>
       </div>
       <div class="card p-4">
-        <div class="flex items-center gap-2 mb-4 text-purple-main font-semibold border-b pb-2 uppercase tracking-wider text-sm">
+        <div
+          class="flex items-center gap-2 mb-4 text-purple-main font-semibold border-b pb-2 uppercase tracking-wider text-sm">
           <i data-lucide="book-open" class="w-5 h-5"></i> Upcoming Reservations
         </div>
         <div class="py-10 text-center">
@@ -315,7 +359,7 @@
         delete rows[nama];
         delete timers[nama];
         updateActiveCount();
-        
+
         if (Object.keys(rows).length === 0) {
           hasil.innerHTML = `<p id="empty-msg" class="col-span-full text-center text-gray-400 py-20 italic">Belum ada member aktif</p>`;
         }

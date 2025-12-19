@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DataMemberController;
@@ -10,12 +11,33 @@ use App\Http\Controllers\ReservasiController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\ScanController;
 
+/*
+|--------------------------------------------------------------------------
+| Home
+|--------------------------------------------------------------------------
+*/
 Route::get('/', function () {
-    return view('auth.login');
+    return Auth::check()
+        ? redirect()->route('dashboard')
+        : redirect()->route('login');
 });
 
-Route::post('/login', [LoginController::class, 'handleLogin'])->name('login');
+/*
+|--------------------------------------------------------------------------
+| Login
+|--------------------------------------------------------------------------
+*/
+Route::get('/login', function () {
+    return view('auth.login');
+})->middleware('guest')->name('login');
 
+Route::post('/login', [LoginController::class, 'handleLogin'])->name('login.process');
+
+/*
+|--------------------------------------------------------------------------
+| Protected Routes
+|--------------------------------------------------------------------------
+*/
 Route::middleware('auth')->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -36,4 +58,11 @@ Route::middleware('auth')->group(function () {
         Route::put('/update-all', [OperationalHoursController::class, 'updateAll'])->name('update-all');
     });
 
+    // Logout
+    Route::post('/logout', function () {
+        Auth::logout();
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
+        return redirect()->route('login');
+    })->name('logout');
 });

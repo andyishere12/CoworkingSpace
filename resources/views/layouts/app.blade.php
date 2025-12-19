@@ -276,7 +276,7 @@
       <!-- Right navbar links -->
       <ul class="navbar-nav ml-auto">
         <li class="nav-item">
-          <a href="#" class="nav-link">
+          <a href="{{ route('scan') }}"  class="nav-link">
             <div class="nav-icon-box">
               <i class="fas fa-home"></i>
             </div>

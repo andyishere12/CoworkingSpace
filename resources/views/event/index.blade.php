@@ -3,10 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dashboard - Trackingspace</title>
+  <title>Event - Trackingspace</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/css/adminlte.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ asset('css/stylemodal.css') }}">
   
   <style>
     body {
@@ -66,52 +68,6 @@
       background-color: rgba(255,255,255,0.15);
       color: white;
     }
-    .stat-card {
-      border-radius: 15px;
-      padding: 25px;
-      color: white;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      transition: transform 0.3s ease;
-    }
-    .stat-card:hover {
-      transform: translateY(-5px);
-    }
-    .stat-card .stat-icon {
-      position: absolute;
-      right: 20px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 60px;
-      opacity: 0.3;
-    }
-    .stat-card h3 {
-      font-size: 36px;
-      font-weight: 700;
-      margin-bottom: 5px;
-    }
-    .stat-card p {
-      font-size: 14px;
-      opacity: 0.9;
-      margin-bottom: 0;
-    }
-    .stat-card small {
-      font-size: 12px;
-      opacity: 0.8;
-    }
-    .bg-cyan {
-      background: linear-gradient(135deg, #00BCD4 0%, #00ACC1 100%);
-    }
-    .bg-lime {
-      background: linear-gradient(135deg, #8BC34A 0%, #7CB342 100%);
-    }
-    .bg-orange-gradient {
-      background: linear-gradient(135deg, #FF9800 0%, #FF6F00 100%);
-    }
-    .bg-red-gradient {
-      background: linear-gradient(135deg, #F44336 0%, #D32F2F 100%);
-    }
   </style>
 </head>
 
@@ -131,7 +87,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a href="{{ route('dashboard') }}" class="nav-link active">
+          <a href="{{ route('dashboard') }}" class="nav-link">
             <i class="fas fa-chart-line"></i> Dashboard
           </a>
         </li>
@@ -166,7 +122,7 @@
         <nav class="mt-2">
           <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
             <li class="nav-item">
-              <a href="{{ route('dashboard') }}" class="nav-link active">
+              <a href="{{ route('dashboard') }}" class="nav-link">
                 <i class="nav-icon fas fa-tachometer-alt"></i>
                 <p>Dashboard</p>
               </a>
@@ -202,7 +158,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="{{ route('event.index') }}" class="nav-link">
+              <a href="{{ route('event.index') }}" class="nav-link active">
                 <i class="nav-icon fas fa-calendar"></i>
                 <p>Events</p>
               </a>
@@ -236,12 +192,12 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1 class="m-0">Dashboard</h1>
+              <h1 class="m-0">Event</h1>
             </div>
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
-                <li class="breadcrumb-item active">Dashboard</li>
+                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                <li class="breadcrumb-item active">Event</li>
               </ol>
             </div>
           </div>
@@ -250,56 +206,84 @@
 
       <section class="content">
         <div class="container-fluid">
-          <div class="row">
-            <div class="col-lg-3 col-6">
-              <div class="stat-card bg-cyan">
-                <div class="stat-icon">
-                  <i class="fas fa-users"></i>
-                </div>
-                <div>
-                  <h3>150</h3>
-                  <p>Members</p>
-                  <small>Total Registered</small>
-                </div>
-              </div>
-            </div>
-            <div class="col-lg-3 col-6">
-              <div class="stat-card bg-lime">
-                <div class="stat-icon">
-                  <i class="fas fa-bookmark"></i>
-                </div>
-                <div>
-                  <h3>53</h3>
-                  <p>Reservations</p>
-                  <small>This Month</small>
-                </div>
-              </div>
-            </div>
-            <div class="col-lg-3 col-6">
-              <div class="stat-card bg-orange-gradient">
-                <div class="stat-icon">
-                  <i class="fas fa-door-open"></i>
-                </div>
-                <div>
-                  <h3>44</h3>
-                  <p>Rooms</p>
-                  <small>Available</small>
-                </div>
-              </div>
-            </div>
-            <div class="col-lg-3 col-6">
-              <div class="stat-card bg-red-gradient">
-                <div class="stat-icon">
-                  <i class="fas fa-calendar"></i>
-                </div>
-                <div>
-                  <h3>65</h3>
-                  <p>Events</p>
-                  <small>Upcoming</small>
-                </div>
+
+          {{-- Tombol aksi --}}
+          <div class="d-flex gap-2 mb-3">
+            <a href="{{ route('event.create') }}" class="btn btn-info">
+              <i class="fas fa-plus mr-1"></i> Create Event
+            </a>
+            <a href="" class="btn btn-warning">
+              <i class="fas fa-file-excel mr-1"></i> Import Excel
+            </a>
+          </div>
+
+          {{-- Card tabel --}}
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <p class="text-muted mb-3">
+                Menampilkan {{ count($events ?? []) }} item
+              </p>
+
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead style="background-color: #f8f9fa;">
+                    <tr class="text-secondary" style="font-size: 0.8rem; text-transform: uppercase;">
+                      <th>ID</th>
+                      <th>TITLE</th>
+                      <th>DESCRIPTION</th>
+                      <th>START DATE</th>
+                      <th>END DATE</th>
+                      <th>STATUS</th>
+                      <th>ACTIONS</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    @forelse ($events as $event)
+                      <tr>
+                        <td>{{ $event->id ?? 'N/A' }}</td>
+                        <td>{{ $event->title ?? 'N/A' }}</td>
+                        <td>{{ $event->description ?? 'N/A' }}</td>
+                        <td>{{ $event->start_date ?? 'N/A' }}</td>
+                        <td>{{ $event->end_date ?? 'N/A' }}</td>
+                        <td>
+                          <span class="badge badge-success px-2 py-1">
+                            {{ $event->status ?? 'N/A' }}
+                          </span>
+                        </td>
+                        <td>
+                          <div class="d-flex justify-content-center gap-2">
+                            {{-- Tombol Show --}}
+                            <a href="{{ route('event.show', $event->id) }}" class="btn btn-sm btn-info">
+                              Show
+                            </a>
+
+                            {{-- Tombol Edit --}}
+                            <a href="{{ route('event.edit', $event->id) }}" class="btn btn-sm btn-warning">
+                              Edit
+                            </a>
+
+                            {{-- Hapus --}}
+                            <form action="{{ route('event.destroy', $event->id) }}" method="POST"
+                              onsubmit="return confirm('Hapus data?')" style="display: inline;">
+                              @csrf
+                              @method('DELETE')
+                              <button class="btn btn-sm btn-danger" type="submit">Hapus</button>
+                            </form>
+                          </div>
+                        </td>
+                      </tr>
+                    @empty
+                      <tr>
+                        <td colspan="7" class="text-center">Tidak ada data event.</td>
+                      </tr>
+                    @endforelse
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
+
         </div>
       </section>
     </div>

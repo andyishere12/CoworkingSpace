@@ -7,9 +7,22 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class DataMemberController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $allmember = DataMember::all();
+        $search = $request->input('search');
+        
+        if ($search) {
+            $allmember = DataMember::where('nama', 'like', '%' . $search . '%')
+                ->orWhere('type', 'like', '%' . $search . '%')
+                ->orWhere('aktivitas', 'like', '%' . $search . '%')
+                ->orWhere('status', 'like', '%' . $search . '%')
+                ->orWhere('email', 'like', '%' . $search . '%')
+                ->orWhere('institusi', 'like', '%' . $search . '%')
+                ->get();
+        } else {
+            $allmember = DataMember::all();
+        }
+        
         return view('data_member.index', compact('allmember'));
     }
 
@@ -55,17 +68,13 @@ class DataMemberController extends Controller
         ]);
 
         return redirect()->route('data_member.index')->with('success', 'Member berhasil ditambahkan!');
-
-
     }
-
 
     public function show($id)
     {
         $member = DataMember::findOrFail($id);
         return view('data_member.show', compact('member'));
     }
-
 
     public function edit(DataMember $data_member)
     {
@@ -116,7 +125,4 @@ class DataMemberController extends Controller
         $data_member->delete();
         return redirect()->route('data_member.index');
     }
-
-
-
 }

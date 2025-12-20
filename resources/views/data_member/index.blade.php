@@ -100,6 +100,47 @@
     .btn-update:hover {
       background-color: #e9ecef;
     }
+    
+    /* Styling untuk search box */
+    .search-container {
+      position: relative;
+      max-width: 300px;
+    }
+    
+    .search-results {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 0 0 4px 4px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      max-height: 300px;
+      overflow-y: auto;
+      z-index: 1000;
+      display: none;
+    }
+    
+    .search-result-item {
+      padding: 10px 15px;
+      border-bottom: 1px solid #eee;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .search-result-item:hover {
+      background-color: #f8f9fa;
+    }
+    
+    .search-result-item:last-child {
+      border-bottom: none;
+    }
+    
+    .search-highlight {
+      color: #6C3FB5;
+      font-weight: bold;
+    }
   </style>
 </head>
 
@@ -248,7 +289,15 @@
             <div class="card-header">
               <div class="d-flex justify-content-between align-items-center">
                 <h3 class="card-title font-weight-bold">Members</h3>
-                <div class="d-flex gap-2">
+                <div class="d-flex gap-2 align-items-center">
+                  <!-- Search Box -->
+                  <div class="search-container">
+                    <input type="text" id="searchInput" class="form-control" 
+                           placeholder="Search members..." 
+                           style="min-width: 250px;">
+                    <div id="searchResults" class="search-results"></div>
+                  </div>
+                  
                   <a href="{{ route('data_member.create') }}" class="btn btn-info">
                     <i class="fas fa-plus mr-1"></i> Create Member
                   </a>
@@ -281,9 +330,10 @@
                     </tr>
                   </thead>
 
-                  <tbody>
+                  <tbody id="membersTable">
                     @foreach ($allmember as $r)
-                    <tr>
+                    <tr data-id="{{ $r->id }}" data-nama="{{ $r->nama }}" data-type="{{ $r->type }}" 
+                        data-aktivitas="{{ $r->aktivitas }}" data-status="{{ $r->status }}">
                       <td>{{ $r->id }}</td>
                       <td>{{ $r->nama }}</td>
                       <td>{{ $r->type }}</td>
@@ -344,12 +394,10 @@
         </div>
 
         <div class="modal-body text-center">
-
           <div class="mb-4 d-flex justify-content-center">
             <img id="modalFoto" src="" alt="" class="rounded-circle shadow"
               style="width: 150px; height: 150px; object-fit: cover;">
           </div>
-
 
           <div class="qr-box mb-3">
             <div class="d-flex justify-content-center">
@@ -364,7 +412,6 @@
           </div>
 
           <div class="text-center mt-3">
-
             <div class="info-card p-3 mt-3 mx-auto">
               <div class="info-row">
                 <span class="label">Nama</span>
@@ -381,10 +428,8 @@
                 <span class="value" id="modalStatus"></span>
               </div>
             </div>
-
           </div>
         </div>
-
 
         <div class="modal-footer bg-light">
           <button type="button" class="btn btn-success" id="btnDownload">
@@ -408,14 +453,10 @@
   <script>
     // Tombol Download
     $('#btnDownload').click(function() {
-
-      // Bagian yang ingin dijadikan gambar
       const modalBody = document.querySelector('#detailModal .modal-body');
-
       html2canvas(modalBody, {
         scale: 2
       }).then(canvas => {
-        // Convert ke file download
         const link = document.createElement('a');
         link.download = 'member_detail.png';
         link.href = canvas.toDataURL("image/png");
@@ -427,19 +468,14 @@
       var nama = $(this).data('nama');
       var type = $(this).data('type');
       var status = $(this).data('status');
-      var foto = $(this).data('foto'); // path foto, misal /uploads/member.jpg
+      var foto = $(this).data('foto');
 
       $('#modalNama').text(nama);
       $('#modalType').text(type);
       $('#modalStatus').text(status);
-
-      // Set foto
       $('#modalFoto').attr('src', foto);
-
-      // Clear QR code sebelumnya
       $('#qrcode').html('');
 
-      // Generate QR code di atas foto
       new QRCode(document.getElementById("qrcode"), {
         text: nama + ' | ' + type,
         width: 170,
@@ -449,9 +485,145 @@
         correctLevel: QRCode.CorrectLevel.H
       });
 
-      // Tampilkan modal
       var myModal = new bootstrap.Modal(document.getElementById('detailModal'));
       myModal.show();
+    });
+
+    // Real-time Search Functionality
+    $(document).ready(function() {
+      let searchTimeout;
+      let allMembers = []; // Untuk menyimpan semua data member
+
+      // Ambil data member saat halaman dimuat
+      function loadAllMembers() {
+        $.ajax({
+          url: "{{ route('data_member.index') }}",
+          method: 'GET',
+          dataType: 'json',
+          success: function(data) {
+            // Simpan data member
+            allMembers = data;
+          },
+          error: function(xhr) {
+            console.error('Error loading members:', xhr);
+          }
+        });
+      }
+
+      // Load data saat halaman dimuat
+      loadAllMembers();
+
+      // Real-time search
+      $('#searchInput').on('input', function() {
+        clearTimeout(searchTimeout);
+        const searchTerm = $(this).val().toLowerCase();
+        
+        if (searchTerm.length === 0) {
+          $('#searchResults').hide().empty();
+          return;
+        }
+
+        searchTimeout = setTimeout(function() {
+          $.ajax({
+            url: "{{ route('data_member.index') }}",
+            method: 'GET',
+            data: { search: searchTerm },
+            success: function(response) {
+              const members = response;
+              const resultsContainer = $('#searchResults');
+              resultsContainer.empty();
+              
+              if (members.length === 0) {
+                resultsContainer.append('<div class="search-result-item">No results found</div>');
+              } else {
+                members.slice(0, 10).forEach(function(member) {
+                  const highlightedName = highlightText(member.nama, searchTerm);
+                  const item = $(`
+                    <div class="search-result-item" data-id="${member.id}">
+                      <div class="fw-bold">${highlightedName}</div>
+                      <small class="text-muted">${member.type} • ${member.aktivitas}</small>
+                    </div>
+                  `);
+                  resultsContainer.append(item);
+                });
+              }
+              
+              resultsContainer.show();
+            },
+            error: function(xhr) {
+              console.error('Error searching:', xhr);
+            }
+          });
+        }, 300); // Debounce 300ms
+      });
+
+      // Highlight text in search results
+      function highlightText(text, searchTerm) {
+        if (!searchTerm) return text;
+        const regex = new RegExp(`(${searchTerm})`, 'gi');
+        return text.replace(regex, '<span class="search-highlight">$1</span>');
+      }
+
+      // When clicking on a search result
+      $(document).on('click', '.search-result-item', function() {
+        const memberId = $(this).data('id');
+        const searchTerm = $('#searchInput').val();
+        
+        // Find the row and highlight it
+        $('#membersTable tr').removeClass('table-primary');
+        const targetRow = $(`#membersTable tr[data-id="${memberId}"]`);
+        targetRow.addClass('table-primary');
+        
+        // Scroll to the row
+        $('html, body').animate({
+          scrollTop: targetRow.offset().top - 100
+        }, 500);
+        
+        // Clear search
+        $('#searchInput').val('');
+        $('#searchResults').hide().empty();
+      });
+
+      // Hide search results when clicking outside
+      $(document).on('click', function(e) {
+        if (!$(e.target).closest('.search-container').length) {
+          $('#searchResults').hide();
+        }
+      });
+
+      // Client-side filtering for instant feedback
+      $('#searchInput').on('keyup', function() {
+        const searchTerm = $(this).val().toLowerCase();
+        
+        if (searchTerm.length === 0) {
+          // Show all rows
+          $('#membersTable tr').show();
+          $('.text-muted').text(`Total ${$('#membersTable tr').length} items.`);
+          return;
+        }
+
+        // Filter rows
+        let visibleCount = 0;
+        $('#membersTable tr').each(function() {
+          const row = $(this);
+          const nama = row.data('nama').toLowerCase();
+          const type = row.data('type').toLowerCase();
+          const aktivitas = row.data('aktivitas').toLowerCase();
+          const status = row.data('status').toLowerCase();
+          
+          if (nama.includes(searchTerm) || 
+              type.includes(searchTerm) || 
+              aktivitas.includes(searchTerm) || 
+              status.includes(searchTerm)) {
+            row.show();
+            visibleCount++;
+          } else {
+            row.hide();
+          }
+        });
+        
+        $('.text-muted').text(`Total ${visibleCount} items.`);
+      });
     });
   </script>
 </body>

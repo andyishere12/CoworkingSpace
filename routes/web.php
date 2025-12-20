@@ -10,6 +10,7 @@ use App\Http\Controllers\OperationalHoursController;
 use App\Http\Controllers\ReservasiController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\ScanController;
+use App\Http\Controllers\AttendanceController; 
 
 /*
 |--------------------------------------------------------------------------
@@ -41,6 +42,12 @@ Route::post('/login', [LoginController::class, 'handleLogin'])->name('login.proc
 Route::middleware('auth')->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Attendance (Hadir)
+    Route::get('/attendance', [AttendanceController::class, 'index'])->name('hadir.index');
+    Route::post('/attendance/check-in', [AttendanceController::class, 'checkIn'])->name('attendance.checkin');
+    Route::post('/attendance/check-out', [AttendanceController::class, 'checkOut'])->name('attendance.checkout');
+
 
     Route::resource('data_member', DataMemberController::class);
     Route::resource('reservasi', ReservasiController::class);

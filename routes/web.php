@@ -7,7 +7,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\OperationalHoursController;
 use App\Http\Controllers\ReservasiController;
 use App\Http\Controllers\RoomController;
-use App\Http\Controllers\ReportController; // TAMBAHAN BARU
+use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -22,7 +22,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('data_member', DataMemberController::class);
 
-    Route::resource('reservasi',ReservasiController::class);
+    Route::resource('reservasi', ReservasiController::class);
 
     Route::resource('room', RoomController::class);
 
@@ -41,19 +41,25 @@ Route::middleware('auth')->group(function () {
     Route::prefix('reports')->name('reports.')->group(function () {
         // Halaman index laporan
         Route::get('/', [ReportController::class, 'index'])->name('index');
-        
+
         // Laporan Membership
         Route::get('/membership', [ReportController::class, 'membershipReport'])->name('membership');
-        
+
         // Laporan Ruangan
         Route::get('/room', [ReportController::class, 'roomReport'])->name('room');
-        
+
         // Laporan Event
         Route::get('/event', [ReportController::class, 'eventReport'])->name('event');
-        
+
         // Export Routes
         Route::get('/export/membership', [ReportController::class, 'exportMembership'])->name('export.membership');
         Route::get('/export/room', [ReportController::class, 'exportRoom'])->name('export.room');
         Route::get('/export/event', [ReportController::class, 'exportEvent'])->name('export.event');
     });
+
+
+    // Profile Routes
+    Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile.index');
+    Route::post('/profile/update', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/password', [App\Http\Controllers\ProfileController::class, 'updatePassword'])->name('profile.password');
 });

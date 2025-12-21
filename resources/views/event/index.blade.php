@@ -176,7 +176,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="#" class="nav-link">
+              <a href="{{ route('profile.index') }}" class="nav-link">
                 <i class="nav-icon fas fa-user"></i>
                 <p>Profile</p>
               </a>

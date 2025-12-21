@@ -182,7 +182,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="#" class="nav-link">
+              <a href="{{ route('reports.index') }}" class="nav-link">
                 <i class="nav-icon fas fa-chart-bar"></i>
                 <p>Reports</p>
               </a>

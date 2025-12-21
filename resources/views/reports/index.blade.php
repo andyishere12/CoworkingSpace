@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dashboard - Trackingspace</title>
+  <title>Laporan - Trackingspace</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/css/adminlte.min.css">
@@ -66,51 +66,51 @@
       background-color: rgba(255,255,255,0.15);
       color: white;
     }
-    .stat-card {
+    .report-card {
       border-radius: 15px;
-      padding: 25px;
-      color: white;
-      position: relative;
-      overflow: hidden;
+      padding: 30px;
+      background: white;
       box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      transition: transform 0.3s ease;
+      transition: all 0.3s ease;
+      height: 100%;
+      border-left: 5px solid;
+      margin-bottom: 20px;
     }
-    .stat-card:hover {
-      transform: translateY(-5px);
+    .report-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
     }
-    .stat-card .stat-icon {
-      position: absolute;
-      right: 20px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 60px;
-      opacity: 0.3;
+    .report-card.membership {
+      border-left-color: #8BC34A;
     }
-    .stat-card h3 {
-      font-size: 36px;
-      font-weight: 700;
-      margin-bottom: 5px;
+    .report-card.room {
+      border-left-color: #FF9800;
     }
-    .stat-card p {
+    .report-card.event {
+      border-left-color: #F44336;
+    }
+    .report-card h5 {
+      font-weight: 600;
+      margin-bottom: 15px;
+      font-size: 18px;
+    }
+    .report-card p {
+      color: #6c757d;
+      margin-bottom: 20px;
       font-size: 14px;
-      opacity: 0.9;
-      margin-bottom: 0;
     }
-    .stat-card small {
-      font-size: 12px;
-      opacity: 0.8;
-    }
-    .bg-cyan {
+    .report-card .btn {
       background: linear-gradient(135deg, #00BCD4 0%, #00ACC1 100%);
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: all 0.3s;
     }
-    .bg-lime {
-      background: linear-gradient(135deg, #8BC34A 0%, #7CB342 100%);
-    }
-    .bg-orange-gradient {
-      background: linear-gradient(135deg, #FF9800 0%, #FF6F00 100%);
-    }
-    .bg-red-gradient {
-      background: linear-gradient(135deg, #F44336 0%, #D32F2F 100%);
+    .report-card .btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 15px rgba(0,188,212,0.4);
     }
   </style>
 </head>
@@ -131,13 +131,13 @@
           </a>
         </li>
         <li class="nav-item">
-          <a href="{{ route('dashboard') }}" class="nav-link active">
+          <a href="{{ route('dashboard') }}" class="nav-link">
             <i class="fas fa-chart-line"></i> Dashboard
           </a>
         </li>
         <li class="nav-item">
           <a href="#" class="nav-link">
-            <i class="fas fa-users"></i> <span class="badge badge-danger">0</span> Active
+            <i class="fas fa-users"></i> <span class="badge badge-danger">9</span> Active
           </a>
         </li>
         <li class="nav-item">
@@ -166,7 +166,7 @@
         <nav class="mt-2">
           <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
             <li class="nav-item">
-              <a href="{{ route('dashboard') }}" class="nav-link active">
+              <a href="{{ route('dashboard') }}" class="nav-link">
                 <i class="nav-icon fas fa-tachometer-alt"></i>
                 <p>Dashboard</p>
               </a>
@@ -214,7 +214,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="{{ route('reports.index') }}" class="nav-link">
+              <a href="{{ route('reports.index') }}" class="nav-link active">
                 <i class="nav-icon fas fa-chart-bar"></i>
                 <p>Reports</p>
               </a>
@@ -236,12 +236,12 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1 class="m-0">Dashboard</h1>
+              <h1 class="m-0">Laporan</h1>
             </div>
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
-                <li class="breadcrumb-item active">Dashboard</li>
+                <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+                <li class="breadcrumb-item active">Laporan</li>
               </ol>
             </div>
           </div>
@@ -250,53 +250,44 @@
 
       <section class="content">
         <div class="container-fluid">
+          <div class="card mb-4">
+            <div class="card-body">
+              <h4 class="mb-2">Daftar Laporan</h4>
+              <p class="text-muted mb-0">Pilih jenis laporan yang ingin Anda lihat</p>
+            </div>
+          </div>
+
           <div class="row">
-            <div class="col-lg-3 col-6">
-              <div class="stat-card bg-cyan">
-                <div class="stat-icon">
-                  <i class="fas fa-users"></i>
-                </div>
-                <div>
-                  <h3>150</h3>
-                  <p>Members</p>
-                  <small>Total Registered</small>
-                </div>
+            <!-- Laporan Membership -->
+            <div class="col-lg-4 col-md-6">
+              <div class="report-card membership">
+                <h5><i class="fas fa-id-card mr-2"></i>Laporan Member</h5>
+                <p>Lihat statistik dan data member.</p>
+                <a href="{{ route('reports.membership') }}" class="btn">
+                  <i class="fas fa-eye mr-2"></i>Lihat Laporan
+                </a>
               </div>
             </div>
-            <div class="col-lg-3 col-6">
-              <div class="stat-card bg-lime">
-                <div class="stat-icon">
-                  <i class="fas fa-bookmark"></i>
-                </div>
-                <div>
-                  <h3>53</h3>
-                  <p>Reservations</p>
-                  <small>This Month</small>
-                </div>
+
+            <!-- Laporan Ruangan -->
+            <div class="col-lg-4 col-md-6">
+              <div class="report-card room">
+                <h5><i class="fas fa-door-open mr-2"></i>Laporan Ruangan</h5>
+                <p>Lihat statistik penggunaan ruangan.</p>
+                <a href="{{ route('reports.room') }}" class="btn">
+                  <i class="fas fa-eye mr-2"></i>Lihat Laporan
+                </a>
               </div>
             </div>
-            <div class="col-lg-3 col-6">
-              <div class="stat-card bg-orange-gradient">
-                <div class="stat-icon">
-                  <i class="fas fa-door-open"></i>
-                </div>
-                <div>
-                  <h3>44</h3>
-                  <p>Rooms</p>
-                  <small>Available</small>
-                </div>
-              </div>
-            </div>
-            <div class="col-lg-3 col-6">
-              <div class="stat-card bg-red-gradient">
-                <div class="stat-icon">
-                  <i class="fas fa-calendar"></i>
-                </div>
-                <div>
-                  <h3>65</h3>
-                  <p>Events</p>
-                  <small>Upcoming</small>
-                </div>
+
+            <!-- Laporan Event -->
+            <div class="col-lg-4 col-md-6">
+              <div class="report-card event">
+                <h5><i class="fas fa-calendar-alt mr-2"></i>Laporan Event</h5>
+                <p>Lihat statistik dan data event.</p>
+                <a href="{{ route('reports.event') }}" class="btn">
+                  <i class="fas fa-eye mr-2"></i>Lihat Laporan
+                </a>
               </div>
             </div>
           </div>

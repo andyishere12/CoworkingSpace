@@ -2,24 +2,31 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Hadir extends Model
 {
+    use HasFactory;
+
     protected $table = 'hadir';
+
     protected $fillable = [
-        'nama',
-        'type',
+        'member_id',
         'tanggal',
         'waktu_masuk',
         'waktu_keluar',
         'durasi'
     ];
-    
-    protected $dates = ['tanggal'];
-    
+
+    protected $casts = [
+        'tanggal' => 'date',
+    ];
+
+
     public function member()
     {
-        return $this->belongsTo(DataMember::class, 'nama', 'nama');
+        return $this->belongsTo(DataMember::class, 'member_id');
     }
+
 }

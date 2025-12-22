@@ -12,15 +12,13 @@ return new class extends Migration {
     {
         Schema::create('hadir', function (Blueprint $table) {
             $table->id();
-            $table->string('nama');
-            $table->string('type');
+            $table->foreignId('member_id')->constrained('data_members')->onDelete('cascade');
             $table->date('tanggal');
             $table->time('waktu_masuk')->nullable();
             $table->time('waktu_keluar')->nullable();
-            $table->integer('durasi')->nullable(); // menit
+            $table->integer('durasi')->nullable();
             $table->timestamps();
         });
-
     }
 
     /**

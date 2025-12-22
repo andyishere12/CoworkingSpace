@@ -5,7 +5,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Members - Trackingspace</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/css/adminlte.min.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -100,13 +101,13 @@
     .btn-update:hover {
       background-color: #e9ecef;
     }
-    
+
     /* Styling untuk search box */
     .search-container {
       position: relative;
       max-width: 300px;
     }
-    
+
     .search-results {
       position: absolute;
       top: 100%;
@@ -115,28 +116,28 @@
       background: white;
       border: 1px solid #ddd;
       border-radius: 0 0 4px 4px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
       max-height: 300px;
       overflow-y: auto;
       z-index: 1000;
       display: none;
     }
-    
+
     .search-result-item {
       padding: 10px 15px;
       border-bottom: 1px solid #eee;
       cursor: pointer;
       transition: background-color 0.2s;
     }
-    
+
     .search-result-item:hover {
       background-color: #f8f9fa;
     }
-    
+
     .search-result-item:last-child {
       border-bottom: none;
     }
-    
+
     .search-highlight {
       color: #6C3FB5;
       font-weight: bold;
@@ -155,7 +156,7 @@
       </ul>
       <ul class="navbar-nav ml-auto">
         <li class="nav-item">
-         <a href="{{ route('scan') }}" class="nav-link">
+          <a href="{{ route('scan') }}" class="nav-link">
             <i class="fas fa-home"></i> Home
           </a>
         </li>
@@ -169,7 +170,7 @@
             <i class="fas fa-users"></i> <span class="badge badge-danger">0</span> Active
           </a>
         </li>
-         <li class="nav-item">
+        <li class="nav-item">
           <form action="{{ route('logout') }}" method="POST" class="m-0">
             @csrf
             <button type="submit" class="nav-link btn btn-link text-danger w-100 text-start">
@@ -186,13 +187,15 @@
     <!-- Sidebar -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
       <a href="{{ route('dashboard') }}" class="brand-link">
-        <img src="https://adminlte.io/themes/v3/dist/img/AdminLTELogo.png" alt="Logo" class="brand-image img-circle elevation-3">
+        <img src="https://adminlte.io/themes/v3/dist/img/AdminLTELogo.png" alt="Logo"
+          class="brand-image img-circle elevation-3">
         <span class="brand-text">Trackingspace</span>
       </a>
       <div class="sidebar">
         <div class="user-panel mt-3 pb-3 mb-3">
           <div class="image">
-            <img src="https://adminlte.io/themes/v3/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User">
+            <img src="https://adminlte.io/themes/v3/dist/img/user2-160x160.jpg" class="img-circle elevation-2"
+              alt="User">
           </div>
           <div class="info">
             <a href="#">admin</a>
@@ -213,7 +216,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="#" class="nav-link">
+              <a href="{{ route('attendance.index') }}" class="nav-link">
                 <i class="nav-icon fas fa-clock"></i>
                 <p>Attendance</p>
               </a>
@@ -292,12 +295,11 @@
                 <div class="d-flex gap-2 align-items-center">
                   <!-- Search Box -->
                   <div class="search-container">
-                    <input type="text" id="searchInput" class="form-control" 
-                           placeholder="Search members..." 
-                           style="min-width: 250px;">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search members..."
+                      style="min-width: 250px;">
                     <div id="searchResults" class="search-results"></div>
                   </div>
-                  
+
                   <a href="{{ route('data_member.create') }}" class="btn btn-info">
                     <i class="fas fa-plus mr-1"></i> Create Member
                   </a>
@@ -309,10 +311,10 @@
             </div>
             <div class="card-body">
               @if(session('success'))
-              <div class="alert alert-success alert-dismissible fade show">
-                {{ session('success') }}
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-              </div>
+                <div class="alert alert-success alert-dismissible fade show">
+                  {{ session('success') }}
+                  <button type="button" class="close" data-dismiss="alert">&times;</button>
+                </div>
               @endif
 
               <p class="text-muted">Total {{ count($allmember) }} items.</p>
@@ -332,41 +334,42 @@
 
                   <tbody id="membersTable">
                     @foreach ($allmember as $r)
-                    <tr data-id="{{ $r->id }}" data-nama="{{ $r->nama }}" data-type="{{ $r->type }}" 
+                      <tr data-id="{{ $r->id }}" data-nama="{{ $r->nama }}" data-type="{{ $r->type }}"
                         data-aktivitas="{{ $r->aktivitas }}" data-status="{{ $r->status }}">
-                      <td>{{ $r->id }}</td>
-                      <td>{{ $r->nama }}</td>
-                      <td>{{ $r->type }}</td>
-                      <td>{{ $r->aktivitas }}</td>
-                      <td>
-                        <span class="badge badge-success px-2 py-1">
-                          {{ $r->status }}
-                        </span>
-                      </td>
-                      <td>
-                        <div class="d-flex justify-content-center gap-2">
-                          {{-- Tombol Detail --}}
-                          <button class="btn btn-sm btn-info btn-detail" data-id="{{ $r->id }}" data-nama="{{ $r->nama }}"
-                            data-type="{{ $r->type }}" data-status="{{ $r->status }}"
-                            data-foto="{{ asset('uploads/foto/' . $r->foto) }}">
-                            Detail
-                          </button>
+                        <td>{{ $r->id }}</td>
+                        <td>{{ $r->nama }}</td>
+                        <td>{{ $r->type }}</td>
+                        <td>{{ $r->aktivitas }}</td>
+                        <td>
+                          <span class="badge badge-success px-2 py-1">
+                            {{ $r->status }}
+                          </span>
+                        </td>
+                        <td>
+                          <div class="d-flex justify-content-center gap-2">
+                            {{-- Tombol Detail --}}
+                            <button class="btn btn-sm btn-info btn-detail" data-id="{{ $r->id }}"
+                              data-nama="{{ $r->nama }}" data-type="{{ $r->type }}" data-status="{{ $r->status }}"
+                              data-foto="{{ asset('uploads/foto/' . $r->foto) }}">
+                              Detail
+                            </button>
 
-                          {{-- Tombol Edit --}}
-                          <a href="{{ route('data_member.edit', $r->id) }}" class="btn btn-sm btn-warning">
-                            Edit
-                          </a>
 
-                          {{-- Hapus --}}
-                          <form action="{{ route('data_member.destroy', $r->id) }}" method="POST"
-                            onsubmit="return confirm('Hapus data?')" style="display: inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button class="btn btn-sm btn-danger" type="submit">Hapus</button>
-                          </form>
-                        </div>
-                      </td>
-                    </tr>
+                            {{-- Tombol Edit --}}
+                            <a href="{{ route('data_member.edit', $r->id) }}" class="btn btn-sm btn-warning">
+                              Edit
+                            </a>
+
+                            {{-- Hapus --}}
+                            <form action="{{ route('data_member.destroy', $r->id) }}" method="POST"
+                              onsubmit="return confirm('Hapus data?')" style="display: inline;">
+                              @csrf
+                              @method('DELETE')
+                              <button class="btn btn-sm btn-danger" type="submit">Hapus</button>
+                            </form>
+                          </div>
+                        </td>
+                      </tr>
                     @endforeach
                   </tbody>
                 </table>
@@ -452,7 +455,7 @@
 
   <script>
     // Tombol Download
-    $('#btnDownload').click(function() {
+    $('#btnDownload').click(function () {
       const modalBody = document.querySelector('#detailModal .modal-body');
       html2canvas(modalBody, {
         scale: 2
@@ -464,10 +467,12 @@
       });
     });
 
-    $(document).on('click', '.btn-detail', function() {
-      var nama = $(this).data('nama');
-      var type = $(this).data('type');
-      var status = $(this).data('status');
+    $(document).on('click', '.btn-detail', function () {
+      var row = $(this).closest('tr');
+      var memberId = row.data('id');
+      var nama = row.data('nama');
+      var type = row.data('type');
+      var status = row.data('status');
       var foto = $(this).data('foto');
 
       $('#modalNama').text(nama);
@@ -477,7 +482,7 @@
       $('#qrcode').html('');
 
       new QRCode(document.getElementById("qrcode"), {
-        text: nama + ' | ' + type,
+        text: memberId.toString(), // <-- hanya ID
         width: 170,
         height: 170,
         colorDark: "#000000",
@@ -485,12 +490,14 @@
         correctLevel: QRCode.CorrectLevel.H
       });
 
+
       var myModal = new bootstrap.Modal(document.getElementById('detailModal'));
       myModal.show();
     });
 
+
     // Real-time Search Functionality
-    $(document).ready(function() {
+    $(document).ready(function () {
       let searchTimeout;
       let allMembers = []; // Untuk menyimpan semua data member
 
@@ -500,11 +507,11 @@
           url: "{{ route('data_member.index') }}",
           method: 'GET',
           dataType: 'json',
-          success: function(data) {
+          success: function (data) {
             // Simpan data member
             allMembers = data;
           },
-          error: function(xhr) {
+          error: function (xhr) {
             console.error('Error loading members:', xhr);
           }
         });
@@ -514,29 +521,29 @@
       loadAllMembers();
 
       // Real-time search
-      $('#searchInput').on('input', function() {
+      $('#searchInput').on('input', function () {
         clearTimeout(searchTimeout);
         const searchTerm = $(this).val().toLowerCase();
-        
+
         if (searchTerm.length === 0) {
           $('#searchResults').hide().empty();
           return;
         }
 
-        searchTimeout = setTimeout(function() {
+        searchTimeout = setTimeout(function () {
           $.ajax({
             url: "{{ route('data_member.index') }}",
             method: 'GET',
             data: { search: searchTerm },
-            success: function(response) {
+            success: function (response) {
               const members = response;
               const resultsContainer = $('#searchResults');
               resultsContainer.empty();
-              
+
               if (members.length === 0) {
                 resultsContainer.append('<div class="search-result-item">No results found</div>');
               } else {
-                members.slice(0, 10).forEach(function(member) {
+                members.slice(0, 10).forEach(function (member) {
                   const highlightedName = highlightText(member.nama, searchTerm);
                   const item = $(`
                     <div class="search-result-item" data-id="${member.id}">
@@ -547,10 +554,10 @@
                   resultsContainer.append(item);
                 });
               }
-              
+
               resultsContainer.show();
             },
-            error: function(xhr) {
+            error: function (xhr) {
               console.error('Error searching:', xhr);
             }
           });
@@ -565,36 +572,36 @@
       }
 
       // When clicking on a search result
-      $(document).on('click', '.search-result-item', function() {
+      $(document).on('click', '.search-result-item', function () {
         const memberId = $(this).data('id');
         const searchTerm = $('#searchInput').val();
-        
+
         // Find the row and highlight it
         $('#membersTable tr').removeClass('table-primary');
         const targetRow = $(`#membersTable tr[data-id="${memberId}"]`);
         targetRow.addClass('table-primary');
-        
+
         // Scroll to the row
         $('html, body').animate({
           scrollTop: targetRow.offset().top - 100
         }, 500);
-        
+
         // Clear search
         $('#searchInput').val('');
         $('#searchResults').hide().empty();
       });
 
       // Hide search results when clicking outside
-      $(document).on('click', function(e) {
+      $(document).on('click', function (e) {
         if (!$(e.target).closest('.search-container').length) {
           $('#searchResults').hide();
         }
       });
 
       // Client-side filtering for instant feedback
-      $('#searchInput').on('keyup', function() {
+      $('#searchInput').on('keyup', function () {
         const searchTerm = $(this).val().toLowerCase();
-        
+
         if (searchTerm.length === 0) {
           // Show all rows
           $('#membersTable tr').show();
@@ -604,24 +611,24 @@
 
         // Filter rows
         let visibleCount = 0;
-        $('#membersTable tr').each(function() {
+        $('#membersTable tr').each(function () {
           const row = $(this);
           const nama = row.data('nama').toLowerCase();
           const type = row.data('type').toLowerCase();
           const aktivitas = row.data('aktivitas').toLowerCase();
           const status = row.data('status').toLowerCase();
-          
-          if (nama.includes(searchTerm) || 
-              type.includes(searchTerm) || 
-              aktivitas.includes(searchTerm) || 
-              status.includes(searchTerm)) {
+
+          if (nama.includes(searchTerm) ||
+            type.includes(searchTerm) ||
+            aktivitas.includes(searchTerm) ||
+            status.includes(searchTerm)) {
             row.show();
             visibleCount++;
           } else {
             row.hide();
           }
         });
-        
+
         $('.text-muted').text(`Total ${visibleCount} items.`);
       });
     });

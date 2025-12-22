@@ -4,95 +4,72 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Hadir;
-use App\Models\DataMember;
-use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 class AttendanceController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $startDate = $request->input('start_date', now()->toDateString());
+        $endDate = $request->input('end_date', now()->toDateString());
+
+        // Load relasi member
         $attendances = Hadir::with('member')
-            ->orderBy('tanggal', 'desc')
+            ->whereBetween('tanggal', [$startDate, $endDate])
             ->orderBy('waktu_masuk', 'desc')
             ->paginate(20);
-            
-        $totalAttendance = Hadir::count();
-        $todayAttendance = Hadir::whereDate('tanggal', today())->count();
-        
-        // Top members
-        $topMembers = DB::table('hadir')
-            ->select(
-                'data_members.id',
-                'data_members.nama',
-                'data_members.foto',
-                'data_members.type',
-                DB::raw('COUNT(hadir.id) as total_visits')
-            )
-            ->join('data_members', 'hadir.nama', '=', 'data_members.nama')
-            ->groupBy('data_members.id', 'data_members.nama', 'data_members.foto', 'data_members.type')
-            ->orderByDesc('total_visits')
-            ->limit(10)
-            ->get();
-        
-        return view('attendance.index', compact(
-            'attendances',
-            'totalAttendance',
-            'todayAttendance',
-            'topMembers'
-        ));
+
+        foreach ($attendances as $attendance) {
+            if ($attendance->durasi !== null) {
+                $hours = floor($attendance->durasi / 60);
+                $minutes = $attendance->durasi % 60;
+                $attendance->formatted_durasi = sprintf('%02d:%02d', $hours, $minutes);
+            } else {
+                $attendance->formatted_durasi = '-';
+            }
+        }
+
+        return view('attendance.index', compact('attendances', 'startDate', 'endDate'));
     }
-    
+
+    // Check-in
     public function checkIn(Request $request)
     {
-        $request->validate([
-            'nama' => 'required|string',
-            'type' => 'required|string'
+        $validated = $request->validate([
+            'member_id' => 'required|exists:members,id',
         ]);
-        
-        // Cek apakah sudah check in hari ini
-        $existing = Hadir::where('nama', $request->nama)
-            ->whereDate('tanggal', today())
-            ->first();
-            
-        if ($existing) {
-            return back()->with('error', 'Anda sudah check in hari ini');
-        }
-        
+
         Hadir::create([
-            'nama' => $request->nama,
-            'type' => $request->type,
-            'tanggal' => today(),
-            'waktu_masuk' => now(),
+            'member_id' => $validated['member_id'],
+            'tanggal' => now()->toDateString(),
+            'waktu_masuk' => now()->format('H:i:s'),
         ]);
-        
-        return back()->with('success', 'Check in berhasil');
+
+        return redirect()->back()->with('success', 'Check-in berhasil');
     }
-    
+
+    // Check-out
     public function checkOut(Request $request)
     {
-        $request->validate([
-            'nama' => 'required|string'
+        $validated = $request->validate([
+            'attendance_id' => 'required|exists:hadir,id',
         ]);
-        
-        $attendance = Hadir::where('nama', $request->nama)
-            ->whereDate('tanggal', today())
-            ->whereNull('waktu_keluar')
-            ->first();
-            
-        if (!$attendance) {
-            return back()->with('error', 'Tidak ada data check in untuk hari ini');
+
+        $attendance = Hadir::findOrFail($validated['attendance_id']);
+
+        if ($attendance->waktu_keluar) {
+            return redirect()->back()->with('error', 'Sudah check-out');
         }
-        
-        $checkIn = Carbon::parse($attendance->waktu_masuk);
-        $checkOut = now();
-        $duration = $checkIn->diffInMinutes($checkOut);
-        
+
+        $checkInTime = Carbon::parse($attendance->tanggal . ' ' . $attendance->waktu_masuk, 'Asia/Jakarta');
+        $checkOutTime = now();
+        $duration = $checkOutTime->diffInMinutes($checkInTime);
+
         $attendance->update([
-            'waktu_keluar' => $checkOut,
-            'durasi' => $duration
+            'waktu_keluar' => $checkOutTime->format('H:i:s'),
+            'durasi' => $duration,
         ]);
-        
-        return back()->with('success', 'Check out berhasil');
+
+        return redirect()->back()->with('success', 'Check-out berhasil');
     }
 }

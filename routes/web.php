@@ -47,9 +47,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Attendance
-    Route::get('/attendance', [AttendanceController::class, 'index'])->name('hadir.index');
+    Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
     Route::post('/attendance/check-in', [AttendanceController::class, 'checkIn'])->name('attendance.checkin');
     Route::post('/attendance/check-out', [AttendanceController::class, 'checkOut'])->name('attendance.checkout');
+
 
     // Resources
     Route::resource('data_member', DataMemberController::class);
@@ -58,14 +59,22 @@ Route::middleware('auth')->group(function () {
     Route::resource('event', EventController::class);
 
     // Scan
+    Route::get('/scanner', [ScanController::class, 'index'])->name('scan');
     Route::get('/scan', [ScanController::class, 'index'])->name('scan');
     Route::post('/scan/store', [ScanController::class, 'store'])->name('scan.store');
-
+    // Tambahkan route baru
+    Route::get('/scan/active-members', [ScanController::class, 'getActiveMembers'])->name('scan.active');
+    Route::post('/manual-checkout', [ScanController::class, 'manualCheckout'])->name('scan.manual.checkout');
+    Route::post('/manual-checkin', [ScanController::class, 'manualCheckin'])->name('scan.manual.checkin');
+    Route::get('/search-members', [ScanController::class, 'searchMembers'])->name('scan.search.members');
+    Route::get('/active-members', [ScanController::class, 'getActiveMembers'])->name('scan.active.members'); 
+    
     // Operational Hours
     Route::prefix('operational-hours')->name('operational-hours.')->group(function () {
         Route::get('/', [OperationalHoursController::class, 'index'])->name('index');
         Route::get('/edit', [OperationalHoursController::class, 'edit'])->name('edit');
         Route::put('/update-all', [OperationalHoursController::class, 'updateAll'])->name('update-all');
+
     });
 
     // Reports

@@ -300,7 +300,7 @@
       </ul>
       <ul class="navbar-nav ml-auto">
         <li class="nav-item">
-          <a href="{{ route('scan') }}" class="nav-link" >
+          <a href="{{ route('scan') }}" class="nav-link">
             <i class="fas fa-home"></i> Home
           </a>
         </li>
@@ -361,7 +361,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="#" class="nav-link">
+              <a href="{{ route('attendance.index') }}" class="nav-link">
                 <i class="nav-icon fas fa-clock"></i>
                 <p>Attendance</p>
               </a>
@@ -501,10 +501,10 @@
                     @forelse($topMembers->take(3) as $index => $member)
                       <div class="col-md-4 mb-4">
                         <div class="member-card 
-                            @if($index == 0) gold 
-                            @elseif($index == 1) silver 
-                            @else bronze 
-                            @endif">
+                              @if($index == 0) gold 
+                              @elseif($index == 1) silver 
+                              @else bronze 
+                              @endif">
 
                           <!-- Rank Badge -->
                           <div class="rank-badge rank-{{ $index + 1 }}">
@@ -685,7 +685,8 @@
 
                   $todayVisits = DB::table('hadir')->whereDate('tanggal', $today)->count();
                   $monthVisits = DB::table('hadir')->where('tanggal', 'like', $month . '%')->count();
-                  $uniqueVisitors = DB::table('hadir')->distinct('nama')->count('nama');
+                  $uniqueVisitors = DB::table('hadir')->distinct('member_id')->count('member_id'); // BENAR
+
                 @endphp
 
                 <div class="row">

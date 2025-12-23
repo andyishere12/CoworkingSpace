@@ -177,14 +177,14 @@
                 <p>Dashboard</p>
               </a>
             </li>
-            <li class="nav-item">
+            <!-- <li class="nav-item">
               <a href="#" class="nav-link">
                 <i class="nav-icon fas fa-tasks"></i>
                 <p>Priority Task</p>
               </a>
-            </li>
+            </li> -->
             <li class="nav-item">
-              <a href="#" class="nav-link">
+              <a href="{{ route('attendance.index') }}"class="nav-link">
                 <i class="nav-icon fas fa-clock"></i>
                 <p>Attendance</p>
               </a>
@@ -312,12 +312,9 @@
                 </div>
               </form>
               <div class="mt-2">
-                <button class="btn btn-success" onclick="alert('Export Excel akan diimplementasikan')">
-                  <i class="fas fa-file-excel"></i> Export Excel
-                </button>
-                <button class="btn btn-danger ml-2" onclick="alert('Export PDF akan diimplementasikan')">
-                  <i class="fas fa-file-pdf"></i> Export PDF
-                </button>
+                 <button type="button" class="btn btn-success btn-print shadow-sm ml-auto" onclick="window.print()">
+                      <i class="fas fa-print mr-2"></i> Cetak Laporan Member
+                    </button>
               </div>
             </div>
           </div>

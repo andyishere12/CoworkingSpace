@@ -375,11 +375,11 @@
           <button id="btnOn"
             class="w-full bg-purple-600 hover:bg-purple-700 text-white py-4 rounded-2xl font-bold transition-all shadow-lg shadow-purple-200 flex items-center justify-center gap-3">
             <i data-lucide="power" class="w-5 h-5"></i>
-            AKTIFKAN SCANNER
+            ON SCANNER
           </button>
           <button id="btnOff"
             class="hidden w-[100%] items-center justify-center gap-3 bg-gray-100 hover:bg-red-50 text-gray-500 hover:text-red-600 py-4 rounded-2xl font-bold transition-all border border-transparent hover:border-red-100">
-            <span>MATIKAN SCANNER</span>
+            <span>OFF SCANNER</span>
           </button>
         </div>
 
@@ -419,7 +419,7 @@
           <i data-lucide="users" class="w-5 h-5"></i> Active Members
         </div>
         <div id="hasil" class="grid grid-cols-1 gap-3">
-          <p id="empty-msg" class="col-span-full text-center text-gray-400 py-20 italic">Belum ada member aktif</p>
+          <p id="empty-msg" class="col-span-full text-center text-gray-400 py-20 italic">Not member active</p>
         </div>
       </div>
     </div>
@@ -525,7 +525,7 @@
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-3">
             <i data-lucide="users" class="w-6 h-6"></i>
-            <h3 class="font-bold text-lg">Cari Member untuk Check-In</h3>
+            <h3 class="font-bold text-lg">Search Member Check-In</h3>
           </div>
           <button onclick="closeSearchModal()" class="hover:bg-purple-700 p-1 rounded-lg transition">
             <i data-lucide="x" class="w-6 h-6"></i>
@@ -551,7 +551,7 @@
         <!-- Loading Indicator -->
         <div id="modalLoading" class="hidden text-center py-8">
           <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto"></div>
-          <p class="text-gray-500 mt-2">Mencari member...</p>
+          <p class="text-gray-500 mt-2">Searching member...</p>
         </div>
 
         <!-- Empty State -->
@@ -559,8 +559,8 @@
           <div class="text-gray-300 mb-3">
             <i data-lucide="users" class="w-12 h-12 mx-auto"></i>
           </div>
-          <p class="text-gray-500">Cari member untuk memulai</p>
-          <p class="text-gray-400 text-sm mt-1">Ketik nama, email, atau ID member</p>
+          <p class="text-gray-500">Search member to start</p>
+          <p class="text-gray-400 text-sm mt-1">Typing name, email, or ID member</p>
         </div>
       </div>
 
@@ -569,12 +569,12 @@
         <div class="flex justify-between items-center">
           <div>
             <p class="text-xs text-gray-500">
-              <span id="resultCount">0</span> member ditemukan
+              <span id="resultCount">0</span> finds member 
             </p>
           </div>
           <button onclick="closeSearchModal()"
             class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition">
-            Tutup
+            Close
           </button>
         </div>
       </div>

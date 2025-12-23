@@ -1,108 +1,131 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Laporan Ruangan - Trackingspace</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/css/adminlte.min.css">
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap4.min.css">
-  
+
   <style>
     body {
       font-family: 'Source Sans Pro', sans-serif;
       background-color: #f4f6f9;
     }
+
     .main-sidebar {
       background: linear-gradient(180deg, #6C3FB5 0%, #8B5FD6 100%) !important;
     }
+
     .brand-link {
       background: transparent !important;
-      border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
       padding: 20px 15px;
     }
+
     .brand-link .brand-text {
       color: white !important;
       font-weight: 600;
       font-size: 20px;
     }
+
     .user-panel {
-      border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
       text-align: center;
       display: block !important;
       padding: 25px 10px !important;
     }
+
     .user-panel .image {
       display: inline-block;
       float: none !important;
       margin: 0 auto 15px;
     }
+
     .user-panel .image img {
       width: 80px;
       height: 80px;
-      border: 3px solid rgba(255,255,255,0.3);
+      border: 3px solid rgba(255, 255, 255, 0.3);
     }
+
     .user-panel .info {
       display: block;
       padding: 0;
       margin: 0;
     }
+
     .user-panel .info a {
       color: white !important;
       font-size: 16px;
       font-weight: 500;
     }
-    .sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link {
-      color: rgba(255,255,255,0.8);
+
+    .sidebar-dark-primary .nav-sidebar>.nav-item>.nav-link {
+      color: rgba(255, 255, 255, 0.8);
       padding: 12px 15px;
       margin: 4px 10px;
       border-radius: 8px;
     }
-    .sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link:hover {
-      background-color: rgba(255,255,255,0.1);
+
+    .sidebar-dark-primary .nav-sidebar>.nav-item>.nav-link:hover {
+      background-color: rgba(255, 255, 255, 0.1);
       color: white;
     }
-    .sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link.active {
-      background-color: rgba(255,255,255,0.15);
+
+    .sidebar-dark-primary .nav-sidebar>.nav-item>.nav-link.active {
+      background-color: rgba(255, 255, 255, 0.15);
       color: white;
     }
+
     .stat-card {
       border-radius: 10px;
       padding: 20px;
       color: white;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
       margin-bottom: 20px;
     }
+
     .stat-card h3 {
       font-size: 32px;
       font-weight: 700;
       margin-bottom: 5px;
     }
+
     .stat-card p {
       font-size: 14px;
       opacity: 0.9;
       margin-bottom: 0;
     }
+
     .stat-card i {
       font-size: 36px;
       opacity: 0.5;
     }
+
     .bg-cyan {
       background: linear-gradient(135deg, #00BCD4 0%, #00ACC1 100%);
     }
+
     .bg-lime {
       background: linear-gradient(135deg, #8BC34A 0%, #7CB342 100%);
     }
+
     .bg-orange {
       background: linear-gradient(135deg, #FF9800 0%, #FF6F00 100%);
     }
+
     .bg-purple {
       background: linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%);
     }
+
     .bg-indigo {
       background: linear-gradient(135deg, #3F51B5 0%, #303F9F 100%);
     }
+
     .table-cyan th {
       color: #06b6d4 !important;
       font-weight: 600;
@@ -148,13 +171,15 @@
     <!-- Sidebar -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
       <a href="{{ route('dashboard') }}" class="brand-link">
-        <img src="https://adminlte.io/themes/v3/dist/img/AdminLTELogo.png" alt="Logo" class="brand-image img-circle elevation-3">
+        <img src="https://adminlte.io/themes/v3/dist/img/AdminLTELogo.png" alt="Logo"
+          class="brand-image img-circle elevation-3">
         <span class="brand-text">Trackingspace</span>
       </a>
       <div class="sidebar">
         <div class="user-panel mt-3 pb-3 mb-3">
           <div class="image">
-            <img src="https://adminlte.io/themes/v3/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User">
+            <img src="https://adminlte.io/themes/v3/dist/img/user2-160x160.jpg" class="img-circle elevation-2"
+              alt="User">
           </div>
           <div class="info">
             <a href="#">admin</a>
@@ -168,14 +193,14 @@
                 <p>Dashboard</p>
               </a>
             </li>
-            <li class="nav-item">
+            <!-- <li class="nav-item">
               <a href="#" class="nav-link">
                 <i class="nav-icon fas fa-tasks"></i>
                 <p>Priority Task</p>
               </a>
-            </li>
+            </li> -->
             <li class="nav-item">
-              <a href="#" class="nav-link">
+              <a href="{{ route('attendance.index') }}" class="nav-link">
                 <i class="nav-icon fas fa-clock"></i>
                 <p>Attendance</p>
               </a>
@@ -258,7 +283,8 @@
                       <select name="type" class="form-control">
                         <option value="all" {{ $type == 'all' ? 'selected' : '' }}>Semua Type</option>
                         @foreach($roomTypes as $roomType)
-                        <option value="{{ $roomType }}" {{ $type == $roomType ? 'selected' : '' }}>{{ $roomType }}</option>
+                          <option value="{{ $roomType }}" {{ $type == $roomType ? 'selected' : '' }}>{{ $roomType }}
+                          </option>
                         @endforeach
                       </select>
                     </div>
@@ -284,11 +310,9 @@
                         <a href="{{ route('reports.room') }}" class="btn btn-secondary">
                           <i class="fas fa-redo"></i> Reset
                         </a>
-                        <button type="button" class="btn btn-success ml-2" onclick="alert('Export Excel akan diimplementasikan')">
-                          <i class="fas fa-file-excel"></i> Export Excel
-                        </button>
-                        <button type="button" class="btn btn-danger" onclick="alert('Export PDF akan diimplementasikan')">
-                          <i class="fas fa-file-pdf"></i> Export PDF
+                        <button type="button" class="btn btn-success btn-print shadow-sm ml-auto"
+                          onclick="window.print()">
+                          <i class="fas fa-print mr-2"></i> Cetak Laporan Ruangan
                         </button>
                       </div>
                     </div>
@@ -348,19 +372,19 @@
 
           <!-- Room by Type Statistics -->
           @if(count($statistics['by_type']) > 0)
-          <h5 class="mt-4 mb-3">Rooms by Type</h5>
-          <div class="row">
-            @foreach($statistics['by_type'] as $roomType => $count)
-            <div class="col-lg-3 col-md-6">
-              <div class="stat-card bg-indigo">
-                <div class="text-center">
-                  <h3>{{ $count }}</h3>
-                  <p>{{ $roomType }}</p>
+            <h5 class="mt-4 mb-3">Rooms by Type</h5>
+            <div class="row">
+              @foreach($statistics['by_type'] as $roomType => $count)
+                <div class="col-lg-3 col-md-6">
+                  <div class="stat-card bg-indigo">
+                    <div class="text-center">
+                      <h3>{{ $count }}</h3>
+                      <p>{{ $roomType }}</p>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              @endforeach
             </div>
-            @endforeach
-          </div>
           @endif
 
           <!-- Data Table -->
@@ -385,26 +409,26 @@
                   <tbody>
                     @php $no = 1; @endphp
                     @forelse($roomData as $room)
-                    <tr>
-                      <td>{{ $no++ }}</td>
-                      <td>{{ $room->name }}</td>
-                      <td><span class="badge badge-info">{{ $room->capacity }} orang</span></td>
-                      <td><span class="badge badge-secondary">{{ $room->type }}</span></td>
-                      <td>{{ Str::limit($room->description, 50) }}</td>
-                      <td>
-                        @if($room->status == 'available')
-                          <span class="badge badge-success">Available</span>
-                        @elseif($room->status == 'booked')
-                          <span class="badge badge-warning">Booked</span>
-                        @else
-                          <span class="badge badge-danger">{{ ucfirst($room->status) }}</span>
-                        @endif
-                      </td>
-                    </tr>
+                      <tr>
+                        <td>{{ $no++ }}</td>
+                        <td>{{ $room->name }}</td>
+                        <td><span class="badge badge-info">{{ $room->capacity }} orang</span></td>
+                        <td><span class="badge badge-secondary">{{ $room->type }}</span></td>
+                        <td>{{ Str::limit($room->description, 50) }}</td>
+                        <td>
+                          @if($room->status == 'available')
+                            <span class="badge badge-success">Available</span>
+                          @elseif($room->status == 'booked')
+                            <span class="badge badge-warning">Booked</span>
+                          @else
+                            <span class="badge badge-danger">{{ ucfirst($room->status) }}</span>
+                          @endif
+                        </td>
+                      </tr>
                     @empty
-                    <tr>
-                      <td colspan="6" class="text-center">Tidak ada data ruangan</td>
-                    </tr>
+                      <tr>
+                        <td colspan="6" class="text-center">Tidak ada data ruangan</td>
+                      </tr>
                     @endforelse
                   </tbody>
                 </table>
@@ -428,9 +452,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/js/adminlte.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
-  
+
   <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
       $('#roomTable').DataTables({
         "language": {
           "url": "//cdn.datatables.net/plug-ins/1.13.4/i18n/id.json"
@@ -439,4 +463,5 @@
     });
   </script>
 </body>
+
 </html>

@@ -294,12 +294,12 @@
                 <p>Dashboard</p>
               </a>
             </li>
-            <li class="nav-item">
+            <!-- <li class="nav-item">
               <a href="#" class="nav-link">
                 <i class="nav-icon fas fa-tasks"></i>
                 <p>Priority Task</p>
               </a>
-            </li>
+            </li> -->
             <li class="nav-item">
               <a href="{{ route('attendance.index') }}" class="nav-link active">
                 <i class="nav-icon fas fa-clock"></i>

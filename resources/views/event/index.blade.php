@@ -1,71 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Event - Trackingspace</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/css/adminlte.min.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="{{ asset('css/stylemodal.css') }}">
-  
+
   <style>
     body {
       font-family: 'Source Sans Pro', sans-serif;
       background-color: #f4f6f9;
     }
+
     .main-sidebar {
       background: linear-gradient(180deg, #6C3FB5 0%, #8B5FD6 100%) !important;
     }
+
     .brand-link {
       background: transparent !important;
-      border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
       padding: 20px 15px;
     }
+
     .brand-link .brand-text {
       color: white !important;
       font-weight: 600;
       font-size: 20px;
     }
+
     .user-panel {
-      border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
       text-align: center;
       display: block !important;
       padding: 25px 10px !important;
     }
+
     .user-panel .image {
       display: inline-block;
       float: none !important;
       margin: 0 auto 15px;
     }
+
     .user-panel .image img {
       width: 80px;
       height: 80px;
-      border: 3px solid rgba(255,255,255,0.3);
+      border: 3px solid rgba(255, 255, 255, 0.3);
     }
+
     .user-panel .info {
       display: block;
       padding: 0;
       margin: 0;
     }
+
     .user-panel .info a {
       color: white !important;
       font-size: 16px;
       font-weight: 500;
     }
-    .sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link {
-      color: rgba(255,255,255,0.8);
+
+    .sidebar-dark-primary .nav-sidebar>.nav-item>.nav-link {
+      color: rgba(255, 255, 255, 0.8);
       padding: 12px 15px;
       margin: 4px 10px;
       border-radius: 8px;
     }
-    .sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link:hover {
-      background-color: rgba(255,255,255,0.1);
+
+    .sidebar-dark-primary .nav-sidebar>.nav-item>.nav-link:hover {
+      background-color: rgba(255, 255, 255, 0.1);
       color: white;
     }
-    .sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link.active {
-      background-color: rgba(255,255,255,0.15);
+
+    .sidebar-dark-primary .nav-sidebar>.nav-item>.nav-link.active {
+      background-color: rgba(255, 255, 255, 0.15);
       color: white;
     }
   </style>
@@ -82,7 +95,7 @@
       </ul>
       <ul class="navbar-nav ml-auto">
         <li class="nav-item">
-           <a href="{{ route('scan') }}" class="nav-link">
+          <a href="{{ route('scan') }}" class="nav-link">
             <i class="fas fa-home"></i> Home
           </a>
         </li>
@@ -96,7 +109,7 @@
             <i class="fas fa-users"></i> <span class="badge badge-danger">0</span> Active
           </a>
         </li>
-       <li class="nav-item">
+        <li class="nav-item">
           <form action="{{ route('logout') }}" method="POST" class="m-0">
             @csrf
             <button type="submit" class="nav-link btn btn-link text-danger w-100 text-start">
@@ -113,13 +126,15 @@
     <!-- Sidebar -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
       <a href="{{ route('dashboard') }}" class="brand-link">
-        <img src="https://adminlte.io/themes/v3/dist/img/AdminLTELogo.png" alt="Logo" class="brand-image img-circle elevation-3">
+        <img src="https://adminlte.io/themes/v3/dist/img/AdminLTELogo.png" alt="Logo"
+          class="brand-image img-circle elevation-3">
         <span class="brand-text">Trackingspace</span>
       </a>
       <div class="sidebar">
         <div class="user-panel mt-3 pb-3 mb-3">
           <div class="image">
-            <img src="https://adminlte.io/themes/v3/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User">
+            <img src="https://adminlte.io/themes/v3/dist/img/user2-160x160.jpg" class="img-circle elevation-2"
+              alt="User">
           </div>
           <div class="info">
             <a href="#">admin</a>
@@ -133,12 +148,12 @@
                 <p>Dashboard</p>
               </a>
             </li>
-            <li class="nav-item">
+            <!-- <li class="nav-item">
               <a href="#" class="nav-link">
                 <i class="nav-icon fas fa-tasks"></i>
                 <p>Priority Task</p>
               </a>
-            </li>
+            </li> -->
             <li class="nav-item">
               <a href="{{ route('attendance.index') }}" class="nav-link">
                 <i class="nav-icon fas fa-clock"></i>
@@ -176,7 +191,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="#" class="nav-link">
+              <a href="{{ route('reports.index') }}" class="nav-link">
                 <i class="nav-icon fas fa-chart-bar"></i>
                 <p>Reports</p>
               </a>
@@ -218,9 +233,9 @@
             <a href="{{ route('event.create') }}" class="btn btn-info">
               <i class="fas fa-plus mr-1"></i> Create Event
             </a>
-            <a href="" class="btn btn-warning">
-              <i class="fas fa-file-excel mr-1"></i> Import Excel
-            </a>
+            <button type="button" class="btn btn-success btn-print shadow-sm ml" onclick="window.print()">
+              <i class="fas fa-print mr-2"></i> Cetak Event
+            </button>
           </div>
 
           {{-- Card tabel --}}
@@ -306,4 +321,5 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/js/adminlte.min.js"></script>
 </body>
+
 </html>

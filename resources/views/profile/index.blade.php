@@ -5,7 +5,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Profile - Trackingspace</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/css/adminlte.min.css">
 
@@ -128,25 +129,34 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="fas fa-sign-out-alt"></i> Logout ({{ Auth::user()->name }})
-                    </a>
+                    <form action="{{ route('logout') }}" method="POST" class="m-0">
+                        @csrf
+                        <button type="submit" class="nav-link btn btn-link text-danger w-100 text-start">
+                            <div class="nav-icon-box d-inline-block me-2">
+                                <i class="fas fa-sign-out-alt"></i>
+                            </div>
+                            Logout (admin)
+                        </button>
+                    </form>
                 </li>
             </ul>
         </nav>
 
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
             <a href="{{ route('dashboard') }}" class="brand-link">
-                <img src="https://adminlte.io/themes/v3/dist/img/AdminLTELogo.png" alt="Logo" class="brand-image img-circle elevation-3">
+                <img src="https://adminlte.io/themes/v3/dist/img/AdminLTELogo.png" alt="Logo"
+                    class="brand-image img-circle elevation-3">
                 <span class="brand-text">Trackingspace</span>
             </a>
             <div class="sidebar">
                 <div class="user-panel mt-3 pb-3 mb-3">
                     <div class="image">
                         @if(Auth::user()->avatar)
-                        <img src="{{ asset('storage/avatars/'.Auth::user()->avatar) }}" class="img-circle elevation-2" alt="User">
+                            <img src="{{ asset('storage/avatars/' . Auth::user()->avatar) }}" class="img-circle elevation-2"
+                                alt="User">
                         @else
-                        <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=6C3FB5&color=fff" class="img-circle elevation-2" alt="User">
+                            <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=6C3FB5&color=fff"
+                                class="img-circle elevation-2" alt="User">
                         @endif
                     </div>
                     <div class="info">
@@ -161,12 +171,12 @@
                                 <p>Dashboard</p>
                             </a>
                         </li>
-                        <li class="nav-item">
+                        <!-- <li class="nav-item">
                             <a href="#" class="nav-link">
                                 <i class="nav-icon fas fa-tasks"></i>
                                 <p>Priority Task</p>
                             </a>
-                        </li>
+                        </li> -->
                         <li class="nav-item">
                             <a href="{{ route('attendance.index') }}" class="nav-link">
                                 <i class="nav-icon fas fa-clock"></i>
@@ -235,10 +245,10 @@
                 <div class="container-fluid">
 
                     @if(session('success'))
-                    <div class="alert alert-success alert-dismissible fade show">
-                        <button type="button" class="close" data-dismiss="alert">&times;</button>
-                        <i class="fas fa-check-circle"></i> {{ session('success') }}
-                    </div>
+                        <div class="alert alert-success alert-dismissible fade show">
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                            <i class="fas fa-check-circle"></i> {{ session('success') }}
+                        </div>
                     @endif
 
                     <div class="row">
@@ -247,9 +257,11 @@
                                 <div class="card-body">
                                     <div class="profile-img-container">
                                         @if($user->avatar)
-                                        <img src="{{ asset('storage/avatars/'.$user->avatar) }}" alt="Profile Photo" class="profile-img">
+                                            <img src="{{ asset('storage/avatars/' . $user->avatar) }}" alt="Profile Photo"
+                                                class="profile-img">
                                         @else
-                                        <img src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&size=150&background=6C3FB5&color=fff" alt="Profile Photo" class="profile-img">
+                                            <img src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&size=150&background=6C3FB5&color=fff"
+                                                alt="Profile Photo" class="profile-img">
                                         @endif
 
                                         <div class="profile-name">{{ $user->name }}</div>
@@ -257,7 +269,8 @@
                                             <i class="fas fa-shield-alt"></i> Super Admin
                                         </div>
 
-                                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="document.getElementById('avatarInput').click()">
+                                        <button type="button" class="btn btn-sm btn-outline-primary"
+                                            onclick="document.getElementById('avatarInput').click()">
                                             <i class="fas fa-camera"></i> Change Photo
                                         </button>
                                     </div>
@@ -285,21 +298,26 @@
                                     <h3 class="card-title"><i class="fas fa-user-edit"></i> Edit Profile</h3>
                                 </div>
                                 <div class="card-body">
-                                    <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
+                                    <form action="{{ route('profile.update') }}" method="POST"
+                                        enctype="multipart/form-data">
                                         @csrf
 
-                                        <input type="file" name="avatar" id="avatarInput" style="display:none" onchange="this.form.submit()">
+                                        <input type="file" name="avatar" id="avatarInput" style="display:none"
+                                            onchange="this.form.submit()">
 
                                         <div class="form-group">
                                             <label>Full Name</label>
-                                            <input type="text" name="name" class="form-control" value="{{ $user->name }}" required>
+                                            <input type="text" name="name" class="form-control"
+                                                value="{{ $user->name }}" required>
                                         </div>
                                         <div class="form-group">
                                             <label>Email Address</label>
-                                            <input type="email" name="email" class="form-control" value="{{ $user->email }}" required>
+                                            <input type="email" name="email" class="form-control"
+                                                value="{{ $user->email }}" required>
                                         </div>
                                         <div class="text-right">
-                                            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Changes</button>
+                                            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i>
+                                                Save Changes</button>
                                         </div>
                                     </form>
                                 </div>
@@ -314,7 +332,8 @@
                                         @csrf
                                         <div class="form-group">
                                             <label>Current Password</label>
-                                            <input type="password" name="current_password" class="form-control" required>
+                                            <input type="password" name="current_password" class="form-control"
+                                                required>
                                         </div>
                                         <div class="form-group">
                                             <label>New Password</label>
@@ -322,10 +341,12 @@
                                         </div>
                                         <div class="form-group">
                                             <label>Confirm New Password</label>
-                                            <input type="password" name="new_password_confirmation" class="form-control" required>
+                                            <input type="password" name="new_password_confirmation" class="form-control"
+                                                required>
                                         </div>
                                         <div class="text-right">
-                                            <button type="submit" class="btn btn-warning"><i class="fas fa-key"></i> Update Password</button>
+                                            <button type="submit" class="btn btn-warning"><i class="fas fa-key"></i>
+                                                Update Password</button>
                                         </div>
                                     </form>
                                 </div>

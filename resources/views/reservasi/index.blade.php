@@ -148,12 +148,12 @@
                 <p>Dashboard</p>
               </a>
             </li>
-            <li class="nav-item">
+            <!-- <li class="nav-item">
               <a href="#" class="nav-link">
                 <i class="nav-icon fas fa-tasks"></i>
                 <p>Priority Task</p>
               </a>
-            </li>
+            </li> -->
             <li class="nav-item">
               <a href="{{ route('attendance.index') }}" class="nav-link">
                 <i class="nav-icon fas fa-clock"></i>
@@ -233,9 +233,9 @@
             <a href="{{ route('reservasi.create') }}" class="btn btn-info">
               <i class="fas fa-plus mr-1"></i> Create Reservasi
             </a>
-            <a href="" class="btn btn-warning">
-              <i class="fas fa-file-excel mr-1"></i> Import Excel
-            </a>
+            <button type="button" class="btn btn-success btn-print shadow-sm ml" onclick="window.print()">
+              <i class="fas fa-print mr-2"></i> Cetak Reservasi
+            </button>
           </div>
 
           {{-- Card tabel --}}

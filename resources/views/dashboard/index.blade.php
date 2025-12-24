@@ -18,6 +18,7 @@
 
     .main-sidebar {
       background: linear-gradient(180deg, #6C3FB5 0%, #8B5FD6 100%) !important;
+        padding-right: 15px; 
     }
 
     .brand-link {
@@ -33,28 +34,37 @@
     }
 
     .user-panel {
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-      text-align: center;
-      display: block !important;
-      padding: 25px 10px !important;
+      padding-left: 15px;
+      padding-right: 15px;
+      margin-left: 10px;
+
     }
 
     .user-panel .image {
-      display: inline-block;
+      display: block !important;
       float: none !important;
-      margin: 0 auto 15px;
+      /* Hapus float kiri bawaan AdminLTE */
+      margin: 0 0 10px 0 !important;
+      /* Atur margin: bawah saja */
+      padding: 0 !important;
     }
 
     .user-panel .image img {
       width: 80px;
       height: 80px;
       border: 3px solid rgba(255, 255, 255, 0.3);
+      display: block;
+      margin: 0 auto;
+      /* Pastikan gambar di tengah */
     }
 
     .user-panel .info {
-      display: block;
-      padding: 0;
-      margin: 0;
+      display: block !important;
+      width: 100% !important;
+      padding: 0 !important;
+      /* Hapus padding kiri bawaan */
+      margin: 0 !important;
+      text-align: center !important;
     }
 
     .user-panel .info a {
@@ -138,6 +148,7 @@
 
     .bg-purple-gradient {
       background: linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%);
+      
     }
 
     /* Rank Badge Styles */
@@ -332,18 +343,28 @@
     <!-- Sidebar -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
       <a href="{{ route('dashboard') }}" class="brand-link">
-        <img src="https://adminlte.io/themes/v3/dist/img/AdminLTELogo.png" alt="Logo"
+        <img src="{{ asset('gambar/icontrasa.jpeg') }}"
+          alt="Logo"
           class="brand-image img-circle elevation-3">
         <span class="brand-text">Trackingspace</span>
       </a>
       <div class="sidebar">
         <div class="user-panel mt-3 pb-3 mb-3">
           <div class="image">
-            <img src="https://adminlte.io/themes/v3/dist/img/user2-160x160.jpg" class="img-circle elevation-2"
-              alt="User">
+            @if(Auth::user()->avatar)
+            <img src="{{ asset('storage/avatars/' . Auth::user()->avatar) }}"
+              class="img-circle elevation-2"
+              alt="{{ Auth::user()->name }}">
+            @else
+            <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name ?? 'Admin') }}&size=80&background=6C3FB5&color=fff"
+              class="img-circle elevation-2"
+              alt="User Image">
+            @endif
           </div>
           <div class="info">
-            <a href="#">admin</a>
+            <a href="#" class="d-block text-white font-weight-bold">
+              {{ Auth::user()->name ?? 'Admin' }}
+            </a>
           </div>
         </div>
         <nav class="mt-2">
@@ -499,139 +520,139 @@
                   <h5 class="mb-3">Top 3 🏆</h5>
                   <div class="row">
                     @forelse($topMembers->take(3) as $index => $member)
-                      <div class="col-md-4 mb-4">
-                        <div class="member-card 
+                    <div class="col-md-4 mb-4">
+                      <div class="member-card 
                               @if($index == 0) gold 
                               @elseif($index == 1) silver 
                               @else bronze 
                               @endif">
 
-                          <!-- Rank Badge -->
-                          <div class="rank-badge rank-{{ $index + 1 }}">
-                            {{ $index + 1 }}
-                          </div>
+                        <!-- Rank Badge -->
+                        <div class="rank-badge rank-{{ $index + 1 }}">
+                          {{ $index + 1 }}
+                        </div>
 
-                          <!-- Member Photo dari database -->
-                          <div class="text-center">
-                            @if($member->foto)
-                              <img src="{{ asset('uploads/foto/' . $member->foto) }}" class="member-photo"
-                                alt="{{ $member->nama }}"
-                                onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($member->nama) }}&background=6C3FB5&color=fff&size=100'">
+                        <!-- Member Photo dari database -->
+                        <div class="text-center">
+                          @if($member->foto)
+                          <img src="{{ asset('uploads/foto/' . $member->foto) }}" class="member-photo"
+                            alt="{{ $member->nama }}"
+                            onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($member->nama) }}&background=6C3FB5&color=fff&size=100'">
+                          @else
+                          <img
+                            src="https://ui-avatars.com/api/?name={{ urlencode($member->nama) }}&background=6C3FB5&color=fff&size=100"
+                            class="member-photo" alt="{{ $member->nama }}">
+                          @endif
+                        </div>
+
+                        <!-- Member Name -->
+                        <h5 class="member-name">{{ $member->nama }}</h5>
+
+                        <!-- Member Type -->
+                        <div class="text-center">
+                          <span class="member-type">{{ $member->type }}</span>
+                        </div>
+
+                        <!-- Visit Count -->
+                        <div class="text-center mt-3">
+                          <div class="visit-count">{{ $member->total_visits }}</div>
+                          <div class="visit-label">Total Visits</div>
+                        </div>
+
+                        <!-- Last Visit -->
+                        <div class="text-center mt-2">
+                          <small class="text-muted">
+                            <i class="fas fa-calendar-alt mr-1"></i>
+                            @if($member->last_visit)
+                            {{ date('d M Y', strtotime($member->last_visit)) }}
                             @else
-                              <img
-                                src="https://ui-avatars.com/api/?name={{ urlencode($member->nama) }}&background=6C3FB5&color=fff&size=100"
-                                class="member-photo" alt="{{ $member->nama }}">
+                            Never
                             @endif
-                          </div>
-
-                          <!-- Member Name -->
-                          <h5 class="member-name">{{ $member->nama }}</h5>
-
-                          <!-- Member Type -->
-                          <div class="text-center">
-                            <span class="member-type">{{ $member->type }}</span>
-                          </div>
-
-                          <!-- Visit Count -->
-                          <div class="text-center mt-3">
-                            <div class="visit-count">{{ $member->total_visits }}</div>
-                            <div class="visit-label">Total Visits</div>
-                          </div>
-
-                          <!-- Last Visit -->
-                          <div class="text-center mt-2">
-                            <small class="text-muted">
-                              <i class="fas fa-calendar-alt mr-1"></i>
-                              @if($member->last_visit)
-                                {{ date('d M Y', strtotime($member->last_visit)) }}
-                              @else
-                                Never
-                              @endif
-                            </small>
-                          </div>
+                          </small>
                         </div>
                       </div>
+                    </div>
                     @empty
-                      <div class="col-12 text-center py-5">
-                        <div class="empty-state">
-                          <i class="fas fa-users fa-4x text-muted mb-3"></i>
-                          <h5 class="text-muted">No Attendance Data Yet</h5>
-                          <p class="text-muted">Start tracking attendance to see top visitors</p>
-                        </div>
+                    <div class="col-12 text-center py-5">
+                      <div class="empty-state">
+                        <i class="fas fa-users fa-4x text-muted mb-3"></i>
+                        <h5 class="text-muted">No Attendance Data Yet</h5>
+                        <p class="text-muted">Start tracking attendance to see top visitors</p>
                       </div>
+                    </div>
                     @endforelse
                   </div>
 
                   <!-- Peringkat 4-10 dalam tabel -->
                   @if($topMembers->count() > 3)
-                    <h5 class="mt-5 mb-3">Ranking 4-10</h5>
-                    <div class="table-responsive">
-                      <table class="table table-hover">
-                        <thead class="thead-light">
-                          <tr>
-                            <th width="10%">Rank</th>
-                            <th width="15%">Photo</th>
-                            <th width="25%">Member</th>
-                            <th width="15%">Type</th>
-                            <th width="15%">Total Visits</th>
-                            <th width="20%">Last Visit</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          @php
-                            // Hitung rank yang benar untuk 4-10
-                            $rankCounter = 4;
-                          @endphp
+                  <h5 class="mt-5 mb-3">Ranking 4-10</h5>
+                  <div class="table-responsive">
+                    <table class="table table-hover">
+                      <thead class="thead-light">
+                        <tr>
+                          <th width="10%">Rank</th>
+                          <th width="15%">Photo</th>
+                          <th width="25%">Member</th>
+                          <th width="15%">Type</th>
+                          <th width="15%">Total Visits</th>
+                          <th width="20%">Last Visit</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @php
+                        // Hitung rank yang benar untuk 4-10
+                        $rankCounter = 4;
+                        @endphp
 
-                          @foreach($topMembers->slice(3) as $member)
-                            <tr class="table-member-row">
-                              <td>
-                                <div class="rank-badge rank-4-10"
-                                  style="position: relative; top: 0; left: 0; width: 35px; height: 35px;">
-                                  {{ $rankCounter }}
-                                </div>
-                              </td>
-                              <td>
-                                @if($member->foto)
-                                  <img src="{{ asset('uploads/foto/' . $member->foto) }}" class="member-photo-small"
-                                    alt="{{ $member->nama }}"
-                                    onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($member->nama) }}&background=6C757D&color=fff&size=60'">
-                                @else
-                                  <img
-                                    src="https://ui-avatars.com/api/?name={{ urlencode($member->nama) }}&background=6C757D&color=fff&size=60"
-                                    class="member-photo-small" alt="{{ $member->nama }}">
-                                @endif
-                              </td>
-                              <td>
-                                <div>
-                                  <strong class="member-name-small">{{ $member->nama }}</strong>
-                                </div>
-                              </td>
-                              <td>
-                                <span class="member-type member-type-small">{{ $member->type }}</span>
-                              </td>
-                              <td>
-                                <div class="text-center">
-                                  <div class="visit-count-small">{{ $member->total_visits }}</div>
-                                  <div class="visit-label visit-label-small">visits</div>
-                                </div>
-                              </td>
-                              <td>
-                                <small class="text-muted">
-                                  <i class="fas fa-calendar-alt mr-1"></i>
-                                  @if($member->last_visit)
-                                    {{ date('d M Y', strtotime($member->last_visit)) }}
-                                  @else
-                                    Never
-                                  @endif
-                                </small>
-                              </td>
-                            </tr>
-                            @php $rankCounter++; @endphp
-                          @endforeach
-                        </tbody>
-                      </table>
-                    </div>
+                        @foreach($topMembers->slice(3) as $member)
+                        <tr class="table-member-row">
+                          <td>
+                            <div class="rank-badge rank-4-10"
+                              style="position: relative; top: 0; left: 0; width: 35px; height: 35px;">
+                              {{ $rankCounter }}
+                            </div>
+                          </td>
+                          <td>
+                            @if($member->foto)
+                            <img src="{{ asset('uploads/foto/' . $member->foto) }}" class="member-photo-small"
+                              alt="{{ $member->nama }}"
+                              onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($member->nama) }}&background=6C757D&color=fff&size=60'">
+                            @else
+                            <img
+                              src="https://ui-avatars.com/api/?name={{ urlencode($member->nama) }}&background=6C757D&color=fff&size=60"
+                              class="member-photo-small" alt="{{ $member->nama }}">
+                            @endif
+                          </td>
+                          <td>
+                            <div>
+                              <strong class="member-name-small">{{ $member->nama }}</strong>
+                            </div>
+                          </td>
+                          <td>
+                            <span class="member-type member-type-small">{{ $member->type }}</span>
+                          </td>
+                          <td>
+                            <div class="text-center">
+                              <div class="visit-count-small">{{ $member->total_visits }}</div>
+                              <div class="visit-label visit-label-small">visits</div>
+                            </div>
+                          </td>
+                          <td>
+                            <small class="text-muted">
+                              <i class="fas fa-calendar-alt mr-1"></i>
+                              @if($member->last_visit)
+                              {{ date('d M Y', strtotime($member->last_visit)) }}
+                              @else
+                              Never
+                              @endif
+                            </small>
+                          </td>
+                        </tr>
+                        @php $rankCounter++; @endphp
+                        @endforeach
+                      </tbody>
+                    </table>
+                  </div>
                   @endif
                 </div>
                 <div class="card-footer">
@@ -680,12 +701,12 @@
               </div>
               <div class="card-body">
                 @php
-                  $today = date('Y-m-d');
-                  $month = date('Y-m');
+                $today = date('Y-m-d');
+                $month = date('Y-m');
 
-                  $todayVisits = DB::table('hadir')->whereDate('tanggal', $today)->count();
-                  $monthVisits = DB::table('hadir')->where('tanggal', 'like', $month . '%')->count();
-                  $uniqueVisitors = DB::table('hadir')->distinct('member_id')->count('member_id'); // BENAR
+                $todayVisits = DB::table('hadir')->whereDate('tanggal', $today)->count();
+                $monthVisits = DB::table('hadir')->where('tanggal', 'like', $month . '%')->count();
+                $uniqueVisitors = DB::table('hadir')->distinct('member_id')->count('member_id'); // BENAR
 
                 @endphp
 
@@ -724,9 +745,9 @@
                         <span class="info-box-text">Avg. Daily</span>
                         <span class="info-box-number">
                           @php
-                            $daysInMonth = date('d');
-                            $avgDaily = $monthVisits > 0 ? round($monthVisits / $daysInMonth, 1) : 0;
-                            echo $avgDaily;
+                          $daysInMonth = date('d');
+                          $avgDaily = $monthVisits > 0 ? round($monthVisits / $daysInMonth, 1) : 0;
+                          echo $avgDaily;
                           @endphp
                         </span>
                       </div>
@@ -744,7 +765,7 @@
   <footer class="main-footer">
     <strong>Copyright &copy; 2025 <a href="#">Trackingspace</a>.</strong> All rights reserved.
     <div class="float-right d-none d-sm-inline-block">
-      <b>Version</b> 1.0.0 | Last Updated: {{ date('d M Y H:i') }}
+      <b>Version</b> 1.0.0
     </div>
   </footer>
   </div>
@@ -755,8 +776,8 @@
 
   <script>
     // Auto refresh dashboard every 60 seconds
-    $(document).ready(function () {
-      setTimeout(function () {
+    $(document).ready(function() {
+      setTimeout(function() {
         window.location.reload();
       }, 60000); // 60 seconds
     });

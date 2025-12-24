@@ -18,6 +18,7 @@
 
         .main-sidebar {
             background: linear-gradient(180deg, #6C3FB5 0%, #8B5FD6 100%) !important;
+            padding-right: 15px; 
         }
 
         .brand-link {
@@ -33,29 +34,37 @@
         }
 
         .user-panel {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-            text-align: center;
-            display: block !important;
-            padding: 25px 10px !important;
+            padding-left: 15px;
+            padding-right: 15px;
+            margin-left: 10px;
+
         }
 
         .user-panel .image {
-            display: inline-block;
+            display: block !important;
             float: none !important;
-            margin: 0 auto 15px;
+            /* Hapus float kiri bawaan AdminLTE */
+            margin: 0 0 10px 0 !important;
+            /* Atur margin: bawah saja */
+            padding: 0 !important;
         }
 
         .user-panel .image img {
             width: 80px;
             height: 80px;
             border: 3px solid rgba(255, 255, 255, 0.3);
-            object-fit: cover;
+            display: block;
+            margin: 0 auto;
+            /* Pastikan gambar di tengah */
         }
 
         .user-panel .info {
-            display: block;
-            padding: 0;
-            margin: 0;
+            display: block !important;
+            width: 100% !important;
+            padding: 0 !important;
+            /* Hapus padding kiri bawaan */
+            margin: 0 !important;
+            text-align: center !important;
         }
 
         .user-panel .info a {
@@ -111,6 +120,7 @@
 
 <body class="hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
+        <!-- Navbar -->
         <nav class="main-header navbar navbar-expand navbar-light">
             <ul class="navbar-nav">
                 <li class="nav-item">
@@ -119,13 +129,19 @@
             </ul>
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    <a href="{{ route('dashboard') }}" class="nav-link">
+                    <a href="{{ route('scan') }}" class="nav-link">
                         <i class="fas fa-home"></i> Home
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ route('dashboard') }}" class="nav-link">
+                    <a href="{{ route('dashboard') }}" class="nav-link active">
                         <i class="fas fa-chart-line"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-users"></i> <span class="badge badge-danger">{{ $todayAttendance ?? 0 }}</span> Active
+                        Today
                     </a>
                 </li>
                 <li class="nav-item">
@@ -141,93 +157,102 @@
                 </li>
             </ul>
         </nav>
+        <!-- /.navbar -->
 
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
             <a href="{{ route('dashboard') }}" class="brand-link">
-                <img src="https://adminlte.io/themes/v3/dist/img/AdminLTELogo.png" alt="Logo"
-                    class="brand-image img-circle elevation-3">
-                <span class="brand-text">Trackingspace</span>
-            </a>
-            <div class="sidebar">
-                <div class="user-panel mt-3 pb-3 mb-3">
-                    <div class="image">
-                        @if(Auth::user()->avatar)
-                            <img src="{{ asset('storage/avatars/' . Auth::user()->avatar) }}" class="img-circle elevation-2"
-                                alt="User">
-                        @else
-                            <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=6C3FB5&color=fff"
-                                class="img-circle elevation-2" alt="User">
-                        @endif
+                <a href="{{ route('dashboard') }}" class="brand-link">
+                    <img src="{{ asset('gambar/icontrasa.jpeg') }}"
+                        alt="Logo"
+                        class="brand-image img-circle elevation-3">
+                    <span class="brand-text">Trackingspace</span>
+                </a>
+                <div class="sidebar">
+                    <div class="user-panel mt-3 pb-3 mb-3">
+                        <div class="image">
+                            @if(Auth::user()->avatar)
+                            <img src="{{ asset('storage/avatars/' . Auth::user()->avatar) }}"
+                                class="img-circle elevation-2"
+                                alt="{{ Auth::user()->name }}">
+                            @else
+                            <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name ?? 'Admin') }}&size=80&background=6C3FB5&color=fff"
+                                class="img-circle elevation-2"
+                                alt="User Image">
+                            @endif
+                        </div>
+                        <div class="info">
+                            <u style="color: white;">
+                                <a href="#" class="d-block text-white font-weight-bold">
+                                    {{ Auth::user()->name ?? 'Admin' }}
+                                </a>
+                            </u>
+                        </div>
                     </div>
-                    <div class="info">
-                        <a href="#">{{ Auth::user()->name }}</a>
-                    </div>
-                </div>
-                <nav class="mt-2">
-                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
-                        <li class="nav-item">
-                            <a href="{{ route('dashboard') }}" class="nav-link">
-                                <i class="nav-icon fas fa-tachometer-alt"></i>
-                                <p>Dashboard</p>
-                            </a>
-                        </li>
-                        <!-- <li class="nav-item">
+                    <nav class="mt-2">
+                        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
+                            <li class="nav-item">
+                                <a href="{{ route('dashboard') }}" class="nav-link">
+                                    <i class="nav-icon fas fa-tachometer-alt"></i>
+                                    <p>Dashboard</p>
+                                </a>
+                            </li>
+                            <!-- <li class="nav-item">
                             <a href="#" class="nav-link">
                                 <i class="nav-icon fas fa-tasks"></i>
                                 <p>Priority Task</p>
                             </a>
                         </li> -->
-                        <li class="nav-item">
-                            <a href="{{ route('attendance.index') }}" class="nav-link">
-                                <i class="nav-icon fas fa-clock"></i>
-                                <p>Attendance</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('data_member.index') }}" class="nav-link">
-                                <i class="nav-icon fas fa-users"></i>
-                                <p>Members</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('reservasi.index') }}" class="nav-link active">
-                                <i class="nav-icon fas fa-bookmark"></i>
-                                <p>Reservations</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('room.index') }}" class="nav-link">
-                                <i class="nav-icon fas fa-door-open"></i>
-                                <p>Rooms</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('event.index') }}" class="nav-link">
-                                <i class="nav-icon fas fa-calendar"></i>
-                                <p>Events</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('operational-hours.index') }}" class="nav-link">
-                                <i class="nav-icon fas fa-clock"></i>
-                                <p>Open Hours</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('reports.index') }}" class="nav-link">
-                                <i class="nav-icon fas fa-chart-bar"></i>
-                                <p>Reports</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('profile.index') }}" class="nav-link">
-                                <i class="nav-icon fas fa-user"></i>
-                                <p>Profile</p>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
+                            <li class="nav-item">
+                                <a href="{{ route('attendance.index') }}" class="nav-link">
+                                    <i class="nav-icon fas fa-clock"></i>
+                                    <p>Attendance</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('data_member.index') }}" class="nav-link">
+                                    <i class="nav-icon fas fa-users"></i>
+                                    <p>Members</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('reservasi.index') }}" class="nav-link ">
+                                    <i class="nav-icon fas fa-bookmark"></i>
+                                    <p>Reservations</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('room.index') }}" class="nav-link">
+                                    <i class="nav-icon fas fa-door-open"></i>
+                                    <p>Rooms</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('event.index') }}" class="nav-link">
+                                    <i class="nav-icon fas fa-calendar"></i>
+                                    <p>Events</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('operational-hours.index') }}" class="nav-link">
+                                    <i class="nav-icon fas fa-clock"></i>
+                                    <p>Open Hours</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('reports.index') }}" class="nav-link">
+                                    <i class="nav-icon fas fa-chart-bar"></i>
+                                    <p>Reports</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('profile.index') }}" class="nav-link active">
+                                    <i class="nav-icon fas fa-user"></i>
+                                    <p>Profile</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
         </aside>
 
         <div class="content-wrapper">
@@ -245,10 +270,10 @@
                 <div class="container-fluid">
 
                     @if(session('success'))
-                        <div class="alert alert-success alert-dismissible fade show">
-                            <button type="button" class="close" data-dismiss="alert">&times;</button>
-                            <i class="fas fa-check-circle"></i> {{ session('success') }}
-                        </div>
+                    <div class="alert alert-success alert-dismissible fade show">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        <i class="fas fa-check-circle"></i> {{ session('success') }}
+                    </div>
                     @endif
 
                     <div class="row">
@@ -257,11 +282,11 @@
                                 <div class="card-body">
                                     <div class="profile-img-container">
                                         @if($user->avatar)
-                                            <img src="{{ asset('storage/avatars/' . $user->avatar) }}" alt="Profile Photo"
-                                                class="profile-img">
+                                        <img src="{{ asset('storage/avatars/' . $user->avatar) }}" alt="Profile Photo"
+                                            class="profile-img">
                                         @else
-                                            <img src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&size=150&background=6C3FB5&color=fff"
-                                                alt="Profile Photo" class="profile-img">
+                                        <img src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&size=150&background=6C3FB5&color=fff"
+                                            alt="Profile Photo" class="profile-img">
                                         @endif
 
                                         <div class="profile-name">{{ $user->name }}</div>
@@ -363,5 +388,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/js/adminlte.min.js"></script>
 </body>
+
+<footer class="main-footer">
+    <strong>Copyright &copy; 2025 <a href="#">Trackingspace</a>.</strong> All rights reserved.
+    <div class="float-right d-none d-sm-inline-block">
+        <b>Version</b> 1.0.0
+    </div>
+</footer>
+</div>
 
 </html>

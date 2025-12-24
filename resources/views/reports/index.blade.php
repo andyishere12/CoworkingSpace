@@ -18,6 +18,7 @@
 
     .main-sidebar {
       background: linear-gradient(180deg, #6C3FB5 0%, #8B5FD6 100%) !important;
+      padding-right: 15px; 
     }
 
     .brand-link {
@@ -33,28 +34,37 @@
     }
 
     .user-panel {
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-      text-align: center;
-      display: block !important;
-      padding: 25px 10px !important;
+      padding-left: 15px;
+      padding-right: 15px;
+      margin-left: 10px;
+
     }
 
     .user-panel .image {
-      display: inline-block;
+      display: block !important;
       float: none !important;
-      margin: 0 auto 15px;
+      /* Hapus float kiri bawaan AdminLTE */
+      margin: 0 0 10px 0 !important;
+      /* Atur margin: bawah saja */
+      padding: 0 !important;
     }
 
     .user-panel .image img {
       width: 80px;
       height: 80px;
       border: 3px solid rgba(255, 255, 255, 0.3);
+      display: block;
+      margin: 0 auto;
+      /* Pastikan gambar di tengah */
     }
 
     .user-panel .info {
-      display: block;
-      padding: 0;
-      margin: 0;
+      display: block !important;
+      width: 100% !important;
+      padding: 0 !important;
+      /* Hapus padding kiri bawaan */
+      margin: 0 !important;
+      text-align: center !important;
     }
 
     .user-panel .info a {
@@ -148,18 +158,19 @@
       </ul>
       <ul class="navbar-nav ml-auto">
         <li class="nav-item">
-          <a href="{{ route('dashboard') }}" class="nav-link">
+          <a href="{{ route('scan') }}" class="nav-link">
             <i class="fas fa-home"></i> Home
           </a>
         </li>
         <li class="nav-item">
-          <a href="{{ route('dashboard') }}" class="nav-link">
+          <a href="{{ route('dashboard') }}" class="nav-link active">
             <i class="fas fa-chart-line"></i> Dashboard
           </a>
         </li>
         <li class="nav-item">
           <a href="#" class="nav-link">
-            <i class="fas fa-users"></i> <span class="badge badge-danger">9</span> Active
+            <i class="fas fa-users"></i> <span class="badge badge-danger">{{ $todayAttendance ?? 0 }}</span> Active
+            Today
           </a>
         </li>
         <li class="nav-item">
@@ -175,22 +186,36 @@
         </li>
       </ul>
     </nav>
+    <!-- /.navbar -->
+
 
     <!-- Sidebar -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
       <a href="{{ route('dashboard') }}" class="brand-link">
-        <img src="https://adminlte.io/themes/v3/dist/img/AdminLTELogo.png" alt="Logo"
+        <img src="{{ asset('gambar/icontrasa.jpeg') }}"
+          alt="Logo"
           class="brand-image img-circle elevation-3">
         <span class="brand-text">Trackingspace</span>
       </a>
       <div class="sidebar">
         <div class="user-panel mt-3 pb-3 mb-3">
           <div class="image">
-            <img src="https://adminlte.io/themes/v3/dist/img/user2-160x160.jpg" class="img-circle elevation-2"
-              alt="User">
+            @if(Auth::user()->avatar)
+            <img src="{{ asset('storage/avatars/' . Auth::user()->avatar) }}"
+              class="img-circle elevation-2"
+              alt="{{ Auth::user()->name }}">
+            @else
+            <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name ?? 'Admin') }}&size=80&background=6C3FB5&color=fff"
+              class="img-circle elevation-2"
+              alt="User Image">
+            @endif
           </div>
           <div class="info">
-            <a href="#">admin</a>
+            <u style="color: white;">
+              <a href="#" class="d-block text-white font-weight-bold">
+                {{ Auth::user()->name ?? 'Admin' }}
+              </a>
+            </u>
           </div>
         </div>
         <nav class="mt-2">

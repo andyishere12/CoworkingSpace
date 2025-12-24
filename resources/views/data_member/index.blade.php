@@ -9,8 +9,10 @@
     href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/css/adminlte.min.css">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> -->
   <link rel="stylesheet" href={{ asset('css/stylemodal.css') }}>
+  <link rel="stylesheet" href="adminlte.min.css">
+
 
   <style>
     body {
@@ -20,6 +22,7 @@
 
     .main-sidebar {
       background: linear-gradient(180deg, #6C3FB5 0%, #8B5FD6 100%) !important;
+      padding-right: 15px;
     }
 
     .brand-link {
@@ -35,28 +38,37 @@
     }
 
     .user-panel {
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-      text-align: center;
-      display: block !important;
-      padding: 25px 10px !important;
+      padding-left: 15px;
+      padding-right: 15px;
+      margin-left: 10px;
+
     }
 
     .user-panel .image {
-      display: inline-block;
+      display: block !important;
       float: none !important;
-      margin: 0 auto 15px;
+      /* Hapus float kiri bawaan AdminLTE */
+      margin: 0 0 10px 0 !important;
+      /* Atur margin: bawah saja */
+      padding: 0 !important;
     }
 
     .user-panel .image img {
       width: 80px;
       height: 80px;
       border: 3px solid rgba(255, 255, 255, 0.3);
+      display: block;
+      margin: 0 auto;
+      /* Pastikan gambar di tengah */
     }
 
     .user-panel .info {
-      display: block;
-      padding: 0;
-      margin: 0;
+      display: block !important;
+      width: 100% !important;
+      padding: 0 !important;
+      /* Hapus padding kiri bawaan */
+      margin: 0 !important;
+      text-align: center !important;
     }
 
     .user-panel .info a {
@@ -83,7 +95,7 @@
     }
 
     .table-cyan th {
-      color: #06b6d4 !important;
+      color: #000000ff !important;
       font-weight: 600;
       text-transform: uppercase;
       font-size: 13px;
@@ -142,6 +154,14 @@
       color: #6C3FB5;
       font-weight: bold;
     }
+
+    .table td {
+      color: black !important;
+    }
+     .btn-gap {
+      display: flex;
+      gap: 8px;
+    }
   </style>
 </head>
 
@@ -161,13 +181,14 @@
           </a>
         </li>
         <li class="nav-item">
-          <a href="{{ route('dashboard') }}" class="nav-link">
+          <a href="{{ route('dashboard') }}" class="nav-link active">
             <i class="fas fa-chart-line"></i> Dashboard
           </a>
         </li>
         <li class="nav-item">
           <a href="#" class="nav-link">
-            <i class="fas fa-users"></i> <span class="badge badge-danger">0</span> Active
+            <i class="fas fa-users"></i> <span class="badge badge-danger">{{ $todayAttendance ?? 0 }}</span> Active
+            Today
           </a>
         </li>
         <li class="nav-item">
@@ -187,18 +208,28 @@
     <!-- Sidebar -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
       <a href="{{ route('dashboard') }}" class="brand-link">
-        <img src="https://adminlte.io/themes/v3/dist/img/AdminLTELogo.png" alt="Logo"
+        <img src="{{ asset('gambar/icontrasa.jpeg') }}"
+          alt="Logo"
           class="brand-image img-circle elevation-3">
         <span class="brand-text">Trackingspace</span>
       </a>
       <div class="sidebar">
         <div class="user-panel mt-3 pb-3 mb-3">
           <div class="image">
-            <img src="https://adminlte.io/themes/v3/dist/img/user2-160x160.jpg" class="img-circle elevation-2"
-              alt="User">
+            @if(Auth::user()->avatar)
+            <img src="{{ asset('storage/avatars/' . Auth::user()->avatar) }}"
+              class="img-circle elevation-2"
+              alt="{{ Auth::user()->name }}">
+            @else
+            <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name ?? 'Admin') }}&size=80&background=6C3FB5&color=fff"
+              class="img-circle elevation-2"
+              alt="User Image">
+            @endif
           </div>
           <div class="info">
-            <a href="#">admin</a>
+            <a href="#" class="d-block text-white font-weight-bold">
+              {{ Auth::user()->name ?? 'Admin' }}
+            </a>
           </div>
         </div>
         <nav class="mt-2">
@@ -295,15 +326,15 @@
                 <div class="d-flex gap-2 align-items-center">
                   <!-- Search Box -->
                   <div class="search-container">
-                    <input type="text" id="searchInput" class="form-control" placeholder="Search members..."
+                    <input type="text" id="searchInput" class="form mr-2" placeholder="Search members..."
                       style="min-width: 250px;">
                     <div id="searchResults" class="search-results"></div>
                   </div>
 
-                  <a href="{{ route('data_member.create') }}" class="btn btn-info">
+                  <a href="{{ route('data_member.create') }}" class="btn btn-info mr-2">
                     <i class="fas fa-plus mr-1"></i> Create Member
                   </a>
-                  <button type="button" class="btn btn-success btn-print shadow-sm ml-auto" onclick="window.print()">
+                  <button type="button" class="btn btn-success btn-print shadow-sm ml- mr-2" onclick="window.print()">
                     <i class="fas fa-print mr-2"></i> Cetak Data Member
                   </button>
                 </div>
@@ -311,10 +342,10 @@
             </div>
             <div class="card-body">
               @if(session('success'))
-                <div class="alert alert-success alert-dismissible fade show">
-                  {{ session('success') }}
-                  <button type="button" class="close" data-dismiss="alert">&times;</button>
-                </div>
+              <div class="alert alert-success alert-dismissible fade show">
+                {{ session('success') }}
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+              </div>
               @endif
 
               <p class="text-muted">Total {{ count($allmember) }} items.</p>
@@ -334,42 +365,42 @@
 
                   <tbody id="membersTable">
                     @foreach ($allmember as $r)
-                      <tr data-id="{{ $r->id }}" data-nama="{{ $r->nama }}" data-type="{{ $r->type }}"
-                        data-aktivitas="{{ $r->aktivitas }}" data-status="{{ $r->status }}">
-                        <td>{{ $r->id }}</td>
-                        <td>{{ $r->nama }}</td>
-                        <td>{{ $r->type }}</td>
-                        <td>{{ $r->aktivitas }}</td>
-                        <td>
-                          <span class="badge badge-success px-2 py-1">
-                            {{ $r->status }}
-                          </span>
-                        </td>
-                        <td>
-                          <div class="d-flex justify-content-center gap-2">
-                            {{-- Tombol Detail --}}
-                            <button class="btn btn-sm btn-info btn-detail" data-id="{{ $r->id }}"
-                              data-nama="{{ $r->nama }}" data-type="{{ $r->type }}" data-status="{{ $r->status }}"
-                              data-foto="{{ asset('uploads/foto/' . $r->foto) }}">
-                              Detail
-                            </button>
+                    <tr data-id="{{ $r->id }}" data-nama="{{ $r->nama }}" data-type="{{ $r->type }}"
+                      data-aktivitas="{{ $r->aktivitas }}" data-status="{{ $r->status }}">
+                      <td>{{ $r->id }}</td>
+                      <td>{{ $r->nama }}</td>
+                      <td>{{ $r->type }}</td>
+                      <td>{{ $r->aktivitas }}</td>
+                      <td>
+                        <span class="badge badge-success px-2 py-1">
+                          {{ $r->status }}
+                        </span>
+                      </td>
+                      <td>
+                        <div class="btn-gap justify-content-center">
+                          {{-- Tombol Detail --}}
+                          <button class="btn btn-sm btn-info btn-detail" data-id="{{ $r->id }}"
+                            data-nama="{{ $r->nama }}" data-type="{{ $r->type }}" data-status="{{ $r->status }}"
+                            data-foto="{{ asset('uploads/foto/' . $r->foto) }}">
+                            Detail
+                          </button>
 
 
-                            {{-- Tombol Edit --}}
-                            <a href="{{ route('data_member.edit', $r->id) }}" class="btn btn-sm btn-warning">
-                              Edit
-                            </a>
+                          {{-- Tombol Edit --}}
+                          <a href="{{ route('data_member.edit', $r->id) }}" class="btn btn-sm btn-warning">
+                            Edit
+                          </a>
 
-                            {{-- Hapus --}}
-                            <form action="{{ route('data_member.destroy', $r->id) }}" method="POST"
-                              onsubmit="return confirm('Hapus data?')" style="display: inline;">
-                              @csrf
-                              @method('DELETE')
-                              <button class="btn btn-sm btn-danger" type="submit">Hapus</button>
-                            </form>
-                          </div>
-                        </td>
-                      </tr>
+                          {{-- Hapus --}}
+                          <form action="{{ route('data_member.destroy', $r->id) }}" method="POST"
+                            onsubmit="return confirm('Hapus data?')" style="display: inline;">
+                            @csrf
+                            @method('DELETE')
+                            <button class="btn btn-sm btn-danger" type="submit">Hapus</button>
+                          </form>
+                        </div>
+                      </td>
+                    </tr>
                     @endforeach
                   </tbody>
                 </table>
@@ -449,13 +480,15 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/js/adminlte.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> -->
+   <script src="bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <script>
     // Tombol Download
-    $('#btnDownload').click(function () {
+    $('#btnDownload').click(function() {
       const modalBody = document.querySelector('#detailModal .modal-body');
       html2canvas(modalBody, {
         scale: 2
@@ -467,7 +500,7 @@
       });
     });
 
-    $(document).on('click', '.btn-detail', function () {
+    $(document).on('click', '.btn-detail', function() {
       var row = $(this).closest('tr');
       var memberId = row.data('id');
       var nama = row.data('nama');
@@ -497,7 +530,7 @@
 
 
     // Real-time Search Functionality
-    $(document).ready(function () {
+    $(document).ready(function() {
       let searchTimeout;
       let allMembers = []; // Untuk menyimpan semua data member
 
@@ -507,11 +540,11 @@
           url: "{{ route('data_member.index') }}",
           method: 'GET',
           dataType: 'json',
-          success: function (data) {
+          success: function(data) {
             // Simpan data member
             allMembers = data;
           },
-          error: function (xhr) {
+          error: function(xhr) {
             console.error('Error loading members:', xhr);
           }
         });
@@ -521,7 +554,7 @@
       loadAllMembers();
 
       // Real-time search
-      $('#searchInput').on('input', function () {
+      $('#searchInput').on('input', function() {
         clearTimeout(searchTimeout);
         const searchTerm = $(this).val().toLowerCase();
 
@@ -530,12 +563,14 @@
           return;
         }
 
-        searchTimeout = setTimeout(function () {
+        searchTimeout = setTimeout(function() {
           $.ajax({
             url: "{{ route('data_member.index') }}",
             method: 'GET',
-            data: { search: searchTerm },
-            success: function (response) {
+            data: {
+              search: searchTerm
+            },
+            success: function(response) {
               const members = response;
               const resultsContainer = $('#searchResults');
               resultsContainer.empty();
@@ -543,7 +578,7 @@
               if (members.length === 0) {
                 resultsContainer.append('<div class="search-result-item">No results found</div>');
               } else {
-                members.slice(0, 10).forEach(function (member) {
+                members.slice(0, 10).forEach(function(member) {
                   const highlightedName = highlightText(member.nama, searchTerm);
                   const item = $(`
                     <div class="search-result-item" data-id="${member.id}">
@@ -557,7 +592,7 @@
 
               resultsContainer.show();
             },
-            error: function (xhr) {
+            error: function(xhr) {
               console.error('Error searching:', xhr);
             }
           });
@@ -572,7 +607,7 @@
       }
 
       // When clicking on a search result
-      $(document).on('click', '.search-result-item', function () {
+      $(document).on('click', '.search-result-item', function() {
         const memberId = $(this).data('id');
         const searchTerm = $('#searchInput').val();
 
@@ -592,14 +627,14 @@
       });
 
       // Hide search results when clicking outside
-      $(document).on('click', function (e) {
+      $(document).on('click', function(e) {
         if (!$(e.target).closest('.search-container').length) {
           $('#searchResults').hide();
         }
       });
 
       // Client-side filtering for instant feedback
-      $('#searchInput').on('keyup', function () {
+      $('#searchInput').on('keyup', function() {
         const searchTerm = $(this).val().toLowerCase();
 
         if (searchTerm.length === 0) {
@@ -611,7 +646,7 @@
 
         // Filter rows
         let visibleCount = 0;
-        $('#membersTable tr').each(function () {
+        $('#membersTable tr').each(function() {
           const row = $(this);
           const nama = row.data('nama').toLowerCase();
           const type = row.data('type').toLowerCase();

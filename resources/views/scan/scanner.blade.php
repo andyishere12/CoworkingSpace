@@ -279,11 +279,16 @@
 <body class="p-4">
 
   <nav class="flex justify-between items-center mb-6 bg-white p-2 px-4 rounded-xl shadow-sm border border-gray-100">
-    <div class="flex items-center gap-2">
-      <div class="bg-purple-main p-1.5 rounded-lg text-white">
-        <i data-lucide="layout-grid" class="w-6 h-6"></i>
+    <div class="flex items-center gap-3">
+      <div class="p-2 rounded-lg flex items-center justify-center">
+        <img
+          src="{{ asset('gambar/icontrasa.jpeg') }}"
+          alt="Trackingspace Logo"
+          class="w-8 h-8 rounded-full object-cover">
       </div>
-      <span class="font-bold text-gray-800 text-xl tracking-tight">Trackingspace</span>
+      <span class="font-bold text-gray-800 text-xl tracking-tight">
+        Trackingspace
+      </span>
     </div>
 
     <div class="flex items-center gap-2">
@@ -434,30 +439,30 @@
         </div>
 
         @if($upcomingEvents->count() > 0)
-          <div class="space-y-3">
-            @foreach($upcomingEvents as $event)
-              <div class="p-3 rounded-lg border border-gray-100 hover:border-purple-200 transition-colors">
-                <div class="flex justify-between items-start mb-1">
-                  <h4 class="font-bold text-gray-800 text-sm truncate">{{ $event['title'] }}</h4>
-                  <span class="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full font-medium">
-                    {{ $event['days_until'] }}
-                  </span>
-                </div>
-                <p class="text-xs text-gray-500 mb-2 line-clamp-2">{{ $event['description'] ?? 'No description' }}</p>
-                <div class="flex items-center text-xs text-gray-400">
-                  <i data-lucide="calendar" class="w-3 h-3 mr-1"></i>
-                  <span>{{ $event['formatted_date'] }}</span>
-                </div>
-              </div>
-            @endforeach
-          </div>
-        @else
-          <div class="py-10 text-center">
-            <div class="text-gray-300 mb-2">
-              <i data-lucide="calendar-x" class="w-10 h-10 mx-auto"></i>
+        <div class="space-y-3">
+          @foreach($upcomingEvents as $event)
+          <div class="p-3 rounded-lg border border-gray-100 hover:border-purple-200 transition-colors">
+            <div class="flex justify-between items-start mb-1">
+              <h4 class="font-bold text-gray-800 text-sm truncate">{{ $event['title'] }}</h4>
+              <span class="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full font-medium">
+                {{ $event['days_until'] }}
+              </span>
             </div>
-            <p class="text-gray-400 text-sm italic">No upcoming events</p>
+            <p class="text-xs text-gray-500 mb-2 line-clamp-2">{{ $event['description'] ?? 'No description' }}</p>
+            <div class="flex items-center text-xs text-gray-400">
+              <i data-lucide="calendar" class="w-3 h-3 mr-1"></i>
+              <span>{{ $event['formatted_date'] }}</span>
+            </div>
           </div>
+          @endforeach
+        </div>
+        @else
+        <div class="py-10 text-center">
+          <div class="text-gray-300 mb-2">
+            <i data-lucide="calendar-x" class="w-10 h-10 mx-auto"></i>
+          </div>
+          <p class="text-gray-400 text-sm italic">No upcoming events</p>
+        </div>
         @endif
       </div>
 
@@ -469,44 +474,44 @@
         </div>
 
         @if($upcomingReservations->count() > 0)
-          <div class="space-y-3">
-            @foreach($upcomingReservations as $reservation)
-              <div class="p-3 rounded-lg border border-gray-100 hover:border-blue-200 transition-colors">
-                <div class="flex justify-between items-start mb-1">
-                  <h4 class="font-bold text-gray-800 text-sm">{{ $reservation['nama_pemesanan'] }}</h4>
-                  <span class="text-xs px-2 py-1 rounded-full font-medium 
+        <div class="space-y-3">
+          @foreach($upcomingReservations as $reservation)
+          <div class="p-3 rounded-lg border border-gray-100 hover:border-blue-200 transition-colors">
+            <div class="flex justify-between items-start mb-1">
+              <h4 class="font-bold text-gray-800 text-sm">{{ $reservation['nama_pemesanan'] }}</h4>
+              <span class="text-xs px-2 py-1 rounded-full font-medium 
                                                                                                       @if($reservation['status'] == 'Confirmed') bg-green-100 text-green-700
                                                                                                       @elseif($reservation['status'] == 'Pending') bg-yellow-100 text-yellow-700
                                                                                                       @else bg-gray-100 text-gray-700
                                                                                                       @endif">
-                    {{ $reservation['status'] }}
-                  </span>
-                </div>
-                <p class="text-xs text-gray-500 mb-2">{{ $reservation['purpose'] }}</p>
-                <div class="grid grid-cols-2 gap-2 text-xs">
-                  <div class="flex items-center text-gray-400">
-                    <i data-lucide="calendar" class="w-3 h-3 mr-1"></i>
-                    <span>{{ $reservation['formatted_date'] }}</span>
-                  </div>
-                  <div class="flex items-center text-gray-400">
-                    <i data-lucide="clock" class="w-3 h-3 mr-1"></i>
-                    <span>{{ $reservation['formatted_time'] }}</span>
-                  </div>
-                </div>
-                <div class="mt-2 text-xs text-gray-400 flex items-center">
-                  <i data-lucide="map-pin" class="w-3 h-3 mr-1"></i>
-                  <span>{{ $reservation['ruangan'] }}</span>
-                </div>
-              </div>
-            @endforeach
-          </div>
-        @else
-          <div class="py-10 text-center">
-            <div class="text-gray-300 mb-2">
-              <i data-lucide="calendar-off" class="w-10 h-10 mx-auto"></i>
+                {{ $reservation['status'] }}
+              </span>
             </div>
-            <p class="text-gray-400 text-sm italic">No upcoming reservations</p>
+            <p class="text-xs text-gray-500 mb-2">{{ $reservation['purpose'] }}</p>
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <div class="flex items-center text-gray-400">
+                <i data-lucide="calendar" class="w-3 h-3 mr-1"></i>
+                <span>{{ $reservation['formatted_date'] }}</span>
+              </div>
+              <div class="flex items-center text-gray-400">
+                <i data-lucide="clock" class="w-3 h-3 mr-1"></i>
+                <span>{{ $reservation['formatted_time'] }}</span>
+              </div>
+            </div>
+            <div class="mt-2 text-xs text-gray-400 flex items-center">
+              <i data-lucide="map-pin" class="w-3 h-3 mr-1"></i>
+              <span>{{ $reservation['ruangan'] }}</span>
+            </div>
           </div>
+          @endforeach
+        </div>
+        @else
+        <div class="py-10 text-center">
+          <div class="text-gray-300 mb-2">
+            <i data-lucide="calendar-off" class="w-10 h-10 mx-auto"></i>
+          </div>
+          <p class="text-gray-400 text-sm italic">No upcoming reservations</p>
+        </div>
         @endif
       </div>
     </div>
@@ -516,7 +521,7 @@
 
   <!-- modal cek in manual -->
 
-  
+
   <!-- Modal untuk Pencarian Member -->
   <div id="searchModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl w-full max-w-md max-h-[80vh] overflow-hidden shadow-2xl">
@@ -569,7 +574,7 @@
         <div class="flex justify-between items-center">
           <div>
             <p class="text-xs text-gray-500">
-              <span id="resultCount">0</span> finds member 
+              <span id="resultCount">0</span> finds member
             </p>
           </div>
           <button onclick="closeSearchModal()"
@@ -621,7 +626,7 @@
     function playSound(type) {
       const audio = type === 'checkin' ? audioIn : audioOut;
       audio.currentTime = 0;
-      audio.play().catch(() => { });
+      audio.play().catch(() => {});
     }
 
     // ================= CAMERA =================
@@ -629,16 +634,20 @@
       scanner = new Html5Qrcode("reader");
 
       const config = {
-        fps: 30,             // Naikkan dari 20 ke 30 untuk gerakan lebih mulus
-        qrbox: { width: 250, height: 250 }, // Gunakan objek untuk kontrol lebih presisi
-        aspectRatio: 1.0,    // Memastikan frame kamera tidak tertarik (stretch)
+        fps: 30, // Naikkan dari 20 ke 30 untuk gerakan lebih mulus
+        qrbox: {
+          width: 250,
+          height: 250
+        }, // Gunakan objek untuk kontrol lebih presisi
+        aspectRatio: 1.0, // Memastikan frame kamera tidak tertarik (stretch)
         experimentalFeatures: {
           useBarCodeDetectorIfSupported: true // Gunakan akselerasi hardware jika ada
         }
       };
 
-      scanner.start(
-        { facingMode: "environment" },
+      scanner.start({
+          facingMode: "environment"
+        },
         config,
         onScanSuccess
       ).then(() => {
@@ -647,6 +656,7 @@
         customFrame.style.display = 'block';
       });
     }
+
     function stopCamera() {
       if (!scanner) return;
       scanner.stop().then(() => {
@@ -666,13 +676,15 @@
       const id = text;
 
       fetch("{{ route('scan.store') }}", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
-        },
-        body: JSON.stringify({ id: id })
-      })
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
+          },
+          body: JSON.stringify({
+            id: id
+          })
+        })
         .then(r => r.json())
         .then(res => {
           if (res.status === 'checkout') {
@@ -697,7 +709,9 @@
           showNotif('❌ Network error');
         })
         .finally(() => {
-          setTimeout(() => { isProcessing = false; }, 2000);
+          setTimeout(() => {
+            isProcessing = false;
+          }, 2000);
         });
     }
 
@@ -794,8 +808,8 @@
 
       el.textContent =
         h > 0 ? `${h}H ${m}M` :
-          m > 0 ? `${m}M ${d}S` :
-            `${d}S`;
+        m > 0 ? `${m}M ${d}S` :
+        `${d}S`;
     }
 
     function updateActiveCount() {
@@ -816,13 +830,15 @@
       if (!confirm(`Checkout manual untuk ${nama}?`)) return;
 
       fetch("{{ route('scan.manual.checkout') }}", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
-        },
-        body: JSON.stringify({ nama: nama })
-      })
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
+          },
+          body: JSON.stringify({
+            nama: nama
+          })
+        })
         .then(r => r.json())
         .then(res => {
           if (res.status === 'checkout') {
@@ -945,13 +961,15 @@
       isProcessing = true;
 
       fetch("{{ route('scan.manual.checkin') }}", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
-        },
-        body: JSON.stringify({ id: id })
-      })
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
+          },
+          body: JSON.stringify({
+            id: id
+          })
+        })
         .then(r => r.json())
         .then(res => {
           if (res.status === 'checkin') {
@@ -969,7 +987,9 @@
           showNotif("❌ Network error - periksa koneksi atau server");
         })
         .finally(() => {
-          setTimeout(() => { isProcessing = false; }, 1000);
+          setTimeout(() => {
+            isProcessing = false;
+          }, 1000);
         });
     }
 
@@ -1134,19 +1154,18 @@
     }
 
     // Close modal when clicking outside
-    document.getElementById('searchModal').addEventListener('click', function (e) {
+    document.getElementById('searchModal').addEventListener('click', function(e) {
       if (e.target.id === 'searchModal') {
         closeSearchModal();
       }
     });
 
     // Close modal with Escape key
-    document.addEventListener('keydown', function (e) {
+    document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape' && !document.getElementById('searchModal').classList.contains('hidden')) {
         closeSearchModal();
       }
     });
-
   </script>
 
 </body>

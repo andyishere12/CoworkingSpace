@@ -254,7 +254,7 @@ class ScanController extends Controller
             'member_id' => $member->id,
             'tanggal' => $today,
             'waktu_masuk' => $waktuMasuk,
-            'created_at' => now(),
+            'created_at' => now(), 
             'updated_at' => now(),
         ]);
 

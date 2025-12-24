@@ -273,6 +273,24 @@
     #modalSearchResults::-webkit-scrollbar-thumb:hover {
       background: #a78bfa;
     }
+
+    /* Scan success (hijau) */
+    .scan-success {
+      border-color: #22c55e !important;
+      /* green-500 */
+      box-shadow:
+        0 0 20px rgba(34, 197, 94, 0.8),
+        0 0 0 1000px rgba(0, 0, 0, 0.5) !important;
+    }
+
+    /* Scan error (merah) – opsional */
+    .scan-error {
+      border-color: #ef4444 !important;
+      /* red-500 */
+      box-shadow:
+        0 0 20px rgba(239, 68, 68, 0.8),
+        0 0 0 1000px rgba(0, 0, 0, 0.5) !important;
+    }
   </style>
 </head>
 
@@ -281,9 +299,7 @@
   <nav class="flex justify-between items-center mb-6 bg-white p-2 px-4 rounded-xl shadow-sm border border-gray-100">
     <div class="flex items-center gap-3">
       <div class="p-2 rounded-lg flex items-center justify-center">
-        <img
-          src="{{ asset('gambar/icontrasa.jpeg') }}"
-          alt="Trackingspace Logo"
+        <img src="{{ asset('gambar/icontrasa.jpeg') }}" alt="Trackingspace Logo"
           class="w-8 h-8 rounded-full object-cover">
       </div>
       <span class="font-bold text-gray-800 text-xl tracking-tight">
@@ -345,7 +361,7 @@
           <div id="reader" class="w-full h-full object-cover scale-x-[-1]"></div>
 
           <div class="absolute inset-0 pointer-events-none">
-            <div
+            <div id="scanFrame"
               class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 rounded-[2rem] border-[2px] border-white/30 shadow-[0_0_0_1000px_rgba(0,0,0,0.5)]">
 
               <div
@@ -439,30 +455,30 @@
         </div>
 
         @if($upcomingEvents->count() > 0)
-        <div class="space-y-3">
-          @foreach($upcomingEvents as $event)
-          <div class="p-3 rounded-lg border border-gray-100 hover:border-purple-200 transition-colors">
-            <div class="flex justify-between items-start mb-1">
-              <h4 class="font-bold text-gray-800 text-sm truncate">{{ $event['title'] }}</h4>
-              <span class="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full font-medium">
-                {{ $event['days_until'] }}
-              </span>
-            </div>
-            <p class="text-xs text-gray-500 mb-2 line-clamp-2">{{ $event['description'] ?? 'No description' }}</p>
-            <div class="flex items-center text-xs text-gray-400">
-              <i data-lucide="calendar" class="w-3 h-3 mr-1"></i>
-              <span>{{ $event['formatted_date'] }}</span>
-            </div>
+          <div class="space-y-3">
+            @foreach($upcomingEvents as $event)
+              <div class="p-3 rounded-lg border border-gray-100 hover:border-purple-200 transition-colors">
+                <div class="flex justify-between items-start mb-1">
+                  <h4 class="font-bold text-gray-800 text-sm truncate">{{ $event['title'] }}</h4>
+                  <span class="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full font-medium">
+                    {{ $event['days_until'] }}
+                  </span>
+                </div>
+                <p class="text-xs text-gray-500 mb-2 line-clamp-2">{{ $event['description'] ?? 'No description' }}</p>
+                <div class="flex items-center text-xs text-gray-400">
+                  <i data-lucide="calendar" class="w-3 h-3 mr-1"></i>
+                  <span>{{ $event['formatted_date'] }}</span>
+                </div>
+              </div>
+            @endforeach
           </div>
-          @endforeach
-        </div>
         @else
-        <div class="py-10 text-center">
-          <div class="text-gray-300 mb-2">
-            <i data-lucide="calendar-x" class="w-10 h-10 mx-auto"></i>
+          <div class="py-10 text-center">
+            <div class="text-gray-300 mb-2">
+              <i data-lucide="calendar-x" class="w-10 h-10 mx-auto"></i>
+            </div>
+            <p class="text-gray-400 text-sm italic">No upcoming events</p>
           </div>
-          <p class="text-gray-400 text-sm italic">No upcoming events</p>
-        </div>
         @endif
       </div>
 
@@ -474,44 +490,44 @@
         </div>
 
         @if($upcomingReservations->count() > 0)
-        <div class="space-y-3">
-          @foreach($upcomingReservations as $reservation)
-          <div class="p-3 rounded-lg border border-gray-100 hover:border-blue-200 transition-colors">
-            <div class="flex justify-between items-start mb-1">
-              <h4 class="font-bold text-gray-800 text-sm">{{ $reservation['nama_pemesanan'] }}</h4>
-              <span class="text-xs px-2 py-1 rounded-full font-medium 
-                                                                                                      @if($reservation['status'] == 'Confirmed') bg-green-100 text-green-700
-                                                                                                      @elseif($reservation['status'] == 'Pending') bg-yellow-100 text-yellow-700
-                                                                                                      @else bg-gray-100 text-gray-700
-                                                                                                      @endif">
-                {{ $reservation['status'] }}
-              </span>
-            </div>
-            <p class="text-xs text-gray-500 mb-2">{{ $reservation['purpose'] }}</p>
-            <div class="grid grid-cols-2 gap-2 text-xs">
-              <div class="flex items-center text-gray-400">
-                <i data-lucide="calendar" class="w-3 h-3 mr-1"></i>
-                <span>{{ $reservation['formatted_date'] }}</span>
+          <div class="space-y-3">
+            @foreach($upcomingReservations as $reservation)
+              <div class="p-3 rounded-lg border border-gray-100 hover:border-blue-200 transition-colors">
+                <div class="flex justify-between items-start mb-1">
+                  <h4 class="font-bold text-gray-800 text-sm">{{ $reservation['nama_pemesanan'] }}</h4>
+                  <span class="text-xs px-2 py-1 rounded-full font-medium 
+                                                                                                                  @if($reservation['status'] == 'Confirmed') bg-green-100 text-green-700
+                                                                                                                  @elseif($reservation['status'] == 'Pending') bg-yellow-100 text-yellow-700
+                                                                                                                  @else bg-gray-100 text-gray-700
+                                                                                                                  @endif">
+                    {{ $reservation['status'] }}
+                  </span>
+                </div>
+                <p class="text-xs text-gray-500 mb-2">{{ $reservation['purpose'] }}</p>
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                  <div class="flex items-center text-gray-400">
+                    <i data-lucide="calendar" class="w-3 h-3 mr-1"></i>
+                    <span>{{ $reservation['formatted_date'] }}</span>
+                  </div>
+                  <div class="flex items-center text-gray-400">
+                    <i data-lucide="clock" class="w-3 h-3 mr-1"></i>
+                    <span>{{ $reservation['formatted_time'] }}</span>
+                  </div>
+                </div>
+                <div class="mt-2 text-xs text-gray-400 flex items-center">
+                  <i data-lucide="map-pin" class="w-3 h-3 mr-1"></i>
+                  <span>{{ $reservation['ruangan'] }}</span>
+                </div>
               </div>
-              <div class="flex items-center text-gray-400">
-                <i data-lucide="clock" class="w-3 h-3 mr-1"></i>
-                <span>{{ $reservation['formatted_time'] }}</span>
-              </div>
-            </div>
-            <div class="mt-2 text-xs text-gray-400 flex items-center">
-              <i data-lucide="map-pin" class="w-3 h-3 mr-1"></i>
-              <span>{{ $reservation['ruangan'] }}</span>
-            </div>
+            @endforeach
           </div>
-          @endforeach
-        </div>
         @else
-        <div class="py-10 text-center">
-          <div class="text-gray-300 mb-2">
-            <i data-lucide="calendar-off" class="w-10 h-10 mx-auto"></i>
+          <div class="py-10 text-center">
+            <div class="text-gray-300 mb-2">
+              <i data-lucide="calendar-off" class="w-10 h-10 mx-auto"></i>
+            </div>
+            <p class="text-gray-400 text-sm italic">No upcoming reservations</p>
           </div>
-          <p class="text-gray-400 text-sm italic">No upcoming reservations</p>
-        </div>
         @endif
       </div>
     </div>
@@ -606,15 +622,13 @@
     let scanner = null;
     let isProcessing = false;
 
-    const audioIn = new Audio("{{ asset('sounds/jk.mp3') }}");
-    const audioOut = new Audio("{{ asset('sounds/ck.mp3') }}");
+    const audioIn = new Audio("{{ asset('sounds/ci.mp3') }}");
+    const audioOut = new Audio("{{ asset('sounds/co.mp3') }}");
 
     // ================= DATA DARI BACKEND =================
     const initialActiveMembers = JSON.parse(
       document.getElementById('app').dataset.members
     );
-
-
 
     document.addEventListener('DOMContentLoaded', () => {
       initialActiveMembers.forEach(m => {
@@ -626,7 +640,7 @@
     function playSound(type) {
       const audio = type === 'checkin' ? audioIn : audioOut;
       audio.currentTime = 0;
-      audio.play().catch(() => {});
+      audio.play().catch(() => { });
     }
 
     // ================= CAMERA =================
@@ -646,8 +660,8 @@
       };
 
       scanner.start({
-          facingMode: "environment"
-        },
+        facingMode: "environment"
+      },
         config,
         onScanSuccess
       ).then(() => {
@@ -676,34 +690,36 @@
       const id = text;
 
       fetch("{{ route('scan.store') }}", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
-          },
-          body: JSON.stringify({
-            id: id
-          })
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({
+          id: id
         })
+      })
         .then(r => r.json())
         .then(res => {
           if (res.status === 'checkout') {
+            scanSuccessEffect();
             removeMember(res.nama);
             playSound('checkout');
             showNotif(`⏱️ ${res.nama} CHECK-OUT`);
             if (res.should_remove) refreshActiveMembers();
           }
-
-          if (res.status === 'checkin') {
+          else if (res.status === 'checkin') {
+            scanSuccessEffect();
             addMember(res.nama, res.type, res.foto, res.timestamp);
             playSound('checkin');
             showNotif(`✅ ${res.nama} CHECK-IN`);
           }
-
-          if (res.status === 'error') {
+          else if (res.status === 'error') {
+            scanErrorEffect();
             showNotif(`❌ ${res.message}`);
           }
         })
+
         .catch(error => {
           console.error('Error:', error);
           showNotif('❌ Network error');
@@ -808,8 +824,8 @@
 
       el.textContent =
         h > 0 ? `${h}H ${m}M` :
-        m > 0 ? `${m}M ${d}S` :
-        `${d}S`;
+          m > 0 ? `${m}M ${d}S` :
+            `${d}S`;
     }
 
     function updateActiveCount() {
@@ -830,15 +846,15 @@
       if (!confirm(`Checkout manual untuk ${nama}?`)) return;
 
       fetch("{{ route('scan.manual.checkout') }}", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
-          },
-          body: JSON.stringify({
-            nama: nama
-          })
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({
+          nama: nama
         })
+      })
         .then(r => r.json())
         .then(res => {
           if (res.status === 'checkout') {
@@ -961,15 +977,15 @@
       isProcessing = true;
 
       fetch("{{ route('scan.manual.checkin') }}", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
-          },
-          body: JSON.stringify({
-            id: id
-          })
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({
+          id: id
         })
+      })
         .then(r => r.json())
         .then(res => {
           if (res.status === 'checkin') {
@@ -1154,18 +1170,43 @@
     }
 
     // Close modal when clicking outside
-    document.getElementById('searchModal').addEventListener('click', function(e) {
+    document.getElementById('searchModal').addEventListener('click', function (e) {
       if (e.target.id === 'searchModal') {
         closeSearchModal();
       }
     });
 
     // Close modal with Escape key
-    document.addEventListener('keydown', function(e) {
+    document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && !document.getElementById('searchModal').classList.contains('hidden')) {
         closeSearchModal();
       }
     });
+
+    function scanSuccessEffect() {
+      const frame = document.getElementById('scanFrame');
+      if (!frame) return;
+
+      frame.classList.remove('scan-error');
+      frame.classList.add('scan-success');
+
+      setTimeout(() => {
+        frame.classList.remove('scan-success');
+      }, 1200);
+    }
+
+    function scanErrorEffect() {
+      const frame = document.getElementById('scanFrame');
+      if (!frame) return;
+
+      frame.classList.remove('scan-success');
+      frame.classList.add('scan-error');
+
+      setTimeout(() => {
+        frame.classList.remove('scan-error');
+      }, 1200);
+    }
+
   </script>
 
 </body>

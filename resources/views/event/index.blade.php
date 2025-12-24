@@ -143,22 +143,19 @@
     <!-- Sidebar -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
       <a href="{{ route('dashboard') }}" class="brand-link">
-        <img src="{{ asset('gambar/icontrasa.jpeg') }}"
-          alt="Logo"
-          class="brand-image img-circle elevation-3">
+        <img src="{{ asset('gambar/icontrasa.jpeg') }}" alt="Logo" class="brand-image img-circle elevation-3">
         <span class="brand-text">Trackingspace</span>
       </a>
       <div class="sidebar">
         <div class="user-panel mt-3 pb-3 mb-3">
           <div class="image">
             @if(Auth::user()->avatar)
-            <img src="{{ asset('storage/avatars/' . Auth::user()->avatar) }}"
-              class="img-circle elevation-2"
-              alt="{{ Auth::user()->name }}">
+              <img src="{{ asset('storage/avatars/' . Auth::user()->avatar) }}" class="img-circle elevation-2"
+                alt="{{ Auth::user()->name }}">
             @else
-            <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name ?? 'Admin') }}&size=80&background=6C3FB5&color=fff"
-              class="img-circle elevation-2"
-              alt="User Image">
+              <img
+                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name ?? 'Admin') }}&size=80&background=6C3FB5&color=fff"
+                class="img-circle elevation-2" alt="User Image">
             @endif
           </div>
           <div class="info">
@@ -273,62 +270,67 @@
               </p>
 
               <div class="table-responsive">
-                <table class="table table-hover">
-                  <thead style="background-color: #f8f9fa;">
-                    <tr class="text-secondary" style="font-size: 0.8rem; text-transform: uppercase;">
-                      <th>ID</th>
-                      <th>TITLE</th>
-                      <th>DESCRIPTION</th>
-                      <th>START DATE</th>
-                      <th>END DATE</th>
-                      <th>STATUS</th>
-                      <th>ACTIONS</th>
+                <table class="table table-hover" style="width: 100%;">
+                  <thead class="table-cyan">
+                    <tr>
+                      <th style="width: 5%;">ID</th>
+                      <th style="width: 20%;">Title</th>
+                      <th style="width: 25%;">Description</th>
+                      <th style="width: 15%;">Start Date</th>
+                      <th style="width: 15%;">End Date</th>
+                      <th style="width: 10%;">Status</th>
+                      <th style="width: 10%;" class="text-center">Actions</th>
                     </tr>
                   </thead>
 
                   <tbody>
                     @forelse ($events as $event)
-                    <tr>
-                      <td>{{ $event->id ?? 'N/A' }}</td>
-                      <td>{{ $event->title ?? 'N/A' }}</td>
-                      <td>{{ $event->description ?? 'N/A' }}</td>
-                      <td>{{ $event->start_date ?? 'N/A' }}</td>
-                      <td>{{ $event->end_date ?? 'N/A' }}</td>
-                      <td>
-                        <span class="badge badge-success px-2 py-1">
-                          {{ $event->status ?? 'N/A' }}
-                        </span>
-                      </td>
-                      <td>
-                        <div class="btn-gap justify-content-center">
-                          <a href="{{ route('event.show', $event->id) }}" class="btn btn-sm btn-info">
-                            Show
-                          </a>
+                      <tr data-id="{{ $event->id }}" data-title="{{ $event->title }}" data-status="{{ $event->status }}">
+                        <td>{{ $event->id ?? 'N/A' }}</td>
+                        <td>{{ $event->title ?? 'N/A' }}</td>
+                        <td>{{ $event->description ?? 'N/A' }}</td>
+                        <td>{{ $event->start_date ?? 'N/A' }}</td>
+                        <td>{{ $event->end_date ?? 'N/A' }}</td>
+                        <td>
+                          <span class="badge badge-success px-2 py-1">
+                            {{ $event->status ?? 'N/A' }}
+                          </span>
+                        </td>
+                        <td>
+                          <div class="btn-gap justify-content-center">
+                            {{-- Show --}}
+                            <a href="{{ route('event.show', $event->id) }}" class="btn btn-sm btn-info">
+                              Show
+                            </a>
 
-                          <a href="{{ route('event.edit', $event->id) }}" class="btn btn-sm btn-warning">
-                            Edit
-                          </a>
+                            {{-- Edit --}}
+                            <a href="{{ route('event.edit', $event->id) }}" class="btn btn-sm btn-warning">
+                              Edit
+                            </a>
 
-                          <form action="{{ route('event.destroy', $event->id) }}" method="POST"
-                            onsubmit="return confirm('Hapus data?')" style="display: inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button class="btn btn-sm btn-danger" type="submit">
-                              Hapus
-                            </button>
-                          </form>
-                        </div>
-
-                      </td>
-                    </tr>
+                            {{-- Hapus --}}
+                            <form action="{{ route('event.destroy', $event->id) }}" method="POST"
+                              onsubmit="return confirm('Hapus data?')" style="display: inline;">
+                              @csrf
+                              @method('DELETE')
+                              <button class="btn btn-sm btn-danger" type="submit">
+                                Hapus
+                              </button>
+                            </form>
+                          </div>
+                        </td>
+                      </tr>
                     @empty
-                    <tr>
-                      <td colspan="7" class="text-center">Tidak ada data event.</td>
-                    </tr>
+                      <tr>
+                        <td colspan="7" class="text-center">
+                          Tidak ada data event.
+                        </td>
+                      </tr>
                     @endforelse
                   </tbody>
                 </table>
               </div>
+
             </div>
           </div>
 

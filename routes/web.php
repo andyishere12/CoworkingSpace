@@ -57,7 +57,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('reservasi', ReservasiController::class);
     Route::resource('room', RoomController::class);
     Route::resource('event', EventController::class);
-
+ 
     // Scan
     Route::get('/scanner', [ScanController::class, 'index'])->name('scan');
     Route::get('/scan', [ScanController::class, 'index'])->name('scan');

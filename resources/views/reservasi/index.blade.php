@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/css/adminlte.min.css">
   <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> -->
   <link rel="stylesheet" href="{{ asset('css/stylemodal.css') }}">
-    <link rel="stylesheet" href="adminlte.min.css">
+  <link rel="stylesheet" href="adminlte.min.css">
 
   <style>
     body {
@@ -21,7 +21,7 @@
 
     .main-sidebar {
       background: linear-gradient(180deg, #6C3FB5 0%, #8B5FD6 100%) !important;
-        padding-right: 15px; 
+      padding-right: 15px;
     }
 
     .brand-link {
@@ -69,6 +69,7 @@
       margin: 0 !important;
       text-align: center !important;
     }
+
     .user-panel .info a {
       color: white !important;
       font-size: 16px;
@@ -90,6 +91,15 @@
     .sidebar-dark-primary .nav-sidebar>.nav-item>.nav-link.active {
       background-color: rgba(255, 255, 255, 0.15);
       color: white;
+    }
+
+    .table td {
+      color: black !important;
+    }
+
+    .btn-gap {
+      display: flex;
+      gap: 8px;
     }
   </style>
 </head>
@@ -138,22 +148,19 @@
     <!-- Sidebar -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
       <a href="{{ route('dashboard') }}" class="brand-link">
-        <img src="{{ asset('gambar/icontrasa.jpeg') }}"
-          alt="Logo"
-          class="brand-image img-circle elevation-3">
+        <img src="{{ asset('gambar/icontrasa.jpeg') }}" alt="Logo" class="brand-image img-circle elevation-3">
         <span class="brand-text">Trackingspace</span>
       </a>
       <div class="sidebar">
         <div class="user-panel mt-3 pb-3 mb-3">
           <div class="image">
             @if(Auth::user()->avatar)
-            <img src="{{ asset('storage/avatars/' . Auth::user()->avatar) }}"
-              class="img-circle elevation-2"
-              alt="{{ Auth::user()->name }}">
+              <img src="{{ asset('storage/avatars/' . Auth::user()->avatar) }}" class="img-circle elevation-2"
+                alt="{{ Auth::user()->name }}">
             @else
-            <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name ?? 'Admin') }}&size=80&background=6C3FB5&color=fff"
-              class="img-circle elevation-2"
-              alt="User Image">
+              <img
+                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name ?? 'Admin') }}&size=80&background=6C3FB5&color=fff"
+                class="img-circle elevation-2" alt="User Image">
             @endif
           </div>
           <div class="info">
@@ -268,64 +275,70 @@
               </p>
 
               <div class="table-responsive">
-                <table class="table table-hover">
-                  <thead style="background-color: #f8f9fa;">
-                    <tr class="text-secondary" style="font-size: 0.8rem; text-transform: uppercase;">
-                      <th>ID</th>
-                      <th>RUANGAN</th>
-                      <th>INSTITUSI</th>
-                      <th>PURPOSE</th>
-                      <th>START TIME</th>
-                      <th>END TIME</th>
-                      <th>STATUS</th>
-                      <th>ACTIONS</th>
+                <table class="table table-hover" style="width: 100%;">
+                  <thead class="table-cyan">
+                    <tr>
+                      <th style="width: 5%;">ID</th>
+                      <th style="width: 15%;">Ruangan</th>
+                      <th style="width: 15%;">Institusi</th>
+                      <th style="width: 20%;">Purpose</th>
+                      <th style="width: 10%;">Start</th>
+                      <th style="width: 10%;">End</th>
+                      <th style="width: 10%;">Status</th>
+                      <th style="width: 15%;" class="text-center">Actions</th>
                     </tr>
                   </thead>
 
                   <tbody>
                     @forelse ($allreservasi as $r)
-                    <tr>
-                      <td>{{ $r->id ?? 'N/A' }}</td>
-                      <td>{{ $r->ruangan ?? 'N/A' }}</td>
-                      <td>{{ $r->institusi ?? 'N/A' }}</td>
-                      <td>{{ $r->purpose ?? 'N/A' }}</td>
-                      <td>{{ $r->waktu_mulai ?? 'N/A' }}</td>
-                      <td>{{ $r->waktu_selesai ?? 'N/A' }}</td>
-                      <td>
-                        <span class="badge badge-success px-2 py-1">
-                          {{ $r->status ?? 'N/A' }}
-                        </span>
-                      </td>
-                      <td>
-                        <div class="d-flex justify-content-center gap-2">
-                          {{-- Tombol Show --}}
-                          <a href="{{ route('reservasi.show', $r->id) }}" class="btn btn-sm btn-info">
-                            Show
-                          </a>
+                      <tr data-id="{{ $r->id }}" data-ruangan="{{ $r->ruangan }}" data-institusi="{{ $r->institusi }}"
+                        data-purpose="{{ $r->purpose }}" data-status="{{ $r->status }}">
+                        <td>{{ $r->id ?? 'N/A' }}</td>
+                        <td>{{ $r->ruangan ?? 'N/A' }}</td>
+                        <td>{{ $r->institusi ?? 'N/A' }}</td>
+                        <td>{{ $r->purpose ?? 'N/A' }}</td>
+                        <td>{{ $r->waktu_mulai ?? 'N/A' }}</td>
+                        <td>{{ $r->waktu_selesai ?? 'N/A' }}</td>
+                        <td>
+                          <span class="badge badge-success px-2 py-1">
+                            {{ $r->status ?? 'N/A' }}
+                          </span>
+                        </td>
+                        <td>
+                          <div class="btn-gap justify-content-center">
+                            {{-- Show --}}
+                            <a href="{{ route('reservasi.show', $r->id) }}" class="btn btn-sm btn-info">
+                              Show
+                            </a>
 
-                          {{-- Tombol Edit --}}
-                          <a href="{{ route('reservasi.edit', $r->id) }}" class="btn btn-sm btn-warning">
-                            Edit
-                          </a>
+                            {{-- Edit --}}
+                            <a href="{{ route('reservasi.edit', $r->id) }}" class="btn btn-sm btn-warning">
+                              Edit
+                            </a>
 
-                          {{-- Hapus --}}
-                          <form action="{{ route('reservasi.destroy', $r->id) }}" method="POST"
-                            onsubmit="return confirm('Hapus data?')" style="display: inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button class="btn btn-sm btn-danger" type="submit">Hapus</button>
-                          </form>
-                        </div>
-                      </td>
-                    </tr>
+                            {{-- Hapus --}}
+                            <form action="{{ route('reservasi.destroy', $r->id) }}" method="POST"
+                              onsubmit="return confirm('Hapus data?')" style="display: inline;">
+                              @csrf
+                              @method('DELETE')
+                              <button class="btn btn-sm btn-danger" type="submit">
+                                Hapus
+                              </button>
+                            </form>
+                          </div>
+                        </td>
+                      </tr>
                     @empty
-                    <tr>
-                      <td colspan="8" class="text-center">Tidak ada data reservasi.</td>
-                    </tr>
+                      <tr>
+                        <td colspan="8" class="text-center">
+                          Tidak ada data reservasi.
+                        </td>
+                      </tr>
                     @endforelse
                   </tbody>
                 </table>
               </div>
+
             </div>
           </div>
 

@@ -163,6 +163,179 @@
       display: flex;
       gap: 8px;
     }
+
+    /* Style untuk modal detail */
+    .section-title {
+      font-size: 1.1rem;
+      border-bottom: 2px solid #6C3FB5;
+      padding-bottom: 5px;
+    }
+
+    .info-item {
+      padding: 8px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .info-item:last-child {
+      border-bottom: none;
+    }
+
+    .info-value {
+      font-size: 1rem;
+      color: #ffffffff;
+      margin-bottom: 0;
+    }
+
+    .badge {
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .member-info {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
+      border-left: 4px solid #6C3FB5;
+    }
+
+    .qr-box {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+    }
+
+    /* --- Perbaikan Visual Modal Detail --- */
+
+    /* Pastikan teks terbaca (Ganti warna putih ke gelap) */
+    .info-value {
+      color: #222222 !important;
+      /* Warna hitam pekat agar mudah dibaca */
+      font-size: 1.1rem !important;
+      /* Ukuran font lebih besar dari label */
+      font-weight: 700 !important;
+      /* Dibuat tebal (bold) */
+      margin-bottom: 0;
+      line-height: 1.2;
+    }
+
+    .info-item label {
+      color: #6c757d !important;
+      /* Warna muted untuk label */
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .info-item label,
+    .info-section label {
+      color: #888888 !important;
+      /* Warna abu-abu agar tidak dominan */
+      font-size: 0.85rem !important;
+      /* Ukuran lebih kecil */
+      font-weight: 500;
+      text-transform: uppercase;
+      /* Membuat label jadi huruf kapital semua agar rapi */
+      letter-spacing: 0.5px;
+      margin-bottom: 2px;
+      display: block;
+    }
+
+    /* Merapikan Section Title */
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #6C3FB5 !important;
+      border-bottom: 2px solid #6C3FB5;
+      padding-bottom: 8px;
+      margin-bottom: 15px !important;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Merapikan Box QR Code agar Center & Simetris */
+    .qr-box {
+      background: #ffffff !important;
+      padding: 15px;
+      border-radius: 12px;
+      border: 1px solid #e0e0e0 !important;
+      display: inline-block;
+      /* Agar box mengikuti lebar QR */
+      margin: 0 auto;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    #detailQrcode canvas,
+    #detailQrcode img {
+      margin: 0 auto !important;
+      /* Memastikan barcode di tengah box */
+      display: block;
+    }
+
+    /* Layouting Member Info */
+    .member-info {
+      background: #ffffff;
+      padding: 25px;
+      border-radius: 15px;
+      border-left: 5px solid #6C3FB5;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Merapikan Badge */
+    .badge-info {
+      background-color: #17a2b8;
+      color: white;
+    }
+
+    .badge-success {
+      background-color: #28a745;
+      color: white;
+    }
+
+    #detailModal .modal-body {
+
+
+      /* Style agar area QR Code punya background */
+      #qrcode {
+        background-color: white;
+        /* Ganti dengan path gambar backgroundmu */
+        background-size: cover;
+        background-position: center;
+        padding: 9px !important;
+        /* Memberi ruang antara barcode dan tepi background */
+        border-radius: 10px;
+        display: inline-block;
+      }
+
+      /* Memastikan gambar barcode di atas background terlihat jelas */
+      #qrcode img {
+        border: 2px solid white;
+        /* Memberi frame putih agar barcode mudah discan */
+        border-radius: 5px;
+      }
+
+      .qr-box {
+        background-color: white;
+        border: none !important;
+        padding: 0 !important;
+      }
+
+      /* Style untuk foto modal barcode */
+      #modalFoto {
+        border: 3px solid #6C3FB5;
+        background-color: #f8f9fa;
+      }
+
+      #detailModal .modal-content {
+        background: transparent;
+      }
+
+      #detailModal .modal-body {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 10px;
+        margin: 10px;
+      }
+    }
   </style>
 </head>
 
@@ -376,13 +549,15 @@
                         </td>
                         <td>
                           <div class="btn-gap justify-content-center">
-                            {{-- Tombol Detail --}}
-                            <button class="btn btn-sm btn-info btn-detail" data-id="{{ $r->id }}"
-                              data-nama="{{ $r->nama }}" data-type="{{ $r->type }}" data-status="{{ $r->status }}"
+                            <!-- button barcode -->
+                            <button class="btn btn-sm btn-secondary btn-barcode" data-id="{{ $r->id }}"
                               data-foto="{{ asset('uploads/foto/' . $r->foto) }}">
+                              <i class="fas fa-qrcode"></i>
+                            </button>
+                            {{-- Tombol Detail (data lengkap) --}}
+                            <button class="btn btn-sm btn-info btn-detail" data-id="{{ $r->id }}">
                               Detail
                             </button>
-
 
                             {{-- Tombol Edit --}}
                             <a href="{{ route('data_member.edit', $r->id) }}" class="btn btn-sm btn-warning">
@@ -477,6 +652,91 @@
     </div>
   </div>
 
+
+  <div class="modal fade" id="detailMemberModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content"
+        style="border-radius: 20px; border: none; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+        <div class="modal-header bg-primary text-white"
+          style="background: linear-gradient(90deg, #6C3FB5, #8B5FD6) !important;">
+          <h5 class="modal-title fw-bold">
+            <i class="fas fa-id-card-alt mr-2"></i> Profil Lengkap Member
+          </h5>
+          <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body" style="background-color: #f8f9fa; padding: 30px;">
+          <div class="row">
+            <div class="col-md-4 text-center">
+              <div class="mb-4">
+                <img id="detailFoto" src="" alt="Foto Member" class="img-fluid rounded-circle shadow"
+                  style="width: 180px; height: 180px; object-fit: cover; border: 5px solid white;">
+              </div>
+
+              <div class="qr-container text-center">
+                <p class="text-muted small mb-2">SCAN MEMBER ID</p>
+                <div class="qr-box">
+                  <div id="detailQrcode"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-8">
+              <div class="member-info"
+                style="background: white; padding: 20px; border-radius: 12px; border-left: 5px solid #6C3FB5;">
+
+                <div class="info-section mb-4">
+                  <h5 class="section-title"
+                    style="color: #6C3FB5; border-bottom: 2px solid #6C3FB5; padding-bottom: 5px; margin-bottom: 15px;">
+                    <i class="fas fa-user-circle mr-2"></i> INFORMASI PRIBADI
+                  </h5>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <label>Nama Lengkap</label>
+                      <p class="info-value" id="detailNama">Memuat...</p>
+                    </div>
+                    <div class="col-md-6">
+                      <label>No. Telepon</label>
+                      <p class="info-value" id="detailNoHp">Memuat...</p>
+                    </div>
+                    <div class="col-md-6">
+                      <label>Tanggal Lahir</label>
+                      <p class="info-value" id="detailTanggalLahir">Memuat...</p>
+                    </div>
+                    <div class="col-md-6">
+                      <label>Email</label>
+                      <p class="info-value" id="detailEmail">Memuat...</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-section">
+                  <h5 class="section-title"
+                    style="color: #6C3FB5; border-bottom: 2px solid #6C3FB5; padding-bottom: 5px; margin-bottom: 15px;">
+                    <i class="fas fa-university mr-2"></i> INSTITUSI
+                  </h5>
+                  <div class="row">
+                    <div class="col-12">
+                      <label>Nama Institusi / Perusahaan</label>
+                      <p class="info-value" id="detailInstitusi">Memuat...</p>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer bg-white border-0">
+          <button type="button" class="btn btn-light shadow-sm" data-dismiss="modal">Tutup</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/js/adminlte.min.js"></script>
@@ -500,7 +760,7 @@
       });
     });
 
-    $(document).on('click', '.btn-detail', function () {
+    $(document).on('click', '.btn-barcode', function () {
       var row = $(this).closest('tr');
       var memberId = row.data('id');
       var nama = row.data('nama');
@@ -508,26 +768,26 @@
       var status = row.data('status');
       var foto = $(this).data('foto');
 
+      // Isi modal barcode
       $('#modalNama').text(nama);
       $('#modalType').text(type);
       $('#modalStatus').text(status);
       $('#modalFoto').attr('src', foto);
       $('#qrcode').html('');
 
+      // Generate QR Code
       new QRCode(document.getElementById("qrcode"), {
-        text: memberId.toString(), // <-- hanya ID
-        width: 200,
-        height: 200,
+        text: memberId.toString(),
+        width: 220,
+        height: 220,
         colorDark: "#000000",
         colorLight: "transparent",
         correctLevel: QRCode.CorrectLevel.H
       });
 
-
-      var myModal = new bootstrap.Modal(document.getElementById('detailModal'));
-      myModal.show();
+      // Tampilkan modal barcode
+      $('#detailModal').modal('show');
     });
-
 
     // Real-time Search Functionality
     $(document).ready(function () {
@@ -668,7 +928,51 @@
       });
     });
 
-    
+    // Event handler untuk tombol detail (data lengkap)
+    $(document).on('click', '.btn-detail', function () {
+      var memberId = $(this).data('id');
+
+      // Mengambil data member via AJAX
+      $.ajax({
+        url: "{{ route('data_member.show', ':id') }}".replace(':id', memberId),
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json'
+        },
+        success: function (response) {
+          // Isi data ke dalam modal detail
+          $('#detailFoto').attr('src', "{{ asset('uploads/foto') }}/" + response.foto);
+          $('#detailNama').text(response.nama);
+          $('#detailTanggalLahir').text(response.tanggal_lahir);
+          $('#detailAlamat').text(response.alamat);
+          $('#detailEmail').text(response.email);
+          $('#detailNoHp').text(response.no_hp);
+          $('#detailAktivitas').text(response.aktivitas);
+          $('#detailInstitusi').text(response.institusi);
+          $('#detailType').text(response.type);
+          $('#detailStatus').text(response.status);
+
+          // Generate QR Code untuk ID member
+          $('#detailQrcode').html(''); // Bersihkan QR lama
+          new QRCode(document.getElementById("detailQrcode"), {
+            text: response.id.toString(),
+            width: 120,
+            height: 120,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+          });
+
+          $('#detailMemberModal').modal('show');
+        },
+        error: function (xhr) {
+          console.error('Error:', xhr);
+          alert('Gagal memuat data member.');
+        }
+      });
+    });
+
+
   </script>
 </body>
 

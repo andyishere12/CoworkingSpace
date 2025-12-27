@@ -32,6 +32,12 @@ class DataMemberController extends Controller
     public function show($id)
     {
         $member = DataMember::findOrFail($id);
+
+        // Jika request ingin JSON (untuk AJAX)
+        if (request()->wantsJson()) {
+            return response()->json($member);
+        }
+
         return view('data_member.show', compact('member'));
     }
 

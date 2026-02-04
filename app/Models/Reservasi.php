@@ -6,7 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class Reservasi extends Model
 {
-    protected $guarded = [];
+    protected $fillable = [
+        'nama_pemesanan',
+        'kontak',
+        'institusi',
+        'purpose',
+        'description',
+        'attends',
+        'tanggal',
+        'waktu_mulai',
+        'waktu_selesai',
+        'ruangan',
+        'status',
+    ];
 
     public function member()
     {

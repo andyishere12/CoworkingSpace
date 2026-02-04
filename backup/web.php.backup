@@ -15,30 +15,17 @@ use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ProfileController;
 
-// ✅ NEW: Import controllers untuk Manager
-use App\Http\Controllers\ManagerDashboardController;
-use App\Http\Controllers\AnalyticsController;
-use App\Http\Controllers\EventApprovalController;
-use App\Http\Controllers\ReservationApprovalController;
-use App\Http\Controllers\UserManagementController;
-
 /*
 |--------------------------------------------------------------------------
 | Home
 |--------------------------------------------------------------------------
 */
-// Rute Home (/) - Redirect berdasarkan role jika sudah login
 Route::get('/', function () {
-    if (!Auth::check()) {
-        return redirect()->route('login');
-    }
-    
-    if (auth::user()->role === 'manager') {
-        return redirect()->route('manager.dashboard');
-    }
-    
-    return redirect()->route('dashboard'); // Diarahkan ke admin dashboard
+    return Auth::check()
+        ? redirect()->route('dashboard')
+        : redirect()->route('login');
 });
+
 /*
 |--------------------------------------------------------------------------
 | Login
@@ -52,10 +39,10 @@ Route::post('/login', [LoginController::class, 'handleLogin'])->name('login.proc
 
 /*
 |--------------------------------------------------------------------------
-| Admin Routes (Protected) - ✅ UPDATED: Tambah middleware role:admin
+| Protected Routes
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'role:admin'])->group(function () {
+Route::middleware('auth')->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -64,6 +51,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/attendance/check-in', [AttendanceController::class, 'checkIn'])->name('attendance.checkin');
     Route::post('/attendance/check-out', [AttendanceController::class, 'checkOut'])->name('attendance.checkout');
 
+
     // Resources
     Route::resource('data_member', DataMemberController::class);
     Route::resource('reservasi', ReservasiController::class);
@@ -71,9 +59,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('event', EventController::class);
  
     // Scan
-    Route::get('/scanner', [ScanController::class, 'index'])->name('scanner');
+    Route::get('/scanner', [ScanController::class, 'index'])->name('scan');
     Route::get('/scan', [ScanController::class, 'index'])->name('scan');
     Route::post('/scan/store', [ScanController::class, 'store'])->name('scan.store');
+    // Tambahkan route baru
     Route::get('/scan/active-members', [ScanController::class, 'getActiveMembers'])->name('scan.active');
     Route::post('/manual-checkout', [ScanController::class, 'manualCheckout'])->name('scan.manual.checkout');
     Route::post('/manual-checkin', [ScanController::class, 'manualCheckin'])->name('scan.manual.checkin');
@@ -85,6 +74,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('/', [OperationalHoursController::class, 'index'])->name('index');
         Route::get('/edit', [OperationalHoursController::class, 'edit'])->name('edit');
         Route::put('/update-all', [OperationalHoursController::class, 'updateAll'])->name('update-all');
+
     });
 
     // Reports
@@ -93,6 +83,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('/membership', [ReportController::class, 'membershipReport'])->name('membership');
         Route::get('/room', [ReportController::class, 'roomReport'])->name('room');
         Route::get('/event', [ReportController::class, 'eventReport'])->name('event');
+
         Route::get('/export/membership', [ReportController::class, 'exportMembership'])->name('export.membership');
         Route::get('/export/room', [ReportController::class, 'exportRoom'])->name('export.room');
         Route::get('/export/event', [ReportController::class, 'exportEvent'])->name('export.event');
@@ -102,57 +93,12 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
     Route::post('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
-});
 
-/*
-|--------------------------------------------------------------------------
-| ✅ NEW: Manager Routes (Protected)
-|--------------------------------------------------------------------------
-*/
-Route::middleware(['auth', 'role:manager'])->prefix('manager')->name('manager.')->group(function () {
-    
-    // Manager Dashboard
-    Route::get('/dashboard', [ManagerDashboardController::class, 'index'])->name('dashboard');
-    
-    // Analytics with AI insights
-    Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics');
-    
-    // Members - Read Only
-    Route::get('/members', [DataMemberController::class, 'index'])->name('members.index');
-    Route::get('/members/{id}', [DataMemberController::class, 'show'])->name('members.show');
-    
-    // Event Approval
-    Route::get('/event-approval', [EventApprovalController::class, 'index'])->name('event-approval.index');
-    Route::post('/event-approval/{id}/approve', [EventApprovalController::class, 'approve'])->name('event-approval.approve');
-    Route::post('/event-approval/{id}/reject', [EventApprovalController::class, 'reject'])->name('event-approval.reject');
-    
-    // Reservation Approval
-    Route::get('/reservation-approval', [ReservationApprovalController::class, 'index'])->name('reservation-approval.index');
-    Route::post('/reservation-approval/{id}/approve', [ReservationApprovalController::class, 'approve'])->name('reservation-approval.approve');
-    Route::post('/reservation-approval/{id}/reject', [ReservationApprovalController::class, 'reject'])->name('reservation-approval.reject');
-    
-    // User Management
-    Route::resource('users', UserManagementController::class);
-    
-    // Settings
-    Route::get('/settings', function() {
-        return view('manager.settings');
-    })->name('settings');
-    
-    // Profile
-    Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
-    Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
-    Route::post('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
+    // Logout
+    Route::post('/logout', function () {
+        Auth::logout();
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
+        return redirect()->route(route: 'login');
+    })->name('logout');
 });
-
-/*
-|--------------------------------------------------------------------------
-| Logout (Both Admin & Manager)
-|--------------------------------------------------------------------------
-*/
-Route::middleware('auth')->post('/logout', function () {
-    Auth::logout();
-    request()->session()->invalidate();
-    request()->session()->regenerateToken();
-    return redirect()->route('login');
-})->name('logout');

@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
+
 
 class LoginController extends Controller
 {
@@ -26,12 +29,17 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
+
+            // Tambahkan logika pengecekan role di sini
+            if (auth::user()->role === 'manager') {
+                return redirect()->intended('/manager/dashboard');
+            }
+
             return redirect()->intended('/dashboard');
         }
 
         return back()->withErrors([
             'email' => 'Email atau password yang anda masukan salah',
-
         ])->onlyinput('email');
     }
 }

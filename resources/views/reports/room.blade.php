@@ -171,18 +171,30 @@
     <!-- Sidebar -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
       <a href="{{ route('dashboard') }}" class="brand-link">
-        <img src="https://adminlte.io/themes/v3/dist/img/AdminLTELogo.png" alt="Logo"
+        <img src="{{ asset('gambar/icontrasa.jpeg') }}"
+          alt="Logo"
           class="brand-image img-circle elevation-3">
         <span class="brand-text">Trackingspace</span>
       </a>
       <div class="sidebar">
         <div class="user-panel mt-3 pb-3 mb-3">
           <div class="image">
-            <img src="https://adminlte.io/themes/v3/dist/img/user2-160x160.jpg" class="img-circle elevation-2"
-              alt="User">
+            @if(Auth::user()->avatar)
+            <img src="{{ asset('storage/avatars/' . Auth::user()->avatar) }}"
+              class="img-circle elevation-2"
+              alt="{{ Auth::user()->name }}">
+            @else
+            <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name ?? 'Admin') }}&size=80&background=6C3FB5&color=fff"
+              class="img-circle elevation-2"
+              alt="User Image">
+            @endif
           </div>
           <div class="info">
-            <a href="#">admin</a>
+            <u style="color: white;">
+              <a href="#" class="d-block text-white font-weight-bold">
+                {{ Auth::user()->name ?? 'Admin' }}
+              </a>
+            </u>
           </div>
         </div>
         <nav class="mt-2">
@@ -242,7 +254,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="#" class="nav-link">
+              <a href="{{ route('profile.index') }}" class="nav-link">
                 <i class="nav-icon fas fa-user"></i>
                 <p>Profile</p>
               </a>
@@ -251,6 +263,7 @@
         </nav>
       </div>
     </aside>
+
 
     <!-- Content Wrapper -->
     <div class="content-wrapper">

@@ -15,7 +15,7 @@ use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ProfileController;
 
-// ✅ NEW: Import controllers untuk Manager
+// NEW: Import controllers untuk Manager
 use App\Http\Controllers\ManagerDashboardController;
 use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\EventApprovalController;

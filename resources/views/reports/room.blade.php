@@ -157,7 +157,7 @@
         </li>
         <li class="nav-item">
           <a href="#" class="nav-link">
-            <i class="fas fa-users"></i> <span class="badge badge-danger">9</span> Active
+            <i class="fas fa-users"></i> <span class="badge badge-danger">{{ $statistics['active_members'] ?? 0 }}</span> Active
           </a>
         </li>
         <li class="nav-item">
@@ -296,8 +296,8 @@
                       <select name="type" class="form-control">
                         <option value="all" {{ $type == 'all' ? 'selected' : '' }}>Semua Type</option>
                         @foreach($roomTypes as $roomType)
-                          <option value="{{ $roomType }}" {{ $type == $roomType ? 'selected' : '' }}>{{ $roomType }}
-                          </option>
+                        <option value="{{ $roomType }}" {{ $type == $roomType ? 'selected' : '' }}>{{ $roomType }}
+                        </option>
                         @endforeach
                       </select>
                     </div>
@@ -327,6 +327,14 @@
                           onclick="window.print()">
                           <i class="fas fa-print mr-2"></i> Cetak Laporan Ruangan
                         </button>
+                        <!-- Export icons: Excel and PDF (icon-only, keep same routes) -->
+                        <a href="{{ url('/reports/room/excel') }}" class="btn btn-success btn-sm" title="Export Excel" aria-label="Export Excel" style="padding: 8px 10px; margin-left: 10px;">
+                          <i class="fas fa-file-excel"></i>
+                        </a>
+                        </a>
+                        <a href="{{ url('/reports/room/pdf') }}" class="btn btn-danger btn-sm ml-2" title="Export PDF" aria-label="Export PDF" style="padding:8px 10px;">
+                          <i class="fas fa-file-pdf"></i>
+                        </a>
                       </div>
                     </div>
                   </div>
@@ -385,19 +393,19 @@
 
           <!-- Room by Type Statistics -->
           @if(count($statistics['by_type']) > 0)
-            <h5 class="mt-4 mb-3">Rooms by Type</h5>
-            <div class="row">
-              @foreach($statistics['by_type'] as $roomType => $count)
-                <div class="col-lg-3 col-md-6">
-                  <div class="stat-card bg-indigo">
-                    <div class="text-center">
-                      <h3>{{ $count }}</h3>
-                      <p>{{ $roomType }}</p>
-                    </div>
-                  </div>
+          <h5 class="mt-4 mb-3">Rooms by Type</h5>
+          <div class="row">
+            @foreach($statistics['by_type'] as $roomType => $count)
+            <div class="col-lg-3 col-md-6">
+              <div class="stat-card bg-indigo">
+                <div class="text-center">
+                  <h3>{{ $count }}</h3>
+                  <p>{{ $roomType }}</p>
                 </div>
-              @endforeach
+              </div>
             </div>
+            @endforeach
+          </div>
           @endif
 
           <!-- Data Table -->
@@ -422,26 +430,26 @@
                   <tbody>
                     @php $no = 1; @endphp
                     @forelse($roomData as $room)
-                      <tr>
-                        <td>{{ $no++ }}</td>
-                        <td>{{ $room->name }}</td>
-                        <td><span class="badge badge-info">{{ $room->capacity }} orang</span></td>
-                        <td><span class="badge badge-secondary">{{ $room->type }}</span></td>
-                        <td>{{ Str::limit($room->description, 50) }}</td>
-                        <td>
-                          @if($room->status == 'available')
-                            <span class="badge badge-success">Available</span>
-                          @elseif($room->status == 'booked')
-                            <span class="badge badge-warning">Booked</span>
-                          @else
-                            <span class="badge badge-danger">{{ ucfirst($room->status) }}</span>
-                          @endif
-                        </td>
-                      </tr>
+                    <tr>
+                      <td>{{ $no++ }}</td>
+                      <td>{{ $room->name }}</td>
+                      <td><span class="badge badge-info">{{ $room->capacity }} orang</span></td>
+                      <td><span class="badge badge-secondary">{{ $room->type }}</span></td>
+                      <td>{{ Str::limit($room->description, 50) }}</td>
+                      <td>
+                        @if($room->status == 'available')
+                        <span class="badge badge-success">Available</span>
+                        @elseif($room->status == 'booked')
+                        <span class="badge badge-warning">Booked</span>
+                        @else
+                        <span class="badge badge-danger">{{ ucfirst($room->status) }}</span>
+                        @endif
+                      </td>
+                    </tr>
                     @empty
-                      <tr>
-                        <td colspan="6" class="text-center">Tidak ada data ruangan</td>
-                      </tr>
+                    <tr>
+                      <td colspan="6" class="text-center">Tidak ada data ruangan</td>
+                    </tr>
                     @endforelse
                   </tbody>
                 </table>
@@ -467,7 +475,7 @@
   <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
 
   <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
       $('#roomTable').DataTables({
         "language": {
           "url": "//cdn.datatables.net/plug-ins/1.13.4/i18n/id.json"

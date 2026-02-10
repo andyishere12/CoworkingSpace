@@ -165,7 +165,7 @@
         </li>
         <li class="nav-item">
           <a href="#" class="nav-link">
-            <i class="fas fa-users"></i> <span class="badge badge-danger">9</span> Active
+            <i class="fas fa-users"></i> <span class="badge badge-danger">{{ $statistics['active_members'] ?? 0 }}</span> Active
           </a>
         </li>
         <li class="nav-item">
@@ -339,6 +339,17 @@
                 <button type="button" class="btn btn-success btn-print shadow-sm ml-auto" onclick="window.print()">
                   <i class="fas fa-print mr-2"></i> Cetak Report
                 </button>
+                <!-- Export icons: Excel and PDF (icon-only, keep same routes) -->
+                <a href="{{ url('/reports/event/excel') }}" class="btn btn-success btn-sm" title="Export Excel" aria-label="Export Excel" style="padding: 8px 10px; margin-left: 10px;">
+                  <i class="fas fa-file-excel"></i>
+                </a>
+                <a href="{{ url('/reports/event/pdf') }}?start_date={{ $startDate }}&end_date={{ $endDate }}&status={{ $status }}"
+                  class="btn btn-danger btn-sm ml-2"
+                  title="Export PDF"
+                  aria-label="Export PDF"
+                  style="padding:8px 10px;">
+                  <i class="fas fa-file-pdf"></i>
+                </a>
               </div>
             </div>
           </div>
@@ -451,30 +462,30 @@
                   <tbody>
                     @php $no = 1; @endphp
                     @forelse($eventData as $event)
-                      <tr>
-                        <td>{{ $no++ }}</td>
-                        <td><strong>{{ $event->title }}</strong></td>
-                        <td>{{ Str::limit($event->description, 50) }}</td>
-                        <td>{{ \Carbon\Carbon::parse($event->start_date)->format('d M Y') }}</td>
-                        <td>{{ \Carbon\Carbon::parse($event->end_date)->format('d M Y') }}</td>
-                        <td>
-                          <span class="badge badge-info">
-                            {{ \Carbon\Carbon::parse($event->start_date)->diffInDays(\Carbon\Carbon::parse($event->end_date)) + 1 }}
-                            hari
-                          </span>
-                        </td>
-                        <td>
-                          @if($event->status == 'active')
-                            <span class="badge badge-success">Active</span>
-                          @else
-                            <span class="badge badge-secondary">Inactive</span>
-                          @endif
-                        </td>
-                      </tr>
+                    <tr>
+                      <td>{{ $no++ }}</td>
+                      <td><strong>{{ $event->title }}</strong></td>
+                      <td>{{ Str::limit($event->description, 50) }}</td>
+                      <td>{{ \Carbon\Carbon::parse($event->start_date)->format('d M Y') }}</td>
+                      <td>{{ \Carbon\Carbon::parse($event->end_date)->format('d M Y') }}</td>
+                      <td>
+                        <span class="badge badge-info">
+                          {{ \Carbon\Carbon::parse($event->start_date)->diffInDays(\Carbon\Carbon::parse($event->end_date)) + 1 }}
+                          hari
+                        </span>
+                      </td>
+                      <td>
+                        @if($event->status == 'active')
+                        <span class="badge badge-success">Active</span>
+                        @else
+                        <span class="badge badge-secondary">Inactive</span>
+                        @endif
+                      </td>
+                    </tr>
                     @empty
-                      <tr>
-                        <td colspan="7" class="text-center">Tidak ada data event</td>
-                      </tr>
+                    <tr>
+                      <td colspan="7" class="text-center">Tidak ada data event</td>
+                    </tr>
                     @endforelse
                   </tbody>
                 </table>
@@ -500,7 +511,7 @@
   <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
 
   <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
       $('#eventTable').DataTable({
         "language": {
           "url": "//cdn.datatables.net/plug-ins/1.13.4/i18n/id.json"

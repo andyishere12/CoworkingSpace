@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,110 +9,134 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/css/adminlte.min.css">
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap4.min.css">
-  
+
   <style>
     body {
       font-family: 'Source Sans Pro', sans-serif;
       background-color: #f4f6f9;
     }
+
     .main-sidebar {
       background: linear-gradient(180deg, #6C3FB5 0%, #8B5FD6 100%) !important;
     }
+
     .brand-link {
       background: transparent !important;
-      border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
       padding: 20px 15px;
     }
+
     .brand-link .brand-text {
       color: white !important;
       font-weight: 600;
       font-size: 20px;
     }
+
     .user-panel {
-      border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
       text-align: center;
       display: block !important;
       padding: 25px 10px !important;
     }
+
     .user-panel .image {
       display: inline-block;
       float: none !important;
       margin: 0 auto 15px;
     }
+
     .user-panel .image img {
       width: 80px;
       height: 80px;
-      border: 3px solid rgba(255,255,255,0.3);
+      border: 3px solid rgba(255, 255, 255, 0.3);
     }
+
     .user-panel .info {
       display: block;
       padding: 0;
       margin: 0;
     }
+
     .user-panel .info a {
       color: white !important;
       font-size: 16px;
       font-weight: 500;
     }
-    .sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link {
-      color: rgba(255,255,255,0.8);
+
+    .sidebar-dark-primary .nav-sidebar>.nav-item>.nav-link {
+      color: rgba(255, 255, 255, 0.8);
       padding: 12px 15px;
       margin: 4px 10px;
       border-radius: 8px;
     }
-    .sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link:hover {
-      background-color: rgba(255,255,255,0.1);
+
+    .sidebar-dark-primary .nav-sidebar>.nav-item>.nav-link:hover {
+      background-color: rgba(255, 255, 255, 0.1);
       color: white;
     }
-    .sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link.active {
-      background-color: rgba(255,255,255,0.15);
+
+    .sidebar-dark-primary .nav-sidebar>.nav-item>.nav-link.active {
+      background-color: rgba(255, 255, 255, 0.15);
       color: white;
     }
+
     .stat-card {
       border-radius: 10px;
       padding: 20px;
       color: white;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
       margin-bottom: 20px;
     }
+
     .stat-card h3 {
       font-size: 32px;
       font-weight: 700;
       margin-bottom: 5px;
     }
+
     .stat-card p {
       font-size: 14px;
       opacity: 0.9;
       margin-bottom: 0;
     }
+
     .stat-card i {
       font-size: 36px;
       opacity: 0.5;
     }
+
     .bg-cyan {
       background: linear-gradient(135deg, #00BCD4 0%, #00ACC1 100%);
     }
+
     .bg-lime {
       background: linear-gradient(135deg, #8BC34A 0%, #7CB342 100%);
     }
+
     .bg-orange {
       background: linear-gradient(135deg, #FF9800 0%, #FF6F00 100%);
     }
+
     .bg-red {
       background: linear-gradient(135deg, #F44336 0%, #D32F2F 100%);
     }
+
     .bg-purple {
       background: linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%);
     }
+
     .bg-indigo {
       background: linear-gradient(135deg, #3F51B5 0%, #303F9F 100%);
     }
+
     .bg-teal {
       background: linear-gradient(135deg, #009688 0%, #00796B 100%);
     }
+
     .bg-pink {
       background: linear-gradient(135deg, #E91E63 0%, #C2185B 100%);
     }
+
     .table-cyan th {
       color: #06b6d4 !important;
       font-weight: 600;
@@ -143,7 +168,7 @@
         </li>
         <li class="nav-item">
           <a href="#" class="nav-link">
-            <i class="fas fa-users"></i> <span class="badge badge-danger">9</span> Active
+            <i class="fas fa-users"></i> <span class="badge badge-danger">{{ $statistics['active_members'] ?? 0 }}</span> Active
           </a>
         </li>
         <li class="nav-item">
@@ -327,9 +352,17 @@
                 </div>
               </form>
               <div class="mt-2">
-                 <button type="button" class="btn btn-success btn-print shadow-sm ml-auto" onclick="window.print()">
-                      <i class="fas fa-print mr-2"></i> Cetak Laporan Member
-                    </button>
+                <button type="button" class="btn btn-success btn-print shadow-sm ml-auto" onclick="window.print()">
+                  <i class="fas fa-print mr-2"></i> Cetak Laporan Member
+                </button>
+                <!-- Export icons: Excel and PDF (icon-only, keep same routes) -->
+                <a href="{{ url('/reports/member/excel') }}" class="btn btn-success btn-sm" title="Export Excel" aria-label="Export Excel" style="padding: 8px 10px; margin-left: 10px;">
+                  <i class="fas fa-file-excel"></i>
+                </a>
+                </a>
+                <a href="{{ url('/reports/member/pdf') }}" class="btn btn-danger btn-sm ml-2" title="Export PDF" aria-label="Export PDF" style="padding:8px 10px;">
+                  <i class="fas fa-file-pdf"></i>
+                </a>
               </div>
             </div>
           </div>
@@ -498,9 +531,9 @@
                       <td>{{ $member->institusi }}</td>
                       <td>
                         @if($member->status == 'Aktive')
-                          <span class="badge badge-success">Active</span>
+                        <span class="badge badge-success">Active</span>
                         @else
-                          <span class="badge badge-danger">Inactive</span>
+                        <span class="badge badge-danger">Inactive</span>
                         @endif
                       </td>
                       <td>{{ \Carbon\Carbon::parse($member->created_at)->format('d M Y') }}</td>
@@ -532,7 +565,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/js/adminlte.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
-  
+
   <script>
     $(document).ready(function() {
       $('#memberTable').DataTable({
@@ -543,4 +576,5 @@
     });
   </script>
 </body>
+
 </html>

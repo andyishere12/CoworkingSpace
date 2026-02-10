@@ -150,12 +150,12 @@
         <div class="user-panel mt-3 pb-3 mb-3">
           <div class="image">
             @if(Auth::user()->avatar)
-              <img src="{{ asset('storage/avatars/' . Auth::user()->avatar) }}" class="img-circle elevation-2"
-                alt="{{ Auth::user()->name }}">
+            <img src="{{ asset('storage/avatars/' . Auth::user()->avatar) }}" class="img-circle elevation-2"
+              alt="{{ Auth::user()->name }}">
             @else
-              <img
-                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name ?? 'Admin') }}&size=80&background=6C3FB5&color=fff"
-                class="img-circle elevation-2" alt="User Image">
+            <img
+              src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name ?? 'Admin') }}&size=80&background=6C3FB5&color=fff"
+              class="img-circle elevation-2" alt="User Image">
             @endif
           </div>
           <div class="info">
@@ -257,9 +257,16 @@
             <a href="{{ route('event.create') }}" class="btn btn-info mr-2">
               <i class="fas fa-plus mr-1"></i> Create Event
             </a>
-            <button type="button" class="btn btn-success btn-print shadow-sm ml" onclick="window.print()">
+            <button type="button" class="btn btn-success btn-print shadow-sm mr-2" onclick="window.print()">
               <i class="fas fa-print mr-2"></i> Cetak Event
             </button>
+            <!-- Export icons: Excel and PDF (icon-only, keep same routes) -->
+            <a href="{{ route('event.export.excel') }}" class="btn btn-success btn-sm" title="Export Excel" aria-label="Export Excel" style="padding:8px 10px;">
+              <i class="fas fa-file-excel"></i>
+            </a>
+            <a href="{{ route('event.export.pdf') }}" class="btn btn-danger btn-sm ml-2" title="Export PDF" aria-label="Export PDF" style="padding:8px 10px;">
+              <i class="fas fa-file-pdf"></i>
+            </a>
           </div>
 
           {{-- Card tabel --}}
@@ -285,47 +292,47 @@
 
                   <tbody>
                     @forelse ($events as $event)
-                      <tr data-id="{{ $event->id }}" data-title="{{ $event->title }}" data-status="{{ $event->status }}">
-                        <td>{{ $event->id ?? 'N/A' }}</td>
-                        <td>{{ $event->title ?? 'N/A' }}</td>
-                        <td>{{ $event->description ?? 'N/A' }}</td>
-                        <td>{{ $event->start_date ?? 'N/A' }}</td>
-                        <td>{{ $event->end_date ?? 'N/A' }}</td>
-                        <td>
-                          <span class="badge badge-success px-2 py-1">
-                            {{ $event->status ?? 'N/A' }}
-                          </span>
-                        </td>
-                        <td>
-                          <div class="btn-gap justify-content-center">
-                            {{-- Show --}}
-                            <a href="{{ route('event.show', $event->id) }}" class="btn btn-sm btn-info">
-                              Show
-                            </a>
+                    <tr data-id="{{ $event->id }}" data-title="{{ $event->title }}" data-status="{{ $event->status }}">
+                      <td>{{ $event->id ?? 'N/A' }}</td>
+                      <td>{{ $event->title ?? 'N/A' }}</td>
+                      <td>{{ $event->description ?? 'N/A' }}</td>
+                      <td>{{ $event->start_date ?? 'N/A' }}</td>
+                      <td>{{ $event->end_date ?? 'N/A' }}</td>
+                      <td>
+                        <span class="badge badge-success px-2 py-1">
+                          {{ $event->status ?? 'N/A' }}
+                        </span>
+                      </td>
+                      <td>
+                        <div class="btn-gap justify-content-center">
+                          {{-- Show --}}
+                          <a href="{{ route('event.show', $event->id) }}" class="btn btn-sm btn-info">
+                            Show
+                          </a>
 
-                            {{-- Edit --}}
-                            <a href="{{ route('event.edit', $event->id) }}" class="btn btn-sm btn-warning">
-                              Edit
-                            </a>
+                          {{-- Edit --}}
+                          <a href="{{ route('event.edit', $event->id) }}" class="btn btn-sm btn-warning">
+                            Edit
+                          </a>
 
-                            {{-- Hapus --}}
-                            <form action="{{ route('event.destroy', $event->id) }}" method="POST"
-                              onsubmit="return confirm('Hapus data?')" style="display: inline;">
-                              @csrf
-                              @method('DELETE')
-                              <button class="btn btn-sm btn-danger" type="submit">
-                                Hapus
-                              </button>
-                            </form>
-                          </div>
-                        </td>
-                      </tr>
+                          {{-- Hapus --}}
+                          <form action="{{ route('event.destroy', $event->id) }}" method="POST"
+                            onsubmit="return confirm('Hapus data?')" style="display: inline;">
+                            @csrf
+                            @method('DELETE')
+                            <button class="btn btn-sm btn-danger" type="submit">
+                              Hapus
+                            </button>
+                          </form>
+                        </div>
+                      </td>
+                    </tr>
                     @empty
-                      <tr>
-                        <td colspan="7" class="text-center">
-                          Tidak ada data event.
-                        </td>
-                      </tr>
+                    <tr>
+                      <td colspan="7" class="text-center">
+                        Tidak ada data event.
+                      </td>
+                    </tr>
                     @endforelse
                   </tbody>
                 </table>

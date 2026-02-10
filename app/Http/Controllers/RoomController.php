@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Room;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\RoomExport;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class RoomController extends Controller
 {
@@ -74,5 +77,18 @@ class RoomController extends Controller
     {
         $room->delete();
         return redirect()->route('room.index')->with('success', 'Room dihapus!');
+    }
+    public function exportExcel()
+    {
+        return Excel::download(new RoomExport, 'DATA RUANGAN.xlsx');
+    }
+    public function exportPdf()
+    {
+        $rooms = Room::all();
+
+        $pdf = Pdf::loadView('room.pdf', compact('rooms'))
+            ->setPaper('a4', 'landscape');
+
+        return $pdf->download('DATA RUANGAN.pdf');
     }
 }

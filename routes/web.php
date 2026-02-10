@@ -32,11 +32,11 @@ Route::get('/', function () {
     if (!Auth::check()) {
         return redirect()->route('login');
     }
-    
+
     if (auth::user()->role === 'manager') {
         return redirect()->route('manager.dashboard');
     }
-    
+
     return redirect()->route('dashboard'); // Diarahkan ke admin dashboard
 });
 /*
@@ -69,7 +69,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('reservasi', ReservasiController::class);
     Route::resource('room', RoomController::class);
     Route::resource('event', EventController::class);
- 
+
     // Scan
     Route::get('/scanner', [ScanController::class, 'index'])->name('scanner');
     Route::get('/scan', [ScanController::class, 'index'])->name('scan');
@@ -78,8 +78,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/manual-checkout', [ScanController::class, 'manualCheckout'])->name('scan.manual.checkout');
     Route::post('/manual-checkin', [ScanController::class, 'manualCheckin'])->name('scan.manual.checkin');
     Route::get('/search-members', [ScanController::class, 'searchMembers'])->name('scan.search.members');
-    Route::get('/active-members', [ScanController::class, 'getActiveMembers'])->name('scan.active.members'); 
-    
+    Route::get('/active-members', [ScanController::class, 'getActiveMembers'])->name('scan.active.members');
+
     // Operational Hours
     Route::prefix('operational-hours')->name('operational-hours.')->group(function () {
         Route::get('/', [OperationalHoursController::class, 'index'])->name('index');
@@ -102,43 +102,72 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
     Route::post('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
+
+    // Export Members to Excel
+    Route::get('/members/export/excel', [DataMemberController::class, 'exportExcel'])
+        ->name('members.export.excel');
+    Route::get('/reservasi/export/excel', [ReservasiController::class, 'exportExcel'])
+        ->name('reservasi.export.excel');
+    Route::get('/room/export/excel', [RoomController::class, 'exportExcel'])
+        ->name('room.export.excel');
+    Route::get('/event/export/excel', [EventController::class, 'exportExcel'])
+        ->name('event.export.excel');
+
+    // Export Members to PDF
+    Route::get('/members/export/pdf', [DataMemberController::class, 'exportPdf'])
+        ->name('members.export.pdf');
+    Route::get('/reservasi/export/pdf', [ReservasiController::class, 'exportPdf'])
+        ->name('reservasi.export.pdf');
+    Route::get('/room/export/pdf', [RoomController::class, 'exportPdf'])
+        ->name('room.export.pdf');
+    Route::get('/event/export/pdf', [EventController::class, 'exportPdf'])
+        ->name('event.export.pdf');
+
+    // Detailed Report Routes
+    Route::get('/reports/member/excel', [ReportController::class, 'exportMembershipExcel']);
+    Route::get('/reports/member/pdf', [ReportController::class, 'memberPdf']);
+
+    Route::get('/reports/room/excel', [ReportController::class, 'exportRoomExcel']);
+    Route::get('/reports/room/pdf', [ReportController::class, 'exportRoomPdf']);
+
+    Route::get('/reports/event/excel', [ReportController::class, 'exportEventExcel']);
+    Route::get('/reports/event/pdf', [ReportController::class, 'exportEventPdf']);
 });
 
 /*
-|--------------------------------------------------------------------------
 | ✅ NEW: Manager Routes (Protected)
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:manager'])->prefix('manager')->name('manager.')->group(function () {
-    
+
     // Manager Dashboard
     Route::get('/dashboard', [ManagerDashboardController::class, 'index'])->name('dashboard');
-    
+
     // Analytics with AI insights
     Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics');
-    
+
     // Members - Read Only
     Route::get('/members', [DataMemberController::class, 'index'])->name('members.index');
     Route::get('/members/{id}', [DataMemberController::class, 'show'])->name('members.show');
-    
+
     // Event Approval
     Route::get('/event-approval', [EventApprovalController::class, 'index'])->name('event-approval.index');
     Route::post('/event-approval/{id}/approve', [EventApprovalController::class, 'approve'])->name('event-approval.approve');
     Route::post('/event-approval/{id}/reject', [EventApprovalController::class, 'reject'])->name('event-approval.reject');
-    
+
     // Reservation Approval
     Route::get('/reservation-approval', [ReservationApprovalController::class, 'index'])->name('reservation-approval.index');
     Route::post('/reservation-approval/{id}/approve', [ReservationApprovalController::class, 'approve'])->name('reservation-approval.approve');
     Route::post('/reservation-approval/{id}/reject', [ReservationApprovalController::class, 'reject'])->name('reservation-approval.reject');
-    
+
     // User Management
     Route::resource('users', UserManagementController::class);
-    
+
     // Settings
-    Route::get('/settings', function() {
+    Route::get('/settings', function () {
         return view('manager.settings');
     })->name('settings');
-    
+
     // Profile
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');

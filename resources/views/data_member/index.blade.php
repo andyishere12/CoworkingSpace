@@ -389,12 +389,12 @@
         <div class="user-panel mt-3 pb-3 mb-3">
           <div class="image">
             @if(Auth::user()->avatar)
-              <img src="{{ asset('storage/avatars/' . Auth::user()->avatar) }}" class="img-circle elevation-2"
-                alt="{{ Auth::user()->name }}">
+            <img src="{{ asset('storage/avatars/' . Auth::user()->avatar) }}" class="img-circle elevation-2"
+              alt="{{ Auth::user()->name }}">
             @else
-              <img
-                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name ?? 'Admin') }}&size=80&background=6C3FB5&color=fff"
-                class="img-circle elevation-2" alt="User Image">
+            <img
+              src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name ?? 'Admin') }}&size=80&background=6C3FB5&color=fff"
+              class="img-circle elevation-2" alt="User Image">
             @endif
           </div>
           <div class="info">
@@ -508,15 +508,23 @@
                   <button type="button" class="btn btn-success btn-print shadow-sm ml- mr-2" onclick="window.print()">
                     <i class="fas fa-print mr-2"></i> Cetak Data Member
                   </button>
+
+                  <!-- Export icons: Excel and PDF (icon-only, keep same routes) -->
+                  <a href="{{ route('members.export.excel') }}" class="btn btn-success btn-sm" title="Export Excel" aria-label="Export Excel" style="padding:8px 10px;">
+                    <i class="fas fa-file-excel"></i>
+                  </a>
+                  <a href="{{ route('members.export.pdf') }}" class="btn btn-danger btn-sm ml-2" title="Export PDF" aria-label="Export PDF" style="padding:8px 10px;">
+                    <i class="fas fa-file-pdf"></i>
+                  </a>
                 </div>
               </div>
             </div>
             <div class="card-body">
               @if(session('success'))
-                <div class="alert alert-success alert-dismissible fade show">
-                  {{ session('success') }}
-                  <button type="button" class="close" data-dismiss="alert">&times;</button>
-                </div>
+              <div class="alert alert-success alert-dismissible fade show">
+                {{ session('success') }}
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+              </div>
               @endif
 
               <p class="text-muted">Total {{ count($allmember) }} items.</p>
@@ -536,44 +544,44 @@
 
                   <tbody id="membersTable">
                     @foreach ($allmember as $r)
-                      <tr data-id="{{ $r->id }}" data-nama="{{ $r->nama }}" data-type="{{ $r->type }}"
-                        data-aktivitas="{{ $r->aktivitas }}" data-status="{{ $r->status }}">
-                        <td>{{ $r->id }}</td>
-                        <td>{{ $r->nama }}</td>
-                        <td>{{ $r->type }}</td>
-                        <td>{{ $r->aktivitas }}</td>
-                        <td>
-                          <span class="badge badge-success px-2 py-1">
-                            {{ $r->status }}
-                          </span>
-                        </td>
-                        <td>
-                          <div class="btn-gap justify-content-center">
-                            <!-- button barcode -->
-                            <button class="btn btn-sm btn-secondary btn-barcode" data-id="{{ $r->id }}"
-                              data-foto="{{ asset('uploads/foto/' . $r->foto) }}">
-                              <i class="fas fa-qrcode"></i>
-                            </button>
-                            {{-- Tombol Detail (data lengkap) --}}
-                            <button class="btn btn-sm btn-info btn-detail" data-id="{{ $r->id }}">
-                              Detail
-                            </button>
+                    <tr data-id="{{ $r->id }}" data-nama="{{ $r->nama }}" data-type="{{ $r->type }}"
+                      data-aktivitas="{{ $r->aktivitas }}" data-status="{{ $r->status }}">
+                      <td>{{ $r->id }}</td>
+                      <td>{{ $r->nama }}</td>
+                      <td>{{ $r->type }}</td>
+                      <td>{{ $r->aktivitas }}</td>
+                      <td>
+                        <span class="badge badge-success px-2 py-1">
+                          {{ $r->status }}
+                        </span>
+                      </td>
+                      <td>
+                        <div class="btn-gap justify-content-center">
+                          <!-- button barcode -->
+                          <button class="btn btn-sm btn-secondary btn-barcode" data-id="{{ $r->id }}"
+                            data-foto="{{ asset('uploads/foto/' . $r->foto) }}">
+                            <i class="fas fa-qrcode"></i>
+                          </button>
+                          {{-- Tombol Detail (data lengkap) --}}
+                          <button class="btn btn-sm btn-info btn-detail" data-id="{{ $r->id }}">
+                            Detail
+                          </button>
 
-                            {{-- Tombol Edit --}}
-                            <a href="{{ route('data_member.edit', $r->id) }}" class="btn btn-sm btn-warning">
-                              Edit
-                            </a>
+                          {{-- Tombol Edit --}}
+                          <a href="{{ route('data_member.edit', $r->id) }}" class="btn btn-sm btn-warning">
+                            Edit
+                          </a>
 
-                            {{-- Hapus --}}
-                            <form action="{{ route('data_member.destroy', $r->id) }}" method="POST"
-                              onsubmit="return confirm('Hapus data?')" style="display: inline;">
-                              @csrf
-                              @method('DELETE')
-                              <button class="btn btn-sm btn-danger" type="submit">Hapus</button>
-                            </form>
-                          </div>
-                        </td>
-                      </tr>
+                          {{-- Hapus --}}
+                          <form action="{{ route('data_member.destroy', $r->id) }}" method="POST"
+                            onsubmit="return confirm('Hapus data?')" style="display: inline;">
+                            @csrf
+                            @method('DELETE')
+                            <button class="btn btn-sm btn-danger" type="submit">Hapus</button>
+                          </form>
+                        </div>
+                      </td>
+                    </tr>
                     @endforeach
                   </tbody>
                 </table>
@@ -747,20 +755,22 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <script>
-    // Tombol Download
-    $('#btnDownload').click(function () {
+    // Tombol Download (nama file disesuaikan dengan nama member)
+    $('#btnDownload').click(function() {
       const modalBody = document.querySelector('#detailModal .modal-body');
       html2canvas(modalBody, {
         scale: 2
       }).then(canvas => {
         const link = document.createElement('a');
-        link.download = 'member_detail.png';
+        const rawName = (document.querySelector('#modalNama') && document.querySelector('#modalNama').textContent) ? document.querySelector('#modalNama').textContent.trim() : 'member';
+        const safeName = rawName.replace(/[^a-z0-9\-_]/gi, '_');
+        link.download = `${safeName} Member Card.png`;
         link.href = canvas.toDataURL("image/png");
         link.click();
       });
     });
 
-    $(document).on('click', '.btn-barcode', function () {
+    $(document).on('click', '.btn-barcode', function() {
       var row = $(this).closest('tr');
       var memberId = row.data('id');
       var nama = row.data('nama');
@@ -790,7 +800,7 @@
     });
 
     // Real-time Search Functionality
-    $(document).ready(function () {
+    $(document).ready(function() {
       let searchTimeout;
       let allMembers = []; // Untuk menyimpan semua data member
 
@@ -800,11 +810,11 @@
           url: "{{ route('data_member.index') }}",
           method: 'GET',
           dataType: 'json',
-          success: function (data) {
+          success: function(data) {
             // Simpan data member
             allMembers = data;
           },
-          error: function (xhr) {
+          error: function(xhr) {
             console.error('Error loading members:', xhr);
           }
         });
@@ -814,7 +824,7 @@
       loadAllMembers();
 
       // Real-time search
-      $('#searchInput').on('input', function () {
+      $('#searchInput').on('input', function() {
         clearTimeout(searchTimeout);
         const searchTerm = $(this).val().toLowerCase();
 
@@ -823,14 +833,14 @@
           return;
         }
 
-        searchTimeout = setTimeout(function () {
+        searchTimeout = setTimeout(function() {
           $.ajax({
             url: "{{ route('data_member.index') }}",
             method: 'GET',
             data: {
               search: searchTerm
             },
-            success: function (response) {
+            success: function(response) {
               const members = response;
               const resultsContainer = $('#searchResults');
               resultsContainer.empty();
@@ -838,7 +848,7 @@
               if (members.length === 0) {
                 resultsContainer.append('<div class="search-result-item">No results found</div>');
               } else {
-                members.slice(0, 10).forEach(function (member) {
+                members.slice(0, 10).forEach(function(member) {
                   const highlightedName = highlightText(member.nama, searchTerm);
                   const item = $(`
                     <div class="search-result-item" data-id="${member.id}">
@@ -852,7 +862,7 @@
 
               resultsContainer.show();
             },
-            error: function (xhr) {
+            error: function(xhr) {
               console.error('Error searching:', xhr);
             }
           });
@@ -867,7 +877,7 @@
       }
 
       // When clicking on a search result
-      $(document).on('click', '.search-result-item', function () {
+      $(document).on('click', '.search-result-item', function() {
         const memberId = $(this).data('id');
         const searchTerm = $('#searchInput').val();
 
@@ -887,14 +897,14 @@
       });
 
       // Hide search results when clicking outside
-      $(document).on('click', function (e) {
+      $(document).on('click', function(e) {
         if (!$(e.target).closest('.search-container').length) {
           $('#searchResults').hide();
         }
       });
 
       // Client-side filtering for instant feedback
-      $('#searchInput').on('keyup', function () {
+      $('#searchInput').on('keyup', function() {
         const searchTerm = $(this).val().toLowerCase();
 
         if (searchTerm.length === 0) {
@@ -906,7 +916,7 @@
 
         // Filter rows
         let visibleCount = 0;
-        $('#membersTable tr').each(function () {
+        $('#membersTable tr').each(function() {
           const row = $(this);
           const nama = row.data('nama').toLowerCase();
           const type = row.data('type').toLowerCase();
@@ -929,7 +939,7 @@
     });
 
     // Event handler untuk tombol detail (data lengkap)
-    $(document).on('click', '.btn-detail', function () {
+    $(document).on('click', '.btn-detail', function() {
       var memberId = $(this).data('id');
 
       // Mengambil data member via AJAX
@@ -939,7 +949,7 @@
         headers: {
           'Accept': 'application/json'
         },
-        success: function (response) {
+        success: function(response) {
           // Isi data ke dalam modal detail
           $('#detailFoto').attr('src', "{{ asset('uploads/foto') }}/" + response.foto);
           $('#detailNama').text(response.nama);
@@ -965,14 +975,12 @@
 
           $('#detailMemberModal').modal('show');
         },
-        error: function (xhr) {
+        error: function(xhr) {
           console.error('Error:', xhr);
           alert('Gagal memuat data member.');
         }
       });
     });
-
-
   </script>
 </body>
 

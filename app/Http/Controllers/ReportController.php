@@ -9,6 +9,12 @@ use App\Models\Event;
 use App\Models\Reservasi;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use App\Exports\ReportMemberExport;
+use App\Exports\ReportRoomExport;
+use App\Exports\ReportEventExport;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
+use SebastianBergmann\CodeCoverage\Report\Xml\Report;
 
 class ReportController extends Controller
 {
@@ -45,8 +51,8 @@ class ReportController extends Controller
 
         $statistics = [
             'total_members' => DataMember::count(),
-            'active_members' => DataMember::where('status', 'Aktive')->count(),
-            'inactive_members' => DataMember::where('status', 'Inactive')->count(),
+            'active_members' => DataMember::where('status', 'aktif')->count(),
+            'inactive_members' => DataMember::where('status', '!=', 'aktif')->count(),
             'member_count' => DataMember::where('type', 'Member')->count(),
             'mentor_count' => DataMember::where('type', 'Mentor')->count(),
             'oficial_count' => DataMember::where('type', 'Oficial')->count(),
@@ -141,21 +147,173 @@ class ReportController extends Controller
         return view('reports.event', compact('eventData', 'statistics', 'startDate', 'endDate', 'status'));
     }
 
-    // ==========================================
+    // =================
     // EXPORT FUNCTIONS
-    // ==========================================
-    public function exportMembership(Request $request)
+    // =================
+
+    // ===== MEMBER =====
+    public function exportMembershipExcel(Request $request)
     {
-        return response()->json(['message' => 'Export membership report']);
+        return Excel::download(new ReportMemberExport, 'LAPORAN MEMBER.xlsx');
     }
 
-    public function exportRoom(Request $request)
+    public function memberPdf(Request $request)
     {
-        return response()->json(['message' => 'Export room report']);
+        $table = 'data_members';
+
+        // Data utama
+        $members = DB::table($table)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Ringkasan
+        $totalMember = DB::table($table)->count();
+
+        $aktif = DB::table($table)
+            ->where('status', 'aktif')
+            ->count();
+
+        $nonAktif = DB::table($table)
+            ->where('status', '!=', 'aktif')
+            ->orWhereNull('status')
+            ->count();
+
+        // Statistik tipe
+        $tipeMember = DB::table($table)
+            ->select('type', DB::raw('COUNT(*) as jumlah'))
+            ->groupBy('type')
+            ->get();
+
+        // Statistik aktivitas
+        $aktivitasMember = DB::table($table)
+            ->select('aktivitas', DB::raw('COUNT(*) as jumlah'))
+            ->groupBy('aktivitas')
+            ->get();
+
+        $pdf = Pdf::loadView('reports.member_pdf', compact(
+            'members',
+            'totalMember',
+            'aktif',
+            'nonAktif',
+            'tipeMember',
+            'aktivitasMember'
+        ));
+
+        return $pdf->download('LAPORAN MEMBER.pdf');
     }
 
-    public function exportEvent(Request $request)
+
+    // ===== ROOM =====
+    public function exportRoomExcel(Request $request)
     {
-        return response()->json(['message' => 'Export event report']);
+        return Excel::download(new ReportRoomExport, 'LAPORAN RUANGAN.xlsx');
+    }
+
+    public function exportRoomPdf(Request $request)
+    {
+        // Ambil semua ruangan
+        $rooms = Room::orderBy('name')->get();
+
+        // Hitung statistik
+        $totalRooms = Room::count();
+        $availableRooms = Room::where('status', 'available')->count();
+        $notAvailableRooms = $totalRooms - $availableRooms;
+
+        // Statistik tipe ruangan
+        $typeStats = Room::select('type', DB::raw('COUNT(*) as jumlah'))
+            ->groupBy('type')
+            ->get();
+
+        // Ringkasan reservasi per ruangan
+        $reservationSummary = Reservasi::select(
+            'ruangan',
+            DB::raw('COUNT(*) as total_reservasi'),
+            DB::raw('MAX(status) as status_terakhir')
+        )
+            ->groupBy('ruangan')
+            ->orderBy('total_reservasi', 'desc')
+            ->get();
+
+        // Statistik status reservasi
+        $statusStats = Reservasi::select('status', DB::raw('COUNT(*) as jumlah'))
+            ->groupBy('status')
+            ->get();
+
+        // **PERBAIKAN DI SINI**: Buat array asosiatif untuk memudahkan pencarian
+        $reservationsCount = [];
+        foreach ($reservationSummary as $reservation) {
+            $reservationsCount[strtolower(trim($reservation->ruangan))] = $reservation->total_reservasi;
+        }
+
+        $pdf = PDF::loadView('reports.room_pdf', compact(
+            'rooms',
+            'totalRooms',
+            'availableRooms',
+            'notAvailableRooms',
+            'typeStats',
+            'reservationSummary',
+            'statusStats',
+            'reservationsCount' // Ganti dengan array yang lebih mudah digunakan
+        ));
+
+        return $pdf->download('LAPORAN RUANGAN.pdf');
+    }
+
+
+    // ===== EVENT =====
+    public function exportEventExcel(Request $request)
+    {
+        return Excel::download(new ReportEventExport, 'LAPORAN EVENT.xlsx');
+    }
+
+    public function exportEventPdf(Request $request)
+    {
+        $startDate = $request->input('start_date', Carbon::now()->startOfMonth()->format('Y-m-d'));
+        $endDate = $request->input('end_date', Carbon::now()->endOfMonth()->format('Y-m-d'));
+        $status = $request->input('status', 'all');
+
+        // Query events
+        $query = Event::whereBetween('start_date', [$startDate, $endDate]);
+
+        if ($status != 'all') {
+            $query->where('status', $status);
+        }
+
+        $events = $query->orderBy('start_date', 'desc')->get();
+
+        // Statistik
+        $statistics = [
+            'total_events' => Event::whereBetween('start_date', [$startDate, $endDate])->count(),
+            'active_events' => Event::whereBetween('start_date', [$startDate, $endDate])
+                ->where('status', 'active')->count(),
+            'inactive_events' => Event::whereBetween('start_date', [$startDate, $endDate])
+                ->where('status', 'inactive')->count(),
+            'upcoming_events' => Event::where('start_date', '>', Carbon::now())
+                ->whereBetween('start_date', [$startDate, $endDate])->count(),
+            'ongoing_events' => Event::where('start_date', '<=', Carbon::now())
+                ->where('end_date', '>=', Carbon::now())
+                ->whereBetween('start_date', [$startDate, $endDate])->count(),
+            'completed_events' => Event::where('end_date', '<', Carbon::now())
+                ->whereBetween('start_date', [$startDate, $endDate])->count(),
+            'all_events_total' => Event::count(),
+        ];
+
+        // Pastikan logo ada di public/gambar/
+        // Logo bisa disimpan di: public/gambar/logo_coworking.png dan public/gambar/logo_dinas.jpeg
+
+        $imagePath = public_path('gambar');
+
+        $pdf = PDF::loadView('reports.event_pdf', compact('events', 'statistics', 'startDate', 'endDate', 'imagePath'));
+
+        // Optional: Atur opsi PDF
+        $pdf->setPaper('A4', 'portrait');
+        $pdf->setOptions([
+            'defaultFont' => 'sans-serif',
+            'isHtml5ParserEnabled' => true,
+            'isRemoteEnabled' => true,
+            'chroot' => public_path(),
+        ]);
+
+        return $pdf->download('LAPORAN EVENT   ' . date('d-m-Y') . '.pdf');
     }
 }

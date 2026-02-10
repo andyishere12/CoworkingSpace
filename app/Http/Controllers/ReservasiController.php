@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Reservasi;
 use App\Models\DataMember;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\ReservasiExport;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 class ReservasiController extends Controller
 {
@@ -102,4 +106,18 @@ class ReservasiController extends Controller
         $reservasi->delete();
         return redirect()->route('reservasi.index')->with('success', 'Reservasi dihapus!');
     }
+    public function exportExcel()
+{
+    return Excel::download(new ReservasiExport, 'DATA RESERVASI.xlsx');
+}
+public function exportPdf()
+{
+    $reservasi = Reservasi::all();
+
+    $pdf = Pdf::loadView('reservasi.pdf', compact('reservasi'))
+              ->setPaper('a4', 'landscape');
+
+    return $pdf->download('DATA RESERVASI.pdf');
+}
+
 }

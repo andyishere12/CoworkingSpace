@@ -1,9 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\DataMember;
 use Illuminate\Http\Request;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\MemberExport;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class DataMemberController extends Controller
 {
@@ -132,5 +136,19 @@ class DataMemberController extends Controller
     {
         $data_member->delete();
         return redirect()->route('data_member.index');
+    }
+    public function exportExcel()
+    {
+        return Excel::download(new MemberExport, 'DATA MEMBER.xlsx');
+    }
+
+    public function exportPdf()
+    {
+        $members = DataMember::all();
+
+        $pdf = Pdf::loadView('data_member.pdf', compact('members'))
+            ->setPaper('a4', 'landscape');
+
+        return $pdf->download('DATA MEMBER.pdf');
     }
 }

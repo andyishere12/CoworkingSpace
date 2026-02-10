@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\EventExport;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class EventController extends Controller
 {
@@ -75,4 +78,17 @@ class EventController extends Controller
         $event->delete();
         return redirect()->route('event.index')->with('success', 'Event dihapus!');
     }
+    public function exportExcel()
+{
+    return Excel::download(new EventExport, 'DATA EVENT.xlsx');
+}
+public function exportPdf()
+{
+    $events = Event::all();
+
+    $pdf = Pdf::loadView('event.pdf', compact('events'))
+              ->setPaper('a4', 'landscape');
+
+    return $pdf->download('DATA EVENT.pdf');
+}
 }

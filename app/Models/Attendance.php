@@ -9,13 +9,19 @@ class Attendance extends Model
     protected $table = 'hadir';
 
     protected $fillable = [
-        'data_member_id',
-        'check_in',
-        'check_out',
+        'member_id',
+        'tanggal',
+        'waktu_masuk',
+        'waktu_keluar',
+        'durasi',
     ];
 
     public function member()
     {
-        return $this->belongsTo(DataMember::class, 'data_member_id');
+        return $this->belongsTo(DataMember::class, 'member_id');
+    }
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class, 'member_id');
     }
 }

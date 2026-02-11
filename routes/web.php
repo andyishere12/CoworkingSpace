@@ -143,7 +143,7 @@ Route::middleware(['auth', 'role:manager'])->prefix('manager')->name('manager.')
     // Manager Dashboard
     Route::get('/dashboard', [ManagerDashboardController::class, 'index'])->name('dashboard');
 
-    // Analytics with AI insights
+     // Analytics dengan AI insights
     Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics');
 
     // Members - Read Only

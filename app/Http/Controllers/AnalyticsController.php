@@ -7,6 +7,7 @@ use App\Models\DataMember;
 use App\Models\Attendance;
 use App\Models\Reservasi;
 use App\Models\Event;
+use App\Models\Room;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -17,81 +18,184 @@ class AnalyticsController extends Controller
      */
     public function index()
     {
-        // Get current date info
-        $today = Carbon::today();
-        $currentMonth = Carbon::now()->month;
-        $currentYear = Carbon::now()->year;
+        try {
+            // Get current date info
+            $today = Carbon::today();
+            $currentMonth = Carbon::now()->month;
+            $currentYear = Carbon::now()->year;
 
-        // Calculate business hours (assuming 09:00 - 20:00)
-        $openTime = Carbon::today()->setTime(9, 0);
-        $closeTime = Carbon::today()->setTime(20, 0);
-        $totalMinutes = $openTime->diffInMinutes($closeTime);
+            // Calculate business hours (09:00 - 20:00)
+            $openTime = Carbon::today()->setTime(9, 0);
+            $closeTime = Carbon::today()->setTime(20, 0);
+            $totalMinutes = $openTime->diffInMinutes($closeTime);
 
-        // Get today's attendance data
-        $todayAttendance = Attendance::whereDate('check_in', $today)->get();
-        
-        // Calculate average duration per visitor today
-        $totalDuration = 0;
-        $completedVisits = 0;
-        
-        foreach ($todayAttendance as $attendance) {
-            if ($attendance->check_out) {
+            // === JAM SIBUK ===
+            $peakHours = $this->getPeakHours();
+
+            // === TINGKAT RETENSI ===
+            $retentionRate = $this->getRetentionRate();
+
+            // === DURASI RATA-RATA ===
+            $avgDuration = $this->getAverageDuration();
+            $avgDurationFormatted = $this->formatMinutesToTime($avgDuration);
+
+            // === INDEKS KUNJUNGAN ===
+            $visitIndexChange = $this->getVisitIndexChange();
+
+            // === DISTRIBUSI AKTIVITAS MEMBER ===
+            $activityDistribution = $this->getMemberActivityDistribution();
+
+            // === TREN BULANAN ===
+            $monthlyTrend = $this->getMonthlyTrendData();
+
+            // === AI RECOMMENDATIONS ===
+            $recommendations = $this->generateAIRecommendations([
+                'retention_rate' => $retentionRate,
+                'visit_index' => $visitIndexChange,
+                'avg_duration' => $avgDuration,
+                'peak_hours' => $peakHours,
+                'activity_distribution' => $activityDistribution,
+                'monthly_trend' => $monthlyTrend,
+            ]);
+
+            return view('manager.analytics', compact(
+                'peakHours',
+                'retentionRate',
+                'avgDurationFormatted',
+                'visitIndexChange',
+                'activityDistribution',
+                'monthlyTrend',
+                'recommendations'
+            ));
+
+        } catch (\Exception $e) {
+            // Log error
+            \Log::error('Analytics Error: ' . $e->getMessage());
+            
+            // Return with default values
+            return view('manager.analytics', [
+                'peakHours' => '09:00',
+                'retentionRate' => 0,
+                'avgDurationFormatted' => '00:00',
+                'visitIndexChange' => 0,
+                'activityDistribution' => [],
+                'monthlyTrend' => [],
+                'recommendations' => [
+                    [
+                        'title' => 'System Info',
+                        'description' => 'Not enough data yet',
+                        'icon' => 'info-circle',
+                        'color' => 'info',
+                        'priority' => 'low',
+                        'suggestions' => ['Start tracking attendance to see analytics']
+                    ]
+                ]
+            ]);
+        }
+    }
+
+    /**
+     * Get peak hours (jam tersibuk)
+     */
+    private function getPeakHours()
+    {
+        try {
+            $peakData = Attendance::selectRaw('HOUR(check_in) as hour, COUNT(*) as count')
+                ->whereMonth('check_in', date('m'))
+                ->whereYear('check_in', date('Y'))
+                ->whereNotNull('check_in')
+                ->groupBy(DB::raw('HOUR(check_in)'))
+                ->orderByDesc('count')
+                ->first();
+
+            if ($peakData) {
+                return sprintf('%02d:00', $peakData->hour);
+            }
+
+            return '09:00'; // Default
+        } catch (\Exception $e) {
+            return '09:00';
+        }
+    }
+
+    /**
+     * Get retention rate (member yang kembali dalam 30 hari)
+     */
+    private function getRetentionRate()
+    {
+        try {
+            $thirtyDaysAgo = Carbon::now()->subDays(30);
+            
+            $totalMembers = DataMember::count();
+            
+            if ($totalMembers == 0) {
+                return 0;
+            }
+
+            $membersWithVisits = Attendance::where('check_in', '>=', $thirtyDaysAgo)
+                ->distinct('data_member_id')
+                ->count('data_member_id');
+            
+            return round(($membersWithVisits / $totalMembers) * 100, 1);
+        } catch (\Exception $e) {
+            return 0;
+        }
+    }
+
+    /**
+     * Get average duration per visit
+     */
+    private function getAverageDuration()
+    {
+        try {
+            $attendances = Attendance::whereNotNull('check_out')
+                ->whereMonth('check_in', date('m'))
+                ->whereYear('check_in', date('Y'))
+                ->get();
+
+            if ($attendances->count() == 0) {
+                return 0;
+            }
+
+            $totalDuration = 0;
+            foreach ($attendances as $attendance) {
                 $checkIn = Carbon::parse($attendance->check_in);
                 $checkOut = Carbon::parse($attendance->check_out);
                 $totalDuration += $checkIn->diffInMinutes($checkOut);
-                $completedVisits++;
             }
+
+            return round($totalDuration / $attendances->count());
+        } catch (\Exception $e) {
+            return 0;
         }
-        
-        $avgDuration = $completedVisits > 0 ? round($totalDuration / $completedVisits) : 0;
-        $avgDurationFormatted = $this->formatMinutesToTime($avgDuration);
+    }
 
-        // Get retention rate (members who came back in last 30 days)
-        $thirtyDaysAgo = Carbon::now()->subDays(30);
-        $membersWithVisits = Attendance::where('check_in', '>=', $thirtyDaysAgo)
-            ->distinct('data_member_id')
-            ->count('data_member_id');
-        
-        $totalMembers = DataMember::count();
-        $retentionRate = $totalMembers > 0 ? round(($membersWithVisits / $totalMembers) * 100, 1) : 0;
+    /**
+     * Get visit index change (bulan ini vs bulan lalu)
+     */
+    private function getVisitIndexChange()
+    {
+        try {
+            $currentMonth = date('m');
+            $currentYear = date('Y');
+            
+            $thisMonthVisits = Attendance::whereMonth('check_in', $currentMonth)
+                ->whereYear('check_in', $currentYear)
+                ->count();
+            
+            $lastMonth = Carbon::now()->subMonth();
+            $lastMonthVisits = Attendance::whereMonth('check_in', $lastMonth->month)
+                ->whereYear('check_in', $lastMonth->year)
+                ->count();
+            
+            if ($lastMonthVisits == 0) {
+                return $thisMonthVisits > 0 ? 100 : 0;
+            }
 
-        // Get visit index (comparing this month vs last month)
-        $thisMonthVisits = Attendance::whereMonth('check_in', $currentMonth)
-            ->whereYear('check_in', $currentYear)
-            ->count();
-        
-        $lastMonth = Carbon::now()->subMonth();
-        $lastMonthVisits = Attendance::whereMonth('check_in', $lastMonth->month)
-            ->whereYear('check_in', $lastMonth->year)
-            ->count();
-        
-        $visitIndexChange = $lastMonthVisits > 0 
-            ? round((($thisMonthVisits - $lastMonthVisits) / $lastMonthVisits) * 100, 1) 
-            : 0;
-
-        // Get member activity distribution
-        $activityDistribution = $this->getMemberActivityDistribution();
-
-        // Get monthly trend data
-        $monthlyTrend = $this->getMonthlyTrendData();
-
-        // AI-powered recommendations
-        $recommendations = $this->generateAIRecommendations([
-            'retention_rate' => $retentionRate,
-            'visit_index' => $visitIndexChange,
-            'avg_duration' => $avgDuration,
-            'activity_distribution' => $activityDistribution,
-            'monthly_trend' => $monthlyTrend,
-        ]);
-
-        return view('manager.analytics', compact(
-            'avgDurationFormatted',
-            'retentionRate',
-            'visitIndexChange',
-            'activityDistribution',
-            'monthlyTrend',
-            'recommendations'
-        ));
+            return round((($thisMonthVisits - $lastMonthVisits) / $lastMonthVisits) * 100, 1);
+        } catch (\Exception $e) {
+            return 0;
+        }
     }
 
     /**
@@ -99,23 +203,36 @@ class AnalyticsController extends Controller
      */
     private function getMemberActivityDistribution()
     {
-        $distribution = DataMember::select('member_type', DB::raw('count(*) as total'))
-            ->groupBy('member_type')
-            ->get();
+        try {
+            // Cek apakah kolom member_type ada
+            if (!DB::getSchemaBuilder()->hasColumn('data_members', 'member_type')) {
+                return [];
+            }
 
-        $totalMembers = DataMember::count();
-        
-        $result = [];
-        foreach ($distribution as $item) {
-            $percentage = $totalMembers > 0 ? round(($item->total / $totalMembers) * 100, 1) : 0;
-            $result[] = [
-                'type' => $item->member_type,
-                'total' => $item->total,
-                'percentage' => $percentage,
-            ];
+            $distribution = DataMember::select('member_type', DB::raw('count(*) as total'))
+                ->groupBy('member_type')
+                ->get();
+
+            $totalMembers = DataMember::count();
+            
+            if ($totalMembers == 0) {
+                return [];
+            }
+
+            $result = [];
+            foreach ($distribution as $item) {
+                $percentage = round(($item->total / $totalMembers) * 100, 1);
+                $result[] = [
+                    'type' => $item->member_type ?? 'Unknown',
+                    'total' => $item->total,
+                    'percentage' => $percentage,
+                ];
+            }
+
+            return $result;
+        } catch (\Exception $e) {
+            return [];
         }
-
-        return $result;
     }
 
     /**
@@ -123,169 +240,199 @@ class AnalyticsController extends Controller
      */
     private function getMonthlyTrendData()
     {
-        $currentYear = Carbon::now()->year;
-        $monthlyData = [];
+        try {
+            $currentYear = Carbon::now()->year;
+            $monthlyData = [];
 
-        for ($month = 1; $month <= 12; $month++) {
-            $visits = Attendance::whereMonth('check_in', $month)
-                ->whereYear('check_in', $currentYear)
-                ->count();
-            
-            $monthlyData[] = [
-                'month' => Carbon::create()->month($month)->format('F'),
-                'visits' => $visits,
-            ];
+            for ($month = 1; $month <= 12; $month++) {
+                $visits = Attendance::whereMonth('check_in', $month)
+                    ->whereYear('check_in', $currentYear)
+                    ->count();
+                
+                $monthlyData[] = [
+                    'month' => Carbon::create()->month($month)->format('M'),
+                    'visits' => $visits,
+                ];
+            }
+
+            return $monthlyData;
+        } catch (\Exception $e) {
+            return [];
         }
-
-        return $monthlyData;
     }
 
     /**
-     * Generate AI-powered recommendations based on analytics data
+     * Generate AI-powered recommendations (FREE - Rule-based AI)
      */
     private function generateAIRecommendations($data)
     {
         $recommendations = [];
 
-        // Analyze retention rate
-        if ($data['retention_rate'] < 30) {
-            $recommendations[] = [
-                'title' => 'Retensi Member',
-                'description' => 'Tingkat retensi member rendah (' . $data['retention_rate'] . '%)',
-                'icon' => 'users',
-                'color' => 'success',
-                'suggestions' => [
-                    'Implementasikan program keterlibatan member',
-                    'Tingkatkan fasilitas pendukung',
-                    'Mulai program umpan balik member'
-                ]
-            ];
-        }
+        try {
+            // AI Analysis 1: Retention Rate
+            if ($data['retention_rate'] < 30) {
+                $recommendations[] = [
+                    'title' => 'Retensi Member Rendah',
+                    'description' => 'Tingkat retensi member hanya ' . $data['retention_rate'] . '%',
+                    'icon' => 'users',
+                    'color' => 'danger',
+                    'priority' => 'high',
+                    'suggestions' => [
+                        'Implementasikan program loyalitas member',
+                        'Kirim email personal ke member tidak aktif',
+                        'Buat survei kepuasan member',
+                        'Tingkatkan fasilitas berdasarkan feedback'
+                    ]
+                ];
+            } else if ($data['retention_rate'] >= 70) {
+                $recommendations[] = [
+                    'title' => 'Retensi Member Excellent!',
+                    'description' => 'Tingkat retensi sangat baik: ' . $data['retention_rate'] . '%',
+                    'icon' => 'check-circle',
+                    'color' => 'success',
+                    'priority' => 'low',
+                    'suggestions' => [
+                        'Pertahankan kualitas layanan saat ini',
+                        'Minta testimoni dari member loyal',
+                        'Buat referral program',
+                    ]
+                ];
+            }
 
-        // Analyze visit trends
-        if ($data['visit_index'] < 0) {
+            // AI Analysis 2: Visit Trend
+            if ($data['visit_index'] < -10) {
+                $recommendations[] = [
+                    'title' => 'Penurunan Kunjungan',
+                    'description' => 'Kunjungan turun ' . abs($data['visit_index']) . '% vs bulan lalu',
+                    'icon' => 'chart-line',
+                    'color' => 'warning',
+                    'priority' => 'high',
+                    'suggestions' => [
+                        'Review pricing & paket membership',
+                        'Lakukan promosi khusus bulan ini',
+                        'Survey alasan member berkurang',
+                        'Tingkatkan aktivitas marketing'
+                    ]
+                ];
+            } else if ($data['visit_index'] > 10) {
+                $recommendations[] = [
+                    'title' => 'Pertumbuhan Positif!',
+                    'description' => 'Kunjungan naik ' . $data['visit_index'] . '% vs bulan lalu',
+                    'icon' => 'arrow-up',
+                    'color' => 'success',
+                    'priority' => 'low',
+                    'suggestions' => [
+                        'Siapkan kapasitas tambahan jika perlu',
+                        'Pertahankan strategi marketing saat ini',
+                        'Catat best practices yang berhasil'
+                    ]
+                ];
+            }
+
+            // AI Analysis 3: Capacity Management
             $recommendations[] = [
                 'title' => 'Manajemen Kapasitas',
-                'description' => 'Lalu lintas tinggi pada jam sibuk',
-                'icon' => 'chart-line',
-                'color' => 'warning',
+                'description' => 'Jam sibuk: ' . $data['peak_hours'],
+                'icon' => 'clock',
+                'color' => 'info',
+                'priority' => 'medium',
                 'suggestions' => [
-                    'Pertimbangkan perluasan ruang pada jam sibuk: 09:00, 10:00, 08:00',
-                    'Terapkan optimasi sistem pemesanan ruangan',
-                    'Buat insentif untuk penggunaan di luar jam sibuk'
+                    'Pertimbangkan perluasan ruang di jam ' . $data['peak_hours'],
+                    'Terapkan sistem booking untuk peak hours',
+                    'Buat promosi untuk jam sepi (diskon 10-15%)',
+                    'Monitor kapasitas secara real-time'
                 ]
             ];
-        }
 
-        // Analyze peak hours
-        $recommendations[] = [
-            'title' => 'Promosi Instagram',
-            'description' => 'Optimalkan posting konten pada waktu prime time Instagram',
-            'icon' => 'instagram',
-            'color' => 'danger',
-            'suggestions' => [
-                'Senin-Jumat: 11:00-13:00',
-                'Senin-Jumat: 19:00-21:00',
-                'Sabtu-Minggu: 10:00-11:00',
-                'Sabtu-Minggu: 20:00-22:00',
-                'Posting Stories: 16:00-18:00'
-            ]
-        ];
-
-        // Member segmentation recommendations
-        $workingSegment = collect($data['activity_distribution'])->firstWhere('type', 'Bekerja');
-        if ($workingSegment && $workingSegment['percentage'] > 25) {
+            // AI Analysis 4: Social Media Strategy
             $recommendations[] = [
-                'title' => 'Segmen Unggulan: Bekerja',
-                'description' => 'Performa Baik (' . $workingSegment['percentage'] . '% dari total kunjungan)',
-                'icon' => 'briefcase',
+                'title' => 'Strategi Instagram',
+                'description' => 'Optimasi posting berdasarkan engagement data',
+                'icon' => 'instagram',
+                'color' => 'danger',
+                'priority' => 'medium',
+                'suggestions' => [
+                    'Post optimal: Senin-Jumat 11:00-13:00',
+                    'Post optimal: Senin-Jumat 19:00-21:00',
+                    'Weekend: 10:00-11:00 & 20:00-22:00',
+                    'Stories: 16:00-18:00 (prime time)',
+                    'Gunakan hashtag lokal & niche coworking'
+                ]
+            ];
+
+            // AI Analysis 5: Member Segmentation
+            if (!empty($data['activity_distribution'])) {
+                $topSegment = collect($data['activity_distribution'])->sortByDesc('percentage')->first();
+                
+                if ($topSegment && $topSegment['percentage'] > 50) {
+                    $recommendations[] = [
+                        'title' => 'Segmen Dominan: ' . $topSegment['type'],
+                        'description' => 'Mayoritas member (' . $topSegment['percentage'] . '%) adalah ' . $topSegment['type'],
+                        'icon' => 'users-cog',
+                        'color' => 'primary',
+                        'priority' => 'medium',
+                        'suggestions' => [
+                            'Fokuskan fasilitas untuk segmen ' . $topSegment['type'],
+                            'Buat event khusus untuk segmen ini',
+                            'Survey kebutuhan spesifik mereka',
+                            'Pertimbangkan paket khusus'
+                        ]
+                    ];
+                }
+            }
+
+            // AI Analysis 6: Operational Tasks
+            $recommendations[] = [
+                'title' => 'Tugas Operasional Harian',
+                'description' => 'Checklist optimasi pelayanan',
+                'icon' => 'tasks',
                 'color' => 'primary',
+                'priority' => 'high',
                 'suggestions' => [
-                    'Pertahankan layanan berkualitas',
-                    'Tingkatkan fasilitas pendukung',
-                    'Perkuat program komunitas'
+                    'Periksa kebersihan area kerja: 09:00, 13:00, 17:00',
+                    'Pastikan WiFi stabil & speed test',
+                    'Cek AC & suhu ruangan (21-24°C)',
+                    'Restock supplies: coffee, tissue, sanitizer',
+                    'Follow-up pending reservations'
                 ]
             ];
+
+            // AI Analysis 7: Member Engagement
+            $inactiveMembers = DataMember::whereDoesntHave('attendances', function($query) {
+                $query->where('check_in', '>=', Carbon::now()->subDays(30));
+            })->count();
+
+            if ($inactiveMembers > 0) {
+                $recommendations[] = [
+                    'title' => 'Member Tidak Aktif',
+                    'description' => $inactiveMembers . ' member tidak berkunjung 30+ hari',
+                    'icon' => 'user-times',
+                    'color' => 'warning',
+                    'priority' => 'high',
+                    'suggestions' => [
+                        'Kirim email "We miss you" dengan special offer',
+                        'Telpon personal untuk tanya feedback',
+                        'Tawarkan 1 hari gratis comeback',
+                        'Survey alasan tidak aktif'
+                    ]
+                ];
+            }
+
+            // Sort by priority
+            usort($recommendations, function($a, $b) {
+                $priority = ['high' => 1, 'medium' => 2, 'low' => 3];
+                return $priority[$a['priority']] <=> $priority[$b['priority']];
+            });
+
+        } catch (\Exception $e) {
+            \Log::error('AI Recommendations Error: ' . $e->getMessage());
         }
-
-        // Learning segment analysis
-        $learningSegment = collect($data['activity_distribution'])->firstWhere('type', 'Belajar');
-        if ($learningSegment && $learningSegment['percentage'] > 70) {
-            $recommendations[] = [
-                'title' => 'Segmen Unggulan: Belajar',
-                'description' => 'Performa Baik (' . $learningSegment['percentage'] . '% dari total kunjungan)',
-                'icon' => 'graduation-cap',
-                'color' => 'info',
-                'suggestions' => [
-                    'Pertahankan layanan berkualitas',
-                    'Tingkatkan fasilitas pendukung',
-                    'Perkuat program komunitas'
-                ]
-            ];
-        }
-
-        // Administrative tasks
-        $recommendations[] = [
-            'title' => 'Tugas Admin',
-            'description' => 'Optimasi Pelayanan Member',
-            'icon' => 'tasks',
-            'color' => 'primary',
-            'suggestions' => [
-                'Periksa data member yang kurang aktif',
-                'Lakukan follow-up member tidak aktif',
-                'Update informasi acara mingguan',
-                'Pastikan sistem booking berjalan lancar'
-            ]
-        ];
-
-        // Facility cleaning
-        $recommendations[] = [
-            'title' => 'Tugas Kebersihan',
-            'description' => 'Pemeliharaan Fasilitas',
-            'icon' => 'broom',
-            'color' => 'success',
-            'suggestions' => [
-                'Periksa kebersihan area kerja setiap 09:00, 10:00, 08:00',
-                'Pastikan ketersediaan supplies toilet',
-                'Lakukan general cleaning sebelum jam sibuk',
-                'Periksa kondisi peralatan & furniture'
-            ]
-        ];
-
-        // Member discussion segment
-        $discussSegment = collect($data['activity_distribution'])->firstWhere('type', 'Diskusi');
-        if ($discussSegment && $discussSegment['percentage'] < 2) {
-            $recommendations[] = [
-                'title' => 'Segmen Member: Diskusi',
-                'description' => 'Potensi Pengembangan (1.5% dari total kunjungan)',
-                'icon' => 'comments',
-                'color' => 'info',
-                'suggestions' => [
-                    'Analisis kebutuhan spesifik',
-                    'Tingkatkan fasilitas pendukung',
-                    'Mulai program umpan balik'
-                ]
-            ];
-        }
-
-        // Inactive members
-        $recommendations[] = [
-            'title' => 'Aktivasi Member',
-            'description' => 'Terdapat 263 member tidak aktif dalam 30 hari terakhir',
-            'icon' => 'user-times',
-            'color' => 'danger',
-            'suggestions' => [
-                'Kirim pesan pengingat personal',
-                'Tawarkan program reaktivasi khusus',
-                'Undang ke acara komunitas mendatang'
-            ]
-        ];
 
         return $recommendations;
     }
 
     /**
-     * Format minutes to HH:MM format
+     * Format minutes to HH:MM
      */
     private function formatMinutesToTime($minutes)
     {

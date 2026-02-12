@@ -2,6 +2,95 @@
 
 <head>
     <link rel="stylesheet" href={{ asset('css/stylecreate.css') }}>
+    <style>
+        /* Style untuk notifikasi pop-up */
+        .notification-container {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            z-index: 99999;
+            max-width: 350px;
+        }
+
+        .notification {
+            background: white;
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            border-left: 5px solid;
+            animation: slideIn 0.5s ease, fadeOut 0.5s ease 4.5s forwards;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .notification::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background: currentColor;
+            width: 100%;
+            animation: progress 5s linear forwards;
+        }
+
+        .notification.success {
+            border-left-color: #28a745;
+            color: #155724;
+            background-color: #d4edda;
+        }
+
+        .notification.error {
+            border-left-color: #dc3545;
+            color: #721c24;
+            background-color: #f8d7da;
+        }
+
+        .notification.warning {
+            border-left-color: #ffc107;
+            color: #856404;
+            background-color: #fff3cd;
+        }
+
+        .notification.info {
+            border-left-color: #17a2b8;
+            color: #0c5460;
+            background-color: #d1ecf1;
+        }
+
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        @keyframes progress {
+            from {
+                width: 100%;
+            }
+            to {
+                width: 0%;
+            }
+        }
+    </style>
 </head>
 <div class="content-wrapper">
 
@@ -145,10 +234,61 @@
 
     </section>
 </div>
+
+<!-- Container untuk notifikasi -->
+<div class="notification-container" id="notificationContainer"></div>
+
 @include('layouts.footer')
 <script>
 document.querySelector('.custom-file-input').addEventListener('change', function(e) {
     var fileName = e.target.files[0].name;
     e.target.nextElementSibling.innerText = fileName; 
+});
+
+function showNotification(message, type = 'success') {
+    const container = document.getElementById('notificationContainer');
+    if (!container) return;
+
+    // Icon dihapus, hanya teks
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.innerHTML = `
+        <div style="flex: 1;">
+            <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+                <strong>${type === 'success' ? 'Berhasil!' : 'Perhatian!'}</strong>
+            </div>
+            <div style="margin: 0;">${message}</div>
+        </div>
+    `;
+
+    container.appendChild(notification);
+
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.style.animation = 'fadeOut 0.5s ease forwards';
+            setTimeout(() => notification.remove(), 500);
+        }
+    }, 5000);
+
+    notification.addEventListener('click', () => {
+        notification.style.animation = 'fadeOut 0.5s ease forwards';
+        setTimeout(() => notification.remove(), 500);
+    });
+}
+</script>
+
+<div class="notification-container" id="notificationContainer" data-success-message="{{ session('success') }}" data-error-message="{{ $errors->first() }}"></div>
+
+<script>
+$(document).ready(function() {
+  const successMessage = $('#notificationContainer').data('success-message');
+  const errorMessage = $('#notificationContainer').data('error-message');
+  
+  if (successMessage) {
+    showNotification(successMessage, 'success');
+  }
+  if (errorMessage) {
+    showNotification(errorMessage, 'error');
+  }
 });
 </script>

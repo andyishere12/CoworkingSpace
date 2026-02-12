@@ -9,10 +9,8 @@
     href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/css/adminlte.min.css">
-  <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> -->
   <link rel="stylesheet" href="{{ asset('css/stylemodal.css') }}">
   <link rel="stylesheet" href="adminlte.min.css">
-
 
   <style>
     body {
@@ -41,15 +39,12 @@
       padding-left: 15px;
       padding-right: 15px;
       margin-left: 10px;
-
     }
 
     .user-panel .image {
       display: block !important;
       float: none !important;
-      /* Hapus float kiri bawaan AdminLTE */
       margin: 0 0 10px 0 !important;
-      /* Atur margin: bawah saja */
       padding: 0 !important;
     }
 
@@ -59,14 +54,12 @@
       border: 3px solid rgba(255, 255, 255, 0.3);
       display: block;
       margin: 0 auto;
-      /* Pastikan gambar di tengah */
     }
 
     .user-panel .info {
       display: block !important;
       width: 100% !important;
       padding: 0 !important;
-      /* Hapus padding kiri bawaan */
       margin: 0 !important;
       text-align: center !important;
     }
@@ -109,6 +102,68 @@
       display: flex;
       gap: 8px;
     }
+
+    /* Style untuk notifikasi pop-up - konsisten dengan reservasi */
+    .notification-container {
+      position: fixed;
+      top: 70px;
+      right: 20px;
+      z-index: 99999;
+      max-width: 350px;
+    }
+
+    .notification {
+      background: white;
+      border-radius: 10px;
+      padding: 15px 20px;
+      margin-bottom: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      border-left: 5px solid;
+      animation: slideIn 0.5s ease, fadeOut 0.5s ease 4.5s forwards;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .notification.success {
+      border-left-color: #28a745;
+      color: #155724;
+      background-color: #d4edda;
+    }
+
+    .notification.error {
+      border-left-color: #dc3545;
+      color: #721c24;
+      background-color: #f8d7da;
+    }
+
+    .notification.warning {
+      border-left-color: #ffc107;
+      color: #856404;
+      background-color: #fff3cd;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeOut {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+    }
   </style>
 </head>
 
@@ -134,8 +189,7 @@
         </li>
         <li class="nav-item">
           <a href="#" class="nav-link">
-            <i class="fas fa-users"></i> <span class="badge badge-danger">{{ $todayAttendance ?? 0 }}</span> Active
-            Today
+            <i class="fas fa-users"></i> <span class="badge badge-danger">{{ $todayAttendance ?? 0 }}</span> Active Today
           </a>
         </li>
         <li class="nav-item">
@@ -184,12 +238,6 @@
                 <p>Dashboard</p>
               </a>
             </li>
-            <!-- <li class="nav-item">
-              <a href="#" class="nav-link">
-                <i class="nav-icon fas fa-tasks"></i>
-                <p>Priority Task</p>
-              </a>
-            </li> -->
             <li class="nav-item">
               <a href="{{ route('attendance.index') }}" class="nav-link">
                 <i class="nav-icon fas fa-clock"></i>
@@ -273,7 +321,7 @@
               <i class="fas fa-print mr-2"></i> Cetak Room
             </button>
 
-            <!-- Export icons: Excel and PDF (icon-only, keep same routes) -->
+            <!-- Export icons: Excel and PDF -->
             <a href="{{ route('room.export.excel') }}" class="btn btn-success btn-sm" title="Export Excel" aria-label="Export Excel" style="padding:8px 10px;">
               <i class="fas fa-file-excel"></i>
             </a>
@@ -305,15 +353,18 @@
 
                   <tbody>
                     @forelse ($allrooms as $room)
-                    <tr data-id="{{ $room->id }}" data-name="{{ $room->name }}" data-capacity="{{ $room->capacity }}"
-                      data-type="{{ $room->type }}" data-status="{{ $room->status }}">
+                    <tr>
                       <td>{{ $room->id ?? 'N/A' }}</td>
                       <td>{{ $room->name ?? 'N/A' }}</td>
                       <td>{{ $room->capacity ?? 'N/A' }}</td>
                       <td>{{ $room->type ?? 'N/A' }}</td>
                       <td>{{ $room->description ?? 'N/A' }}</td>
                       <td>
-                        <span class="badge badge-success px-2 py-1">
+                        <span class="badge px-2 py-1 
+                          @if($room->status == 'available') badge-success
+                          @elseif($room->status == 'unavailable') badge-warning
+                          @elseif($room->status == 'maintenance') badge-danger
+                          @else badge-secondary @endif">
                           {{ $room->status ?? 'N/A' }}
                         </span>
                       </td>
@@ -323,12 +374,10 @@
                           <a href="{{ route('room.show', $room->id) }}" class="btn btn-sm btn-info">
                             Show
                           </a>
-
                           {{-- Edit --}}
                           <a href="{{ route('room.edit', $room->id) }}" class="btn btn-sm btn-warning">
                             Edit
                           </a>
-
                           {{-- Hapus --}}
                           <form action="{{ route('room.destroy', $room->id) }}" method="POST"
                             onsubmit="return confirm('Hapus data?')" style="display: inline;">
@@ -367,11 +416,51 @@
     </footer>
   </div>
 
+  {{-- Container untuk notifikasi pop-up --}}
+  <div class="notification-container" id="notificationContainer" data-success-message="{{ session('success') }}"></div>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script> -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/js/adminlte.min.js"></script>
   <script src="bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
 
+  <script>
+    function showNotification(message, type = 'success') {
+      const container = document.getElementById('notificationContainer');
+      if (!container) return;
+
+      const notification = document.createElement('div');
+      notification.className = `notification ${type}`;
+      notification.innerHTML = `
+            <div style="flex: 1;">
+                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+                    <strong>${type === 'success' ? 'Berhasil!' : type === 'error' ? 'Error!' : 'Perhatian!'}</strong>
+                </div>
+                <div style="margin: 0;">${message}</div>
+            </div>
+        `;
+
+      container.appendChild(notification);
+
+      setTimeout(() => {
+        if (notification.parentNode) {
+          notification.style.animation = 'fadeOut 0.5s ease forwards';
+          setTimeout(() => notification.remove(), 500);
+        }
+      }, 5000);
+
+      notification.addEventListener('click', () => {
+        notification.style.animation = 'fadeOut 0.5s ease forwards';
+        setTimeout(() => notification.remove(), 500);
+      });
+    }
+
+    $(document).ready(function() {
+      const successMessage = $('#notificationContainer').data('success-message');
+      if (successMessage) {
+        showNotification(successMessage, 'success');
+      }
+    });
+  </script>
 </body>
 
 </html>

@@ -336,6 +336,64 @@
         margin: 10px;
       }
     }
+
+    /* Style untuk notifikasi pop-up */
+    .notification-container {
+      position: fixed;
+      top: 70px;
+      /* Di bawah navbar */
+      right: 20px;
+      z-index: 99999;
+      max-width: 550px;
+    }
+
+    .notification {
+      background: white;
+      border-radius: 10px;
+      padding: 15px 20px;
+      margin-bottom: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      border-left: 5px solid;
+      animation: slideIn 0.5s ease, fadeOut 0.5s ease 4.5s forwards;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .notification.success {
+      border-left-color: #28a745;
+      color: #155724;
+      background-color: #d4edda;
+    }
+
+    .notification.error {
+      border-left-color: #dc3545;
+      color: #721c24;
+      background-color: #f8d7da;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeOut {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+
+      to {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+    }
   </style>
 </head>
 
@@ -520,12 +578,12 @@
               </div>
             </div>
             <div class="card-body">
-              @if(session('success'))
+              <!-- @if(session('success'))
               <div class="alert alert-success alert-dismissible fade show">
                 {{ session('success') }}
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
               </div>
-              @endif
+              @endif -->
 
               <p class="text-muted">Total {{ count($allmember) }} items.</p>
 
@@ -981,7 +1039,50 @@
         }
       });
     });
+        // Fungsi untuk menampilkan notifikasi
+   function showNotification(message, type = 'success') {
+    const container = document.getElementById('notificationContainer');
+    if (!container) return;
+
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.innerHTML = `
+        <div style="flex: 1;">
+            <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+                <strong>${type === 'success' ? 'Berhasil!' : 'Perhatian!'}</strong>
+            </div>
+            <div style="margin: 0;">${message}</div>
+        </div>
+    `;
+
+    container.appendChild(notification);
+
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.style.animation = 'fadeOut 0.5s ease forwards';
+            setTimeout(() => notification.remove(), 500);
+        }
+    }, 5000);
+
+    notification.addEventListener('click', () => {
+        notification.style.animation = 'fadeOut 0.5s ease forwards';
+        setTimeout(() => notification.remove(), 500);
+    });
+}
   </script>
+
+  <div class="notification-container" id="notificationContainer" data-success-message="{{ session('success') }}"></div>
+
+  <script>
+    // Tampilkan notifikasi jika ada session success
+    $(document).ready(function() {
+      const successMessage = $('#notificationContainer').data('success-message');
+      if (successMessage) {
+        showNotification(successMessage, 'success');
+      }
+    });
+  </script>
+
 </body>
 
 </html>

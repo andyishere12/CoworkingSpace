@@ -204,12 +204,9 @@
                         </li>
                         <!-- Reservation Approval -->
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fas fa-clipboard-check"></i>
-                                <p>
-                                    Reservation Approval
-                                    <span class="badge badge-warning right">Soon</span>
-                                </p>
+                            <a href="{{ route('manager.reservation-approval.index') }}" class="nav-link">
+                                <i class="nav-icon fas fa-bookmark"></i>
+                                <p>Reservation Approval</p>
                             </a>
                         </li>
 

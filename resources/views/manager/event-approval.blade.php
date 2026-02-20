@@ -284,16 +284,39 @@
 
 @include('manager.layouts.footer')
 
-<form id="approveForm" method="POST" style="display:none;">
-    @csrf
-</form>
+{{-- Approve Modal (green) --}}
+<div class="modal fade" id="approveEventModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-check-circle mr-2"></i>Setujui Event
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Apakah Anda yakin ingin menyetujui event:</p>
+                <p><strong id="approveEventName"></strong>?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                <form id="approveEventForm" method="POST" style="display:inline;">
+                    @csrf
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-check mr-1"></i>Ya, Setujui
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
 function approveEvent(eventId, eventName) {
-    if (confirm('Apakah Anda yakin ingin menyetujui event "' + eventName + '"?')) {
-        var form = document.getElementById('approveForm');
-        form.action = '/manager/event-approval/' + eventId + '/approve';
-        form.submit();
-    }
+    document.getElementById('approveEventName').innerText = eventName;
+    document.getElementById('approveEventForm').action = '/manager/event-approval/' + eventId + '/approve';
+    $('#approveEventModal').modal('show');
 }
 </script>

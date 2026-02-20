@@ -24,4 +24,13 @@ class Reservasi extends Model
     {
         return $this->belongsTo(DataMember::class, 'member_id');
     }
+
+    /**
+     * Accessor: alias 'tanggal' sebagai 'tanggal_reservasi'
+     * Dibutuhkan oleh pdf.blade.php
+     */
+    public function getTanggalReservasiAttribute()
+    {
+        return $this->tanggal;
+    }
 }

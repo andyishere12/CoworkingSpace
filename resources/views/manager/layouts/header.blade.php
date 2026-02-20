@@ -7,7 +7,8 @@
     <title>Trackingspace - Manager Dashboard</title>
 
     <!-- Google Font: Source Sans Pro -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <!-- AdminLTE -->
@@ -15,7 +16,7 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('css/stylemember.css') }}">
 
-    <!-- ✅ TAMBAHAN: Stack untuk CSS tambahan dari halaman -->
+    <!-- TAMBAHAN: Stack untuk CSS tambahan dari halaman -->
     @stack('styles')
 
     <style>
@@ -119,7 +120,8 @@
                 <li class="nav-item">
                     <form action="{{ route('logout') }}" method="POST" style="display: inline;">
                         @csrf
-                        <button type="submit" class="nav-link btn btn-link" style="border: none; background: none; padding: 0.5rem 1rem;">
+                        <button type="submit" class="nav-link btn btn-link"
+                            style="border: none; background: none; padding: 0.5rem 1rem;">
                             <div class="nav-icon-box">
                                 <i class="fas fa-sign-out-alt"></i>
                             </div>
@@ -135,9 +137,7 @@
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
             <!-- Brand Logo -->
             <a href="{{ route('manager.dashboard') }}" class="brand-link">
-                <img src="{{ asset('gambar/icontrasa.jpeg') }}"
-                    alt="Logo"
-                    class="brand-image img-circle elevation-3">
+                <img src="{{ asset('gambar/icontrasa.jpeg') }}" alt="Logo" class="brand-image img-circle elevation-3">
                 <span class="brand-text">Trackingspace</span>
             </a>
 
@@ -147,8 +147,7 @@
                 <div class="user-panel mt-3 pb-3 mb-3">
                     <div class="image">
                         <img src="https://ui-avatars.com/api/?name=Manager&size=80&background=6C3FB5&color=fff"
-                            class="img-circle elevation-2"
-                            alt="Manager">
+                            class="img-circle elevation-2" alt="Manager">
                     </div>
                     <div class="info">
                         <a href="#" class="d-block text-white font-weight-bold">
@@ -159,7 +158,8 @@
 
                 <!-- Sidebar Menu -->
                 <nav class="mt-2">
-                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
+                        data-accordion="false">
 
                         <!-- Dashboard -->
                         <li class="nav-item">
@@ -191,15 +191,17 @@
 
                         <!-- Event Approval -->
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="{{ route('manager.event-approval.index') }}"
+                                class="nav-link {{ request()->routeIs('manager.event-approval.*') ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-calendar-check"></i>
                                 <p>
                                     Event Approval
-                                    <span class="badge badge-warning right">Soon</span>
+                                    @if(isset($pendingEventsCount) && $pendingEventsCount > 0)
+                                        <span class="badge badge-danger right">{{ $pendingEventsCount }}</span>
+                                    @endif
                                 </p>
                             </a>
                         </li>
-
                         <!-- Reservation Approval -->
                         <li class="nav-item">
                             <a href="#" class="nav-link">
@@ -247,9 +249,4 @@
             </div>
             <!-- /.sidebar -->
         </aside>
-
-        <!-- Content Wrapper akan dimulai di file halaman -->
-        <!-- Tag TIDAK DITUTUP di sini, biarkan footer yang menutup -->
-
-        <!-- ✅ TAMBAHAN: Stack untuk JavaScript tambahan dari halaman -->
         @stack('scripts')

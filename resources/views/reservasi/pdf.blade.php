@@ -6,6 +6,18 @@
     <title>Data Reservasi</title>
 
     <style>
+        /* print-friendly and landscape */
+        * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+        }
+
+        @page {
+            size: A4 landscape;
+            margin: 30px;
+        }
+
         body {
             font-family: DejaVu Sans;
             font-size: 11px;
@@ -47,6 +59,12 @@
             width: 90px;
         }
 
+        img {
+            max-width: 100%;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
         .title {
             text-align: center;
             line-height: 1.3;
@@ -54,11 +72,14 @@
 
         footer {
             position: fixed;
-            bottom: -20px;
+            bottom: 0;
             left: 0;
             right: 0;
             text-align: center;
             font-size: 9px;
+            height: 20px;
+            line-height: 20px;
+            background-color: white;
         }
     </style>
 </head>
@@ -69,7 +90,11 @@
     <table class="header-table">
         <tr>
             <td width="15%">
-                <img src="{{ public_path('gambar/logo_coworking.png') }}" class="logo-kiri">
+                @if(isset($isPdf) && $isPdf)
+                    <img src="{{ public_path('gambar/logo_coworking.png') }}" class="logo-kiri">
+                @else
+                    <img src="{{ asset('gambar/logo_coworking.png') }}" class="logo-kiri">
+                @endif
             </td>
 
             <td width="70%" class="title">
@@ -80,7 +105,11 @@
             </td>
 
             <td width="15%" align="right">
-                <img src="{{ public_path('gambar/logo_dinas.jpeg') }}" class="logo-kanan">
+                @if(isset($isPdf) && $isPdf)
+                    <img src="{{ public_path('gambar/logo_dinas.jpeg') }}" class="logo-kanan">
+                @else
+                    <img src="{{ asset('gambar/logo_dinas.jpeg') }}" class="logo-kanan">
+                @endif
             </td>
         </tr>
     </table>

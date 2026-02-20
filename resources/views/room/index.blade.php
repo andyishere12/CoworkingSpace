@@ -317,7 +317,7 @@
             <a href="{{ route('room.create') }}" class="btn btn-info mr-2">
               <i class="fas fa-plus mr-1"></i> Create Room
             </a>
-            <button type="button" class="btn btn-success btn-print shadow-sm mr-2" onclick="window.print()">
+            <button type="button" class="btn btn-success btn-print shadow-sm mr-2" onclick="cetakDataRoom()">
               <i class="fas fa-print mr-2"></i> Cetak Room
             </button>
 
@@ -403,6 +403,9 @@
 
             </div>
           </div>
+      
+      <!-- Hidden iframe for printing -->
+      <iframe id="printFrame" style="display:none;"></iframe>
 
         </div>
       </section>
@@ -460,6 +463,15 @@
         showNotification(successMessage, 'success');
       }
     });
+
+    // Fungsi untuk cetak data room dengan PDF layout
+    function cetakDataRoom() {
+      const printFrame = document.getElementById('printFrame');
+      printFrame.src = '/room/print';
+      printFrame.onload = function() {
+        printFrame.contentWindow.print();
+      };
+    }
   </script>
 </body>
 

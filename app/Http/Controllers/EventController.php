@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\EventExport;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class EventController extends Controller
 {
@@ -78,6 +80,18 @@ class EventController extends Controller
         $event->delete();
         return redirect()->route('event.index')->with('success', 'Event dihapus!');
     }
+
+    public function eventPrint(Request $request)
+    {
+        // Ambil semua events
+        $events = Event::orderBy('start_date', 'desc')->get();
+
+        // Flag untuk render HTML di browser
+        $isPdf = false;
+
+        return view('event.pdf', compact('events', 'isPdf'));
+    }
+
     public function exportExcel()
 {
     return Excel::download(new EventExport, 'DATA EVENT.xlsx');
@@ -85,8 +99,9 @@ class EventController extends Controller
 public function exportPdf()
 {
     $events = Event::all();
+    $isPdf = true;
 
-    $pdf = Pdf::loadView('event.pdf', compact('events'))
+    $pdf = Pdf::loadView('event.pdf', compact('events', 'isPdf'))
               ->setPaper('a4', 'landscape');
 
     return $pdf->download('DATA EVENT.pdf');

@@ -1,26 +1,17 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="utf-8">
-    <title>Laporan Member</title>
-
     <style>
         * {
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
-            color-adjust: exact !important;
         }
 
         @page {
-            size: A4 portrait;
-            margin: 25px 30px 40px 30px;
-            
+            size: A4 landscape;
+            margin: 25px 30px;
         }
-
-        @top-center, @bottom-center, @top-left, @top-right, @bottom-left, @bottom-right {
-                content: none;
-            }
 
         @media print {
             body {
@@ -28,12 +19,10 @@
                 padding: 0;
                 background: white !important;
             }
-
             * {
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
-
             img {
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
@@ -42,7 +31,6 @@
         }
 
         body {
-            margin-bottom: 30px;
             font-family: DejaVu Sans, sans-serif;
             font-size: 10px;
             background: white;
@@ -63,8 +51,7 @@
             border: 1px solid #000 !important;
         }
 
-        th,
-        td {
+        th, td {
             border: 1px solid #000 !important;
             padding: 4px;
             white-space: nowrap;
@@ -151,39 +138,40 @@
             text-align: center;
             font-size: 9px;
             height: 20px;
-            /* tinggi footer */
             line-height: 20px;
-            /* vertikal tengah */
             background-color: white;
+        }
+
+        .period {
+            text-align: center;
+            font-size: 11px;
+            margin-bottom: 10px;
         }
     </style>
 </head>
-
 <body>
 
-    {{-- ================= HEADER ================= --}}
+    {{-- HEADER dengan logo --}}
     <table class="header-table">
         <tr>
             <td width="15%">
                 @if(isset($isPdf) && $isPdf)
-                <img src="{{ public_path('gambar/logo_coworking.png') }}" class="logo-kiri" style="max-width: 60px; height: auto;">
+                    <img src="{{ public_path('gambar/logo_coworking.png') }}" class="logo-kiri" style="max-width: 60px; height: auto;">
                 @else
-                <img src="{{ asset('gambar/logo_coworking.png') }}" class="logo-kiri" style="max-width: 60px; height: auto;">
+                    <img src="{{ asset('gambar/logo_coworking.png') }}" class="logo-kiri" style="max-width: 60px; height: auto;">
                 @endif
             </td>
-
             <td width="70%" class="title">
                 <span style="font-size:15px; font-weight:bold;">
                     DINAS KOPERASI, UKM & PERDAGANGAN<br>
                     TRASA COWORKING SPACE
                 </span>
             </td>
-
             <td width="15%" align="right">
                 @if(isset($isPdf) && $isPdf)
-                <img src="{{ public_path('gambar/logo_dinas.jpeg') }}" class="logo-kanan" style="max-width: 85px; height: auto;">
+                    <img src="{{ public_path('gambar/logo_dinas.jpeg') }}" class="logo-kanan" style="max-width: 85px; height: auto;">
                 @else
-                <img src="{{ asset('gambar/logo_dinas.jpeg') }}" class="logo-kanan" style="max-width: 85px; height: auto;">
+                    <img src="{{ asset('gambar/logo_dinas.jpeg') }}" class="logo-kanan" style="max-width: 85px; height: auto;">
                 @endif
             </td>
         </tr>
@@ -191,99 +179,51 @@
 
     <hr>
 
-    <span style="font-size:14px; font-weight:bold; text-align:center; display:block;" class="judul">
-        LAPORAN MEMBER
-    </span>
+    <div style="font-size:14px; font-weight:bold; text-align:center;" class="judul">
+        LAPORAN KEHADIRAN
+    </div>
 
-    {{-- ================= RINGKASAN ================= --}}
-    <h3>Ringkasan Member</h3>
+    <div class="period">
+        Periode: {{ \Carbon\Carbon::parse($startDate)->format('d M Y') }} s/d {{ \Carbon\Carbon::parse($endDate)->format('d M Y') }}
+    </div>
 
-    <table>
-        <tr>
-            <th>Total Member</th>
-            <th>Member Aktif</th>
-            <th>Member Tidak Aktif</th>
-        </tr>
-        <tr class="center">
-            <td>{{ $totalMember }}</td>
-            <td>{{ $aktif }}</td>
-            <td>{{ $nonAktif }}</td>
-        </tr>
-    </table>
-
-    {{-- ================= TIPE ================= --}}
-    <h3>Tipe Member</h3>
-
-    <table>
-        <tr>
-            <th width="70%">Tipe Member</th>
-            <th width="30%">Jumlah</th>
-        </tr>
-        @foreach ($tipeMember as $t)
-        <tr>
-            <td>{{ $t->type ?? '-' }}</td>
-            <td class="center">{{ $t->jumlah }}</td>
-        </tr>
-        @endforeach
-    </table>
-
-    {{-- ================= AKTIVITAS ================= --}}
-    <h3>Aktivitas Member</h3>
-
-    <table>
-        <tr>
-            <th width="70%">Aktivitas</th>
-            <th width="30%">Jumlah</th>
-        </tr>
-        @foreach ($aktivitasMember as $a)
-        <tr>
-            <td>{{ $a->aktivitas ?? '-' }}</td>
-            <td class="center">{{ $a->jumlah }}</td>
-        </tr>
-        @endforeach
-    </table>
-
-    {{-- ================= PINDAH HALAMAN ================= --}}
-    <div class="page-break"></div>
-
-    {{-- ================= DETAIL ================= --}}
-    <h3>Detail Member</h3>
-
+    {{-- TABEL DATA KEHADIRAN --}}
     <table>
         <thead>
             <tr>
                 <th width="3%">No</th>
-                <th width="13%">Nama</th>
-                <th width="18%">Email</th>
-                <th width="10%">Telepon</th>
-                <th width="7%">Tipe</th>
-                <th width="8%">Aktivitas</th>
-                <th width="9%">Institusi</th>
-                <th width="10%">Tanggal Lahir</th>
-                <th width="16%">Alamat</th>
-                <th width="6%">Tanggal Daftar</th>
+                <th width="15%">Nama Member</th>
+                <th width="8%">Tipe</th>
+                <th width="10%">Tanggal</th>
+                <th width="8%">Check In</th>
+                <th width="8%">Check Out</th>
+                <th width="8%">Durasi</th>
+                <th width="8%">Status</th>
             </tr>
         </thead>
-
         <tbody>
-            @foreach($members as $i => $row)
+            @forelse($attendances as $attendance)
             <tr>
-                <td class="center">{{ $i+1 }}</td>
-                <td>{{ $row->nama }}</td>
-                <td>{{ $row->email }}</td>
-                <td class="center">{{ $row->no_hp }}</td>
-                <td class="center">{{ $row->type }}</td>
-                <td class="center">{{ $row->aktivitas }}</td>
-                <td class="center">{{ $row->institusi }}</td>
+                <td class="center">{{ $loop->iteration }}</td>
+                <td>{{ $attendance->member->nama ?? '-' }}</td>
+                <td class="center">{{ $attendance->member->type ?? '-' }}</td>
+                <td class="center">{{ \Carbon\Carbon::parse($attendance->tanggal)->format('d-m-Y') }}</td>
+                <td class="center">{{ $attendance->waktu_masuk }}</td>
+                <td class="center">{{ $attendance->waktu_keluar ?? '-' }}</td>
+                <td class="center">{{ $attendance->formatted_durasi }}</td>
                 <td class="center">
-                    {{ $row->tanggal_lahir ? \Carbon\Carbon::parse($row->tanggal_lahir)->format('d-m-Y') : '-' }}
-                </td>
-                <td>{{ $row->alamat }}</td>
-                <td class="center">
-                    {{ $row->created_at ? \Carbon\Carbon::parse($row->created_at)->format('d-m-Y') : '-' }}
+                    @if($attendance->waktu_keluar)
+                        Selesai
+                    @else
+                        Aktif
+                    @endif
                 </td>
             </tr>
-            @endforeach
+            @empty
+            <tr>
+                <td colspan="8" class="center">Tidak ada data kehadiran</td>
+            </tr>
+            @endforelse
         </tbody>
     </table>
 
@@ -292,5 +232,4 @@
     </footer>
 
 </body>
-
 </html>

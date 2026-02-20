@@ -68,6 +68,56 @@ class ReportController extends Controller
     }
 
     // ==========================================
+    // TAMPILAN CETAK MEMBER (dari file PDF view)
+    // ==========================================
+    public function membershipPrint(Request $request)
+    {
+        $table = 'data_members';
+
+        // Data utama
+        $members = DB::table($table)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Ringkasan
+        $totalMember = DB::table($table)->count();
+
+        $aktif = DB::table($table)
+            ->where('status', 'aktif')
+            ->count();
+
+        $nonAktif = DB::table($table)
+            ->where('status', '!=', 'aktif')
+            ->orWhereNull('status')
+            ->count();
+
+        // Statistik tipe
+        $tipeMember = DB::table($table)
+            ->select('type', DB::raw('COUNT(*) as jumlah'))
+            ->groupBy('type')
+            ->get();
+
+        // Statistik aktivitas
+        $aktivitasMember = DB::table($table)
+            ->select('aktivitas', DB::raw('COUNT(*) as jumlah'))
+            ->groupBy('aktivitas')
+            ->get();
+
+        // Flag untuk render HTML di browser
+        $isPdf = false;
+
+        return view('reports.member_pdf', compact(
+            'members',
+            'totalMember',
+            'aktif',
+            'nonAktif',
+            'tipeMember',
+            'aktivitasMember',
+            'isPdf'
+        ));
+    }
+
+    // ==========================================
     // LAPORAN RUANGAN (dari rooms & reservasis)
     // ==========================================
     public function roomReport(Request $request)
@@ -190,13 +240,17 @@ class ReportController extends Controller
             ->groupBy('aktivitas')
             ->get();
 
+        // Flag untuk menggunakan public_path di PDF
+        $isPdf = true;
+
         $pdf = Pdf::loadView('reports.member_pdf', compact(
             'members',
             'totalMember',
             'aktif',
             'nonAktif',
             'tipeMember',
-            'aktivitasMember'
+            'aktivitasMember',
+            'isPdf'
         ));
 
         return $pdf->download('LAPORAN MEMBER.pdf');
@@ -207,6 +261,74 @@ class ReportController extends Controller
     public function exportRoomExcel(Request $request)
     {
         return Excel::download(new ReportRoomExport, 'LAPORAN RUANGAN.xlsx');
+    }
+
+    // ==========================================
+    // TAMPILAN CETAK ROOM (dari file PDF view)
+    // ==========================================
+    public function roomPrint(Request $request)
+    {
+        $type = $request->input('type', 'all');
+        $status = $request->input('status', 'all');
+
+        // Ambil semua ruangan sesuai filter
+        $query = Room::query();
+
+        if ($type != 'all') {
+            $query->where('type', $type);
+        }
+
+        if ($status != 'all') {
+            $query->where('status', $status);
+        }
+
+        $rooms = $query->orderBy('name')->get();
+
+        // Hitung statistik
+        $totalRooms = Room::count();
+        $availableRooms = Room::where('status', 'available')->count();
+        $notAvailableRooms = $totalRooms - $availableRooms;
+
+        // Statistik tipe ruangan
+        $typeStats = Room::select('type', DB::raw('COUNT(*) as jumlah'))
+            ->groupBy('type')
+            ->get();
+
+        // Ringkasan reservasi per ruangan
+        $reservationSummary = Reservasi::select(
+            'ruangan',
+            DB::raw('COUNT(*) as total_reservasi'),
+            DB::raw('MAX(status) as status_terakhir')
+        )
+            ->groupBy('ruangan')
+            ->orderBy('total_reservasi', 'desc')
+            ->get();
+
+        // Statistik status reservasi
+        $statusStats = Reservasi::select('status', DB::raw('COUNT(*) as jumlah'))
+            ->groupBy('status')
+            ->get();
+
+        // Buat array asosiatif untuk memudahkan pencarian
+        $reservationsCount = [];
+        foreach ($reservationSummary as $reservation) {
+            $reservationsCount[strtolower(trim($reservation->ruangan))] = $reservation->total_reservasi;
+        }
+
+        // Flag untuk render HTML di browser
+        $isPdf = false;
+
+        return view('reports.room_pdf', compact(
+            'rooms',
+            'totalRooms',
+            'availableRooms',
+            'notAvailableRooms',
+            'typeStats',
+            'reservationSummary',
+            'statusStats',
+            'reservationsCount',
+            'isPdf'
+        ));
     }
 
     public function exportRoomPdf(Request $request)
@@ -245,6 +367,9 @@ class ReportController extends Controller
             $reservationsCount[strtolower(trim($reservation->ruangan))] = $reservation->total_reservasi;
         }
 
+        // Flag untuk PDF generation
+        $isPdf = true;
+
         $pdf = PDF::loadView('reports.room_pdf', compact(
             'rooms',
             'totalRooms',
@@ -253,7 +378,8 @@ class ReportController extends Controller
             'typeStats',
             'reservationSummary',
             'statusStats',
-            'reservationsCount' // Ganti dengan array yang lebih mudah digunakan
+            'reservationsCount', // Ganti dengan array yang lebih mudah digunakan
+            'isPdf'
         ));
 
         return $pdf->download('LAPORAN RUANGAN.pdf');
@@ -264,6 +390,47 @@ class ReportController extends Controller
     public function exportEventExcel(Request $request)
     {
         return Excel::download(new ReportEventExport, 'LAPORAN EVENT.xlsx');
+    }
+
+    // ==========================================
+    // TAMPILAN CETAK EVENT (dari file PDF view)
+    // ==========================================
+    public function eventPrint(Request $request)
+    {
+        $startDate = $request->input('start_date', Carbon::now()->startOfMonth()->format('Y-m-d'));
+        $endDate = $request->input('end_date', Carbon::now()->endOfMonth()->format('Y-m-d'));
+        $status = $request->input('status', 'all');
+
+        // Query events
+        $query = Event::whereBetween('start_date', [$startDate, $endDate]);
+
+        if ($status != 'all') {
+            $query->where('status', $status);
+        }
+
+        $events = $query->orderBy('start_date', 'desc')->get();
+
+        // Statistik
+        $statistics = [
+            'total_events' => Event::whereBetween('start_date', [$startDate, $endDate])->count(),
+            'active_events' => Event::whereBetween('start_date', [$startDate, $endDate])
+                ->where('status', 'active')->count(),
+            'inactive_events' => Event::whereBetween('start_date', [$startDate, $endDate])
+                ->where('status', 'inactive')->count(),
+            'upcoming_events' => Event::where('start_date', '>', Carbon::now())
+                ->whereBetween('start_date', [$startDate, $endDate])->count(),
+            'ongoing_events' => Event::where('start_date', '<=', Carbon::now())
+                ->where('end_date', '>=', Carbon::now())
+                ->whereBetween('start_date', [$startDate, $endDate])->count(),
+            'completed_events' => Event::where('end_date', '<', Carbon::now())
+                ->whereBetween('start_date', [$startDate, $endDate])->count(),
+            'all_events_total' => Event::count(),
+        ];
+
+        // Flag untuk render HTML di browser
+        $isPdf = false;
+
+        return view('reports.event_pdf', compact('events', 'statistics', 'startDate', 'endDate', 'isPdf'));
     }
 
     public function exportEventPdf(Request $request)
@@ -301,9 +468,11 @@ class ReportController extends Controller
         // Pastikan logo ada di public/gambar/
         // Logo bisa disimpan di: public/gambar/logo_coworking.png dan public/gambar/logo_dinas.jpeg
 
+        // Flag untuk PDF generation
+        $isPdf = true;
         $imagePath = public_path('gambar');
 
-        $pdf = PDF::loadView('reports.event_pdf', compact('events', 'statistics', 'startDate', 'endDate', 'imagePath'));
+        $pdf = PDF::loadView('reports.event_pdf', compact('events', 'statistics', 'startDate', 'endDate', 'imagePath', 'isPdf'));
 
         // Optional: Atur opsi PDF
         $pdf->setPaper('A4', 'portrait');

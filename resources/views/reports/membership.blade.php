@@ -352,10 +352,10 @@
                 </div>
               </form>
               <div class="mt-2">
-                <button type="button" class="btn btn-success btn-print shadow-sm ml-auto" onclick="window.print()">
-                  <i class="fas fa-print mr-2"></i> Cetak Laporan Member
-                </button>
-                <!-- Export icons: Excel and PDF (icon-only, keep same routes) -->
+                <button type="button" class="btn btn-success btn-print shadow-sm ml-auto" onclick="cetakMember()">
+                          <i class="fas fa-print mr-2"></i> Cetak Laporan Member
+                        </button>
+                        <!-- Export icons: Excel and PDF (icon-only, keep same routes) -->
                 <a href="{{ url('/reports/member/excel') }}" class="btn btn-success btn-sm" title="Export Excel" aria-label="Export Excel" style="padding: 8px 10px; margin-left: 10px;">
                   <i class="fas fa-file-excel"></i>
                 </a>
@@ -366,6 +366,9 @@
               </div>
             </div>
           </div>
+
+              <!-- Hidden iframe untuk print -->
+              <iframe id="printFrame" style="display:none;"></iframe>
 
           <!-- Statistics Cards Row 1 -->
           <div class="row">
@@ -574,6 +577,20 @@
         }
       });
     });
+
+    // Function untuk cetak member dengan tampilan dari file PDF
+    function cetakMember() {
+      // Load konten PDF ke dalam iframe
+      const iframe = document.getElementById('printFrame');
+      iframe.src = '{{ url("/reports/member/print") }}';
+      
+      // Tunggu iframe selesai loading, baru trigger print
+      iframe.onload = function() {
+        setTimeout(function() {
+          iframe.contentWindow.print();
+        }, 500);
+      };
+    }
   </script>
 </body>
 

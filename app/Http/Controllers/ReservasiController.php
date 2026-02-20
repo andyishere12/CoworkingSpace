@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ReservasiExport;
 use Barryvdh\DomPDF\Facade\Pdf;
-
+use Illuminate\Support\Facades\DB;
 
 class ReservasiController extends Controller
 {
@@ -106,6 +106,21 @@ class ReservasiController extends Controller
         $reservasi->delete();
         return redirect()->route('reservasi.index')->with('success', 'Reservasi dihapus!');
     }
+
+    public function reservasiPrint(Request $request)
+    {
+        // Ambil semua reservasi
+        $reservasi = Reservasi::orderBy('created_at', 'desc')->get();
+
+        // Flag untuk render HTML di browser
+        $isPdf = false;
+
+        return view('reservasi.pdf', compact(
+            'reservasi',
+            'isPdf'
+        ));
+    }
+
     public function exportExcel()
 {
     return Excel::download(new ReservasiExport, 'DATA RESERVASI.xlsx');
@@ -113,9 +128,10 @@ class ReservasiController extends Controller
 public function exportPdf()
 {
     $reservasi = Reservasi::all();
+    $isPdf = true;
 
-    $pdf = Pdf::loadView('reservasi.pdf', compact('reservasi'))
-              ->setPaper('a4', 'landscape');
+    $pdf = Pdf::loadView('reservasi.pdf', compact('reservasi', 'isPdf'))
+        ->setPaper('a4', 'landscape');
 
     return $pdf->download('DATA RESERVASI.pdf');
 }

@@ -1,94 +1,192 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Update Operational Hours - Trackingspace</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/css/adminlte.min.css">
-  
+
   <style>
+    /* Sidebar custom dari index */
     body {
       font-family: 'Source Sans Pro', sans-serif;
       background-color: #f4f6f9;
     }
+
     .main-sidebar {
       background: linear-gradient(180deg, #6C3FB5 0%, #8B5FD6 100%) !important;
+      padding-right: 15px;
     }
+
     .brand-link {
       background: transparent !important;
-      border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
       padding: 20px 15px;
     }
+
     .brand-link .brand-text {
       color: white !important;
       font-weight: 600;
       font-size: 20px;
     }
+
     .user-panel {
-      border-bottom: 1px solid rgba(255,255,255,0.1) !important;
-      text-align: center;
-      display: block !important;
-      padding: 25px 10px !important;
+      padding-left: 15px;
+      padding-right: 15px;
+      margin-left: 10px;
     }
+
     .user-panel .image {
-      display: inline-block;
+      display: block !important;
       float: none !important;
-      margin: 0 auto 15px;
+      margin: 0 0 10px 0 !important;
+      padding: 0 !important;
     }
+
     .user-panel .image img {
       width: 80px;
       height: 80px;
-      border: 3px solid rgba(255,255,255,0.3);
-    }
-    .user-panel .info {
+      border: 3px solid rgba(255, 255, 255, 0.3);
       display: block;
-      padding: 0;
-      margin: 0;
+      margin: 0 auto;
     }
+
+    .user-panel .info {
+      display: block !important;
+      width: 100% !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      text-align: center !important;
+    }
+
     .user-panel .info a {
       color: white !important;
       font-size: 16px;
       font-weight: 500;
     }
-    .sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link {
-      color: rgba(255,255,255,0.8);
+
+    .sidebar-dark-primary .nav-sidebar>.nav-item>.nav-link {
+      color: rgba(255, 255, 255, 0.8);
       padding: 12px 15px;
       margin: 4px 10px;
       border-radius: 8px;
     }
-    .sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link:hover {
-      background-color: rgba(255,255,255,0.1);
+
+    .sidebar-dark-primary .nav-sidebar>.nav-item>.nav-link:hover {
+      background-color: rgba(255, 255, 255, 0.1);
       color: white;
     }
-    .sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link.active {
-      background-color: rgba(255,255,255,0.15);
+
+    .sidebar-dark-primary .nav-sidebar>.nav-item>.nav-link.active {
+      background-color: rgba(255, 255, 255, 0.15);
       color: white;
     }
+
+    .nav-icon-box {
+      width: 30px;
+      height: 30px;
+      background-color: rgba(255, 255, 255, 0.2);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 10px;
+    }
+
+    /* Style khusus form operational hours */
     .day-row {
       border-bottom: 1px solid #e9ecef;
       padding: 20px 0;
     }
+
     .day-row:last-child {
       border-bottom: none;
     }
+
     .btn-cyan {
       background-color: #06b6d4;
       border-color: #06b6d4;
       color: white;
     }
+
     .btn-cyan:hover {
       background-color: #0891b2;
       border-color: #0891b2;
       color: white;
+    }
+
+    /* Style notifikasi pop-up (diadopsi dari Event) */
+    .notification-container {
+      position: fixed;
+      top: 70px;
+      right: 20px;
+      z-index: 99999;
+      max-width: 350px;
+    }
+
+    .notification {
+      background: white;
+      border-radius: 10px;
+      padding: 15px 20px;
+      margin-bottom: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      border-left: 5px solid;
+      animation: slideIn 0.5s ease, fadeOut 0.5s ease 4.5s forwards;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .notification.success {
+      border-left-color: #28a745;
+      color: #155724;
+      background-color: #d4edda;
+    }
+
+    .notification.error {
+      border-left-color: #dc3545;
+      color: #721c24;
+      background-color: #f8d7da;
+    }
+
+    .notification.warning {
+      border-left-color: #ffc107;
+      color: #856404;
+      background-color: #fff3cd;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeOut {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(100%);
+        opacity: 0;
+      }
     }
   </style>
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">
   <div class="wrapper">
-    <!-- Navbar -->
+
+    <!-- Navbar (salin dari index operational hours) -->
     <nav class="main-header navbar navbar-expand navbar-light">
       <ul class="navbar-nav">
         <li class="nav-item">
@@ -97,7 +195,7 @@
       </ul>
       <ul class="navbar-nav ml-auto">
         <li class="nav-item">
-          <a href="{{ route('dashboard') }}" class="nav-link">
+          <a href="{{ route('scan') }}" class="nav-link">
             <i class="fas fa-home"></i> Home
           </a>
         </li>
@@ -108,30 +206,45 @@
         </li>
         <li class="nav-item">
           <a href="#" class="nav-link">
-            <i class="fas fa-users"></i> <span class="badge badge-danger">0</span> Active
+            <i class="fas fa-users"></i> <span class="badge badge-danger">{{ $todayAttendance ?? 0 }}</span> Active Today
           </a>
         </li>
         <li class="nav-item">
-          <a href="#" class="nav-link">
-            <i class="fas fa-sign-out-alt"></i> Logout (admin)
-          </a>
+          <form action="{{ route('logout') }}" method="POST" class="m-0">
+            @csrf
+            <button type="submit" class="nav-link btn btn-link text-danger w-100 text-start">
+              <div class="nav-icon-box d-inline-block me-2">
+                <i class="fas fa-sign-out-alt"></i>
+              </div>
+              Logout (admin)
+            </button>
+          </form>
         </li>
       </ul>
     </nav>
 
-    <!-- Sidebar -->
+    <!-- Sidebar (salin dari index operational hours) -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
       <a href="{{ route('dashboard') }}" class="brand-link">
-        <img src="https://adminlte.io/themes/v3/dist/img/AdminLTELogo.png" alt="Logo" class="brand-image img-circle elevation-3">
+        <img src="{{ asset('gambar/icontrasa.jpeg') }}" alt="Logo" class="brand-image img-circle elevation-3">
         <span class="brand-text">Trackingspace</span>
       </a>
       <div class="sidebar">
         <div class="user-panel mt-3 pb-3 mb-3">
           <div class="image">
-            <img src="https://adminlte.io/themes/v3/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User">
+            @if(Auth::user()->avatar)
+            <img src="{{ asset('storage/avatars/' . Auth::user()->avatar) }}" class="img-circle elevation-2"
+              alt="{{ Auth::user()->name }}">
+            @else
+            <img
+              src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name ?? 'Admin') }}&size=80&background=6C3FB5&color=fff"
+              class="img-circle elevation-2" alt="User Image">
+            @endif
           </div>
           <div class="info">
-            <a href="#">admin</a>
+            <a href="#" class="d-block text-white font-weight-bold">
+              {{ Auth::user()->name ?? 'Admin' }}
+            </a>
           </div>
         </div>
         <nav class="mt-2">
@@ -143,13 +256,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="#" class="nav-link">
-                <i class="nav-icon fas fa-tasks"></i>
-                <p>Priority Task</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="#" class="nav-link">
+              <a href="{{ route('attendance.index') }}" class="nav-link">
                 <i class="nav-icon fas fa-clock"></i>
                 <p>Attendance</p>
               </a>
@@ -185,13 +292,13 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="#" class="nav-link">
+              <a href="{{ route('reports.index') }}" class="nav-link">
                 <i class="nav-icon fas fa-chart-bar"></i>
                 <p>Reports</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="#" class="nav-link">
+              <a href="{{ route('profile.index') }}" class="nav-link">
                 <i class="nav-icon fas fa-user"></i>
                 <p>Profile</p>
               </a>
@@ -211,7 +318,7 @@
             </div>
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
                 <li class="breadcrumb-item"><a href="{{ route('operational-hours.index') }}">Operational Hours</a></li>
                 <li class="breadcrumb-item active">Update All</li>
               </ol>
@@ -227,6 +334,7 @@
               <h3 class="card-title font-weight-bold">Update All Operational Hours</h3>
             </div>
             <div class="card-body">
+              {{-- FORM EDIT (dipertahankan utuh) --}}
               <form action="{{ route('operational-hours.update-all') }}" method="POST">
                 @csrf
                 @method('PUT')
@@ -298,11 +406,22 @@
     </footer>
   </div>
 
+  {{-- Container untuk notifikasi pop-up (diadopsi dari Event) --}}
+  <div class="notification-container" id="notificationContainer"></div>
+
+  {{-- Flash Messages Container (data attribute) --}}
+  <div id="flash-messages"
+       data-success="{{ session('success') }}"
+       data-error="{{ session('error') }}"
+       data-warning="{{ session('warning') }}">
+  </div>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/js/adminlte.min.js"></script>
 
   <script>
+    // Fungsi toggleTimeInputs (dipertahankan)
     function toggleTimeInputs(id) {
       const checkbox = document.getElementById('closed_' + id);
       const timeInputs = document.querySelectorAll('.time-input-' + id);
@@ -314,6 +433,51 @@
         }
       });
     }
+
+    // Fungsi notifikasi pop-up (sama dengan di Event)
+    function showNotification(message, type = 'success') {
+      const container = document.getElementById('notificationContainer');
+      if (!container) return;
+
+      const notification = document.createElement('div');
+      notification.className = `notification ${type}`;
+      notification.innerHTML = `
+        <div style="flex: 1;">
+          <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+            <strong>${type === 'success' ? 'Berhasil!' : type === 'error' ? 'Error!' : 'Perhatian!'}</strong>
+          </div>
+          <div style="margin: 0;">${message}</div>
+        </div>
+      `;
+
+      container.appendChild(notification);
+
+      setTimeout(() => {
+        if (notification.parentNode) {
+          notification.style.animation = 'fadeOut 0.5s ease forwards';
+          setTimeout(() => notification.remove(), 500);
+        }
+      }, 5000);
+
+      notification.addEventListener('click', () => {
+        notification.style.animation = 'fadeOut 0.5s ease forwards';
+        setTimeout(() => notification.remove(), 500);
+      });
+    }
+
+    $(document).ready(function() {
+      const flashMessages = document.getElementById('flash-messages');
+      if (flashMessages) {
+        const successMessage = flashMessages.dataset.success;
+        const errorMessage = flashMessages.dataset.error;
+        const warningMessage = flashMessages.dataset.warning;
+
+        if (successMessage) showNotification(successMessage, 'success');
+        if (errorMessage) showNotification(errorMessage, 'error');
+        if (warningMessage) showNotification(warningMessage, 'warning');
+      }
+    });
   </script>
 </body>
+
 </html>

@@ -6,6 +6,19 @@
     <title>Data Member</title>
 
     <style>
+        /* ensure colors are preserved when printing */
+        * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+        }
+
+        /* force landscape A4 for both preview and PDF render */
+        @page {
+            size: A4 landscape;
+            margin: 30px;
+        }
+
         body {
             font-family: DejaVu Sans;
             font-size: 11px;
@@ -58,11 +71,14 @@
 
         footer {
             position: fixed;
-            bottom: -20px;
+            bottom: 0;
             left: 0;
             right: 0;
             text-align: center;
             font-size: 10px;
+            height: 20px;
+            line-height: 20px;
+            background-color: white;
         }
     </style>
 </head>
@@ -73,7 +89,11 @@
     <table class="header-table">
         <tr>
             <td width="15%">
+                @if(isset($isPdf) && $isPdf)
                 <img src="{{ public_path('gambar/logo_coworking.png') }}" class="logo-kiri">
+                @else
+                <img src="{{ asset('gambar/logo_coworking.png') }}" class="logo-kiri">
+                @endif
             </td>
 
             <td width="70%" class="title">
@@ -84,7 +104,11 @@
             </td>
 
             <td width="15%" align="right">
+                @if(isset($isPdf) && $isPdf)
                 <img src="{{ public_path('gambar/logo_dinas.jpeg') }}" class="logo-kanan">
+                @else
+                <img src="{{ asset('gambar/logo_dinas.jpeg') }}" class="logo-kanan">
+                @endif
             </td>
         </tr>
     </table>

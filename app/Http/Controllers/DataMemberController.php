@@ -8,6 +8,7 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\MemberExport;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
 
 class DataMemberController extends Controller
 {
@@ -137,6 +138,38 @@ class DataMemberController extends Controller
         $data_member->delete();
         return redirect()->route('data_member.index');
     }
+
+    public function memberPrint(Request $request)
+    {
+        $members = DataMember::orderBy('created_at', 'desc')->get();
+
+        $totalMember = $members->count();
+        $aktif = $members->where('status', 'aktif')->count();
+        $nonAktif = $totalMember - $aktif;
+
+        $tipeMember = $members->groupBy('type')->map(function ($group, $key) {
+            return (object)['type' => $key ?: 'Tidak Diketahui', 'jumlah' => $group->count()];
+        })->values();
+
+        $aktivitasMember = $members->groupBy('aktivitas')->map(function ($group, $key) {
+            return (object)['aktivitas' => $key ?: 'Tidak Diketahui', 'jumlah' => $group->count()];
+        })->values();
+
+        $isPdf = false; // untuk tampilan web (print preview)
+        $exportOnlyDetail = false; // ✅ Tampilkan lengkap
+
+        return view('data_member.pdf', compact(
+            'members',
+            'totalMember',
+            'aktif',
+            'nonAktif',
+            'tipeMember',
+            'aktivitasMember',
+            'isPdf',
+            'exportOnlyDetail'
+        ));
+    }
+
     public function exportExcel()
     {
         return Excel::download(new MemberExport, 'DATA MEMBER.xlsx');
@@ -145,8 +178,8 @@ class DataMemberController extends Controller
     public function exportPdf()
     {
         $members = DataMember::all();
-
-        $pdf = Pdf::loadView('data_member.pdf', compact('members'))
+        $isPdf = true;
+        $pdf = Pdf::loadView('data_member.pdf', compact('members', 'isPdf'))
             ->setPaper('a4', 'landscape');
 
         return $pdf->download('DATA MEMBER.pdf');

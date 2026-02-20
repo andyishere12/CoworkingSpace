@@ -61,14 +61,20 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     // Attendance
     Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
+    Route::get('/attendance/print', [AttendanceController::class, 'print'])->name('attendance.print');
     Route::post('/attendance/check-in', [AttendanceController::class, 'checkIn'])->name('attendance.checkin');
     Route::post('/attendance/check-out', [AttendanceController::class, 'checkOut'])->name('attendance.checkout');
 
     // Resources
     Route::resource('data_member', DataMemberController::class);
-    Route::resource('reservasi', ReservasiController::class);
-    Route::resource('room', RoomController::class);
-    Route::resource('event', EventController::class);
+    // resource routes with numeric id constraint to avoid collision with
+    // custom paths like /event/print, /room/print, /reservasi/print
+    Route::resource('reservasi', ReservasiController::class)
+        ->where(['reservasi' => '[0-9]+']);
+    Route::resource('room', RoomController::class)
+        ->where(['room' => '[0-9]+']);
+    Route::resource('event', EventController::class)
+        ->where(['event' => '[0-9]+']);
 
     // Scan
     Route::get('/scanner', [ScanController::class, 'index'])->name('scanner');
@@ -123,15 +129,24 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/event/export/pdf', [EventController::class, 'exportPdf'])
         ->name('event.export.pdf');
 
+    // Print Routes untuk Management Pages
+    Route::get('/data-member/print', [DataMemberController::class, 'memberPrint'])->name('data-member.print');
+    Route::get('/event/print', [EventController::class, 'eventPrint'])->name('event.print');
+    Route::get('/reservasi/print', [ReservasiController::class, 'reservasiPrint'])->name('reservasi.print');
+    Route::get('/room/print', [RoomController::class, 'roomPrint'])->name('room.print');
+
     // Detailed Report Routes
     Route::get('/reports/member/excel', [ReportController::class, 'exportMembershipExcel']);
     Route::get('/reports/member/pdf', [ReportController::class, 'memberPdf']);
+    Route::get('/reports/member/print', [ReportController::class, 'membershipPrint'])->name('reports.member.print');
 
     Route::get('/reports/room/excel', [ReportController::class, 'exportRoomExcel']);
     Route::get('/reports/room/pdf', [ReportController::class, 'exportRoomPdf']);
+    Route::get('/reports/room/print', [ReportController::class, 'roomPrint'])->name('reports.room.print');
 
     Route::get('/reports/event/excel', [ReportController::class, 'exportEventExcel']);
     Route::get('/reports/event/pdf', [ReportController::class, 'exportEventPdf']);
+    Route::get('/reports/event/print', [ReportController::class, 'eventPrint'])->name('reports.event.print');
 });
 
 /*

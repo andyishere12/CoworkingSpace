@@ -10,8 +10,6 @@
     href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/css/adminlte.min.css">
-  <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> -->
-   <link rel="stylesheet" href="adminlte.min.css">
 
   <style>
     body {
@@ -21,7 +19,7 @@
 
     .main-sidebar {
       background: linear-gradient(180deg, #6C3FB5 0%, #8B5FD6 100%) !important;
-        padding-right: 15px; 
+      padding-right: 15px;
     }
 
     .brand-link {
@@ -36,21 +34,25 @@
       font-size: 20px;
     }
 
+    /* === PERBAIKAN SIDEBAR SCROLL === */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+    }
+
     .user-panel {
       padding-left: 15px;
       padding-right: 15px;
       margin-left: 10px;
-
+      flex-shrink: 0; /* user-panel tidak ikut menyusut */
     }
-
-
 
     .user-panel .image {
       display: block !important;
       float: none !important;
-      /* Hapus float kiri bawaan AdminLTE */
       margin: 0 0 10px 0 !important;
-      /* Atur margin: bawah saja */
       padding: 0 !important;
     }
 
@@ -60,14 +62,12 @@
       border: 3px solid rgba(255, 255, 255, 0.3);
       display: block;
       margin: 0 auto;
-      /* Pastikan gambar di tengah */
     }
 
     .user-panel .info {
       display: block !important;
       width: 100% !important;
       padding: 0 !important;
-      /* Hapus padding kiri bawaan */
       margin: 0 !important;
       text-align: center !important;
     }
@@ -78,6 +78,32 @@
       font-weight: 500;
     }
 
+    /* Nav sidebar mengambil sisa tinggi dan bisa di-scroll */
+    .nav-sidebar {
+      flex: 1 1 auto;
+      overflow-y: auto;
+      max-height: none; /* hapus batasan max-height sebelumnya */
+    }
+
+    /* Custom scrollbar (opsional, pertahankan dari sebelumnya) */
+    .nav-sidebar::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .nav-sidebar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .nav-sidebar::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 3px;
+    }
+
+    .nav-sidebar::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    /* Style item navigasi */
     .sidebar-dark-primary .nav-sidebar>.nav-item>.nav-link {
       color: rgba(255, 255, 255, 0.8);
       padding: 12px 15px;
@@ -162,7 +188,6 @@
       margin-bottom: 0;
     }
 
-    /* Header Tabel Ungu Modern */
     .table-modern-header {
       background-color: #6C3FB5;
       color: white !important;
@@ -186,18 +211,15 @@
 
     .table-hover tbody tr:hover {
       background-color: #fcfaff;
-      /* Highlight ungu sangat muda saat hover */
       transition: 0.2s;
     }
 
-    /* Styling Nama Member */
     .member-name {
       color: #2D3748;
       font-weight: 700;
       font-size: 15px;
     }
 
-    /* Durasi Box Modern */
     .duration-box {
       background: #f3effb;
       color: #6C3FB5 !important;
@@ -209,7 +231,6 @@
       display: inline-block;
     }
 
-    /* Status Badges */
     .badge-modern {
       padding: 7px 14px;
       border-radius: 8px;
@@ -227,7 +248,6 @@
       color: #1a56db;
     }
 
-    /* Text Colors */
     .text-time-in {
       color: #10b981;
       font-weight: 700;
@@ -244,7 +264,6 @@
       font-size: 13px;
     }
 
-    /* Custom Scrollbar untuk Table Responsive */
     .table-responsive::-webkit-scrollbar {
       height: 6px;
     }
@@ -304,219 +323,234 @@
           class="brand-image img-circle elevation-3">
         <span class="brand-text">Trackingspace</span>
       </a>
-      <div class="user-panel mt-3 pb-3 mb-3">
-        <div class="image">
-          @if(Auth::user()->avatar)
-          <img src="{{ asset('storage/avatars/' . Auth::user()->avatar) }}"
-            class="img-circle elevation-2"
-            alt="{{ Auth::user()->name }}">
-          @else
-          <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name ?? 'Admin') }}&size=80&background=6C3FB5&color=fff"
-            class="img-circle elevation-2"
-            alt="User Image">
-          @endif
-        </div>
-        <div class="info">
-          <a href="#" class="d-block text-white font-weight-bold">
-            {{ Auth::user()->name ?? 'Admin' }}
-          </a>
-        </div>
-      </div>
-      <nav class="mt-2">
-        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
-          <li class="nav-item">
-            <a href="{{ route('dashboard') }}" class="nav-link">
-              <i class="nav-icon fas fa-tachometer-alt"></i>
-              <p>Dashboard</p>
+      <div class="sidebar">
+        <div class="user-panel mt-3 pb-3 mb-3">
+          <div class="image">
+            @if(Auth::user()->avatar)
+            <img src="{{ asset('storage/avatars/' . Auth::user()->avatar) }}"
+              class="img-circle elevation-2"
+              alt="{{ Auth::user()->name }}">
+            @else
+            <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name ?? 'Admin') }}&size=80&background=6C3FB5&color=fff"
+              class="img-circle elevation-2"
+              alt="User Image">
+            @endif
+          </div>
+          <div class="info">
+            <a href="#" class="d-block text-white font-weight-bold">
+              {{ Auth::user()->name ?? 'Admin' }}
             </a>
-          </li>
-          <!-- <li class="nav-item">
-              <a href="#" class="nav-link">
-                <i class="nav-icon fas fa-tasks"></i>
-                <p>Priority Task</p>
+          </div>
+        </div>
+        <nav class="mt-2">
+          <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
+            <li class="nav-item">
+              <a href="{{ route('dashboard') }}" class="nav-link">
+                <i class="nav-icon fas fa-tachometer-alt"></i>
+                <p>Dashboard</p>
               </a>
-            </li> -->
-          <li class="nav-item">
-            <a href="{{ route('attendance.index') }}" class="nav-link active">
-              <i class="nav-icon fas fa-clock"></i>
-              <p>Attendance</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="{{ route(name: 'data_member.index') }}" class="nav-link">
-              <i class="nav-icon fas fa-users"></i>
-              <p>Members</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="{{ route('reservasi.index') }}" class="nav-link">
-              <i class="nav-icon fas fa-bookmark"></i>
-              <p>Reservations</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="{{ route('room.index') }}" class="nav-link">
-              <i class="nav-icon fas fa-door-open"></i>
-              <p>Rooms</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="{{ route('event.index') }}" class="nav-link">
-              <i class="nav-icon fas fa-calendar"></i>
-              <p>Events</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="{{ route('operational-hours.index') }}" class="nav-link">
-              <i class="nav-icon fas fa-clock"></i>
-              <p>Open Hours</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="{{ route('reports.index') }}" class="nav-link">
-              <i class="nav-icon fas fa-chart-bar"></i>
-              <p>Reports</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="{{ route('profile.index') }}" class="nav-link">
-              <i class="nav-icon fas fa-user"></i>
-              <p>Profile</p>
-            </a>
-          </li>
-        </ul>
-      </nav>
-  </div>
-  </aside>
-
-  <div class="content-wrapper">
-    <div class="content-header">
-      <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6">
-            <h1 class="m-0 font-weight-bold">Attendance Management</h1>
-          </div>
-        </div>
+            </li>
+            <li class="nav-item">
+              <a href="{{ route('attendance.index') }}" class="nav-link active">
+                <i class="nav-icon fas fa-clock"></i>
+                <p>Attendance</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{{ route('data_member.index') }}" class="nav-link">
+                <i class="nav-icon fas fa-users"></i>
+                <p>Members</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{{ route('reservasi.index') }}" class="nav-link">
+                <i class="nav-icon fas fa-bookmark"></i>
+                <p>Reservations</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{{ route('room.index') }}" class="nav-link">
+                <i class="nav-icon fas fa-door-open"></i>
+                <p>Rooms</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{{ route('event.index') }}" class="nav-link">
+                <i class="nav-icon fas fa-calendar"></i>
+                <p>Events</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{{ route('operational-hours.index') }}" class="nav-link">
+                <i class="nav-icon fas fa-clock"></i>
+                <p>Open Hours</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{{ route('reports.index') }}" class="nav-link">
+                <i class="nav-icon fas fa-chart-bar"></i>
+                <p>Reports</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{{ route('profile.index') }}" class="nav-link">
+                <i class="nav-icon fas fa-user"></i>
+                <p>Profile</p>
+              </a>
+            </li>
+          </ul>
+        </nav>
       </div>
-    </div>
+    </aside>
 
-    <section class="content">
-      <div class="container-fluid">
-
-        <div class="card no-print card-modern mb-4">
-          <div class="card-body p-4">
-            <form method="GET" action="{{ route('attendance.index') }}">
-              <div class="row align-items-end">
-                <div class="col-md-3">
-                  <label class="font-weight-bold small text-muted mb-2">TANGGAL MULAI</label>
-                  <input type="date" class="form-control border-0 bg-light" name="start_date"
-                    value="{{ $startDate }}">
-                </div>
-                <div class="col-md-3">
-                  <label class="font-weight-bold small text-muted mb-2">TANGGAL SELESAI</label>
-                  <input type="date" class="form-control border-0 bg-light" name="end_date" value="{{ $endDate }}">
-                </div>
-                <div class="col-md-6 d-flex gap-2">
-                  <button type="submit" class="btn btn-purple mr-2">
-                    <i class="fas fa-filter mr-2"></i> Filter
-                  </button>
-
-                  <a href="{{ route('attendance.index') }}" class="btn btn-reset mr-2">
-                    <i class="fas fa-sync-alt mr-2"></i> Reset
-                  </a>
-
-                  <button type="button" class="btn btn-success btn-print shadow-sm ml-auto mr-2" onclick="window.print()">
-                    <i class="fas fa-print mr-2"></i> Cetak Report
-                  </button>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-
-        <div class="card card-modern">
-          <div class="card-body p-0">
-            <div class="table-responsive">
-              <table class="table table-hover">
-                <thead class="table-modern-header">
-                  <tr>
-                    <th class="pl-4">Nama Member</th>
-                    <th>Tipe</th>
-                    <th>Tanggal</th>
-                    <th>Check In</th>
-                    <th>Check Out</th>
-                    <th>Durasi Kerja</th>
-                    <th class="text-center">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @foreach($attendances as $attendance)
-                  <tr>
-                    <td class="pl-4">
-                      <div class="member-name">{{ $attendance->member->nama ?? '-' }}</div>
-                      <small class="text-muted">ID: {{ $attendance->member->id ?? '-' }}</small>
-                    </td>
-                    <td>
-                      @php
-                      $type = $attendance->member->type ?? '-';
-                      $badgeColor = match ($type) {
-                      'Member' => 'bg-success text-white',
-                      'Mentor' => 'bg-primary text-white',
-                      'Oficial' => 'bg-warning text-dark',
-                      default => 'bg-secondary text-white',
-                      };
-                      @endphp
-                      <span class="badge {{ $badgeColor }} p-2" style="font-size: 0.85rem;">{{ $type }}</span>
-                    </td>
-                    <td>{{ \Carbon\Carbon::parse($attendance->tanggal)->format('d M Y') }}</td>
-                    <td><span class="text-time-in"><i
-                          class="far fa-clock mr-1"></i>{{ $attendance->waktu_masuk }}</span></td>
-                    <td>
-                      @if($attendance->waktu_keluar)
-                      <span class="text-time-out"><i
-                          class="far fa-clock mr-1"></i>{{ $attendance->waktu_keluar }}</span>
-                      @else
-                      <span class="text-not-set">Belum Keluar</span>
-                      @endif
-                    </td>
-                    <td>
-                      @if($attendance->formatted_durasi != '-')
-                      <div class="duration-box">{{ $attendance->formatted_durasi }}</div>
-                      @else
-                      <span class="text-muted">—</span>
-                      @endif
-                    </td>
-                    <td class="text-center">
-                      @if($attendance->waktu_keluar)
-                      <span class="badge-modern badge-check-out"><i class="fas fa-check-circle mr-1"></i>
-                        Selesai</span>
-                      @else
-                      <span class="badge-modern badge-check-in"><i class="fas fa-spinner fa-spin mr-1"></i>
-                        Aktif</span>
-                      @endif
-                    </td>
-                  </tr>
-                  @endforeach
-                </tbody>
-              </table>
+    <div class="content-wrapper">
+      <div class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+              <h1 class="m-0 font-weight-bold">Attendance Management</h1>
             </div>
           </div>
         </div>
-
-        <div class="mt-4 d-flex justify-content-between align-items-center">
-          <div class="text-muted small">Menampilkan {{ $attendances->count() }} data dari total
-            {{ $attendances->total() }}
-          </div>
-          <div>{{ $attendances->links('pagination::bootstrap-4') }}</div>
-        </div>
       </div>
-    </section>
-  </div>
-  </div>
 
+      <section class="content">
+        <div class="container-fluid">
+
+          <div class="card no-print card-modern mb-4">
+            <div class="card-body p-4">
+              <form method="GET" action="{{ route('attendance.index') }}">
+                <div class="row align-items-end">
+                  <div class="col-md-3">
+                    <label class="font-weight-bold small text-muted mb-2">TANGGAL MULAI</label>
+                    <input type="date" class="form-control border-0 bg-light" name="start_date"
+                      value="{{ $startDate }}">
+                  </div>
+                  <div class="col-md-3">
+                    <label class="font-weight-bold small text-muted mb-2">TANGGAL SELESAI</label>
+                    <input type="date" class="form-control border-0 bg-light" name="end_date" value="{{ $endDate }}">
+                  </div>
+                  <div class="col-md-6 d-flex gap-2">
+                    <button type="submit" class="btn btn-purple mr-2">
+                      <i class="fas fa-filter mr-2"></i> Filter
+                    </button>
+
+                    <a href="{{ route('attendance.index') }}" class="btn btn-reset mr-2">
+                      <i class="fas fa-sync-alt mr-2"></i> Reset
+                    </a>
+                    <button type="button" class="btn btn-success btn-print shadow-sm ml-auto mr-2" onclick="cetakAttendance()">
+                      <i class="fas fa-print mr-2"></i> Cetak Laporan
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <div class="card card-modern">
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead class="table-modern-header">
+                    <tr>
+                      <th class="pl-4">Nama Member</th>
+                      <th>Tipe</th>
+                      <th>Tanggal</th>
+                      <th>Check In</th>
+                      <th>Check Out</th>
+                      <th>Durasi Kerja</th>
+                      <th class="text-center">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @foreach($attendances as $attendance)
+                    <tr>
+                      <td class="pl-4">
+                        <div class="member-name">{{ $attendance->member->nama ?? '-' }}</div>
+                        <small class="text-muted">ID: {{ $attendance->member->id ?? '-' }}</small>
+                      </td>
+                      <td>
+                        @php
+                        $type = $attendance->member->type ?? '-';
+                        $badgeColor = match ($type) {
+                        'Member' => 'bg-success text-white',
+                        'Mentor' => 'bg-primary text-white',
+                        'Oficial' => 'bg-warning text-dark',
+                        default => 'bg-secondary text-white',
+                        };
+                        @endphp
+                        <span class="badge {{ $badgeColor }} p-2" style="font-size: 0.85rem;">{{ $type }}</span>
+                      </td>
+                      <td>{{ \Carbon\Carbon::parse($attendance->tanggal)->format('d M Y') }}</td>
+                      <td><span class="text-time-in"><i
+                            class="far fa-clock mr-1"></i>{{ $attendance->waktu_masuk }}</span></td>
+                      <td>
+                        @if($attendance->waktu_keluar)
+                        <span class="text-time-out"><i
+                            class="far fa-clock mr-1"></i>{{ $attendance->waktu_keluar }}</span>
+                        @else
+                        <span class="text-not-set">Belum Keluar</span>
+                        @endif
+                      </td>
+                      <td>
+                        @if($attendance->formatted_durasi != '-')
+                        <div class="duration-box">{{ $attendance->formatted_durasi }}</div>
+                        @else
+                        <span class="text-muted">—</span>
+                        @endif
+                      </td>
+                      <td class="text-center">
+                        @if($attendance->waktu_keluar)
+                        <span class="badge-modern badge-check-out"><i class="fas fa-check-circle mr-1"></i>
+                          Selesai</span>
+                        @else
+                        <span class="badge-modern badge-check-in"><i class="fas fa-spinner fa-spin mr-1"></i>
+                          Aktif</span>
+                        @endif
+                      </td>
+                    </tr>
+                    @endforeach
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 d-flex justify-content-between align-items-center">
+            <div class="text-muted small">Menampilkan {{ $attendances->count() }} data dari total
+              {{ $attendances->total() }}
+            </div>
+            <div>{{ $attendances->links('pagination::bootstrap-4') }}</div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+  <!-- Iframe untuk cetak laporan kehadiran -->
+  <iframe id="printFrameAttendance" style="display:none;"></iframe>
+
+  <script>
+    function cetakAttendance() {
+      // Ambil nilai filter dari input yang ada
+      var startDate = document.querySelector('input[name="start_date"]').value;
+      var endDate = document.querySelector('input[name="end_date"]').value;
+      var url = "{{ route('attendance.print') }}?start_date=" + encodeURIComponent(startDate) + "&end_date=" + encodeURIComponent(endDate);
+
+      var iframe = document.getElementById('printFrameAttendance');
+      iframe.src = url;
+
+      iframe.onload = function() {
+        // Beri sedikit jeda agar iframe selesai rendering
+        setTimeout(function() {
+          iframe.contentWindow.print();
+        }, 500);
+      };
+    }
+  </script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/js/adminlte.min.js"></script>
+
 </body>
 
 <footer class="main-footer">

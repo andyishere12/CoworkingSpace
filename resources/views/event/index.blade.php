@@ -317,7 +317,7 @@
             <a href="{{ route('event.create') }}" class="btn btn-info mr-2">
               <i class="fas fa-plus mr-1"></i> Create Event
             </a>
-            <button type="button" class="btn btn-success btn-print shadow-sm mr-2" onclick="window.print()">
+            <button type="button" class="btn btn-success btn-print shadow-sm mr-2" onclick="cetakDataEvent()">
               <i class="fas fa-print mr-2"></i> Cetak Event
             </button>
 
@@ -402,8 +402,9 @@
 
             </div>
           </div>
-
-        </div>
+      
+      <!-- Hidden iframe for printing -->
+      <iframe id="printFrame" style="display:none;"></iframe>        </div>
       </section>
     </div>
 
@@ -459,6 +460,16 @@
         showNotification(successMessage, 'success');
       }
     });
+
+    // Fungsi untuk cetak data event dengan PDF layout
+    function cetakDataEvent() {
+      const printFrame = document.getElementById('printFrame');
+      // use relative path so current host is maintained
+      printFrame.src = '/event/print';
+      printFrame.onload = function() {
+        printFrame.contentWindow.print();
+      };
+    }
   </script>
 </body>
 

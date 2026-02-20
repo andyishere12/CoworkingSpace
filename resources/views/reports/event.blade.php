@@ -336,7 +336,7 @@
                 </div>
               </form>
               <div class="mt-2">
-                <button type="button" class="btn btn-success btn-print shadow-sm ml-auto" onclick="window.print()">
+                <button type="button" class="btn btn-success btn-print shadow-sm ml-auto" onclick="cetakEvent()">
                   <i class="fas fa-print mr-2"></i> Cetak Report
                 </button>
                 <!-- Export icons: Excel and PDF (icon-only, keep same routes) -->
@@ -351,6 +351,8 @@
                   <i class="fas fa-file-pdf"></i>
                 </a>
               </div>
+              <!-- Hidden iframe untuk print -->
+              <iframe id="printFrame" style="display:none;"></iframe>
             </div>
           </div>
 
@@ -518,6 +520,20 @@
         }
       });
     });
+
+    // Function untuk cetak event dengan tampilan dari file PDF
+    function cetakEvent() {
+      // Load konten PDF ke dalam iframe
+      const iframe = document.getElementById('printFrame');
+      iframe.src = '{{ url("/reports/event/print") }}?start_date={{ $startDate }}&end_date={{ $endDate }}&status={{ $status }}';
+      
+      // Tunggu iframe selesai loading, baru trigger print
+      iframe.onload = function() {
+        setTimeout(function() {
+          iframe.contentWindow.print();
+        }, 500);
+      };
+    }
   </script>
 </body>
 

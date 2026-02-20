@@ -37,15 +37,12 @@
       padding-left: 15px;
       padding-right: 15px;
       margin-left: 10px;
-
     }
 
     .user-panel .image {
       display: block !important;
       float: none !important;
-      /* Hapus float kiri bawaan AdminLTE */
       margin: 0 0 10px 0 !important;
-      /* Atur margin: bawah saja */
       padding: 0 !important;
     }
 
@@ -55,14 +52,12 @@
       border: 3px solid rgba(255, 255, 255, 0.3);
       display: block;
       margin: 0 auto;
-      /* Pastikan gambar di tengah */
     }
 
     .user-panel .info {
       display: block !important;
       width: 100% !important;
       padding: 0 !important;
-      /* Hapus padding kiri bawaan */
       margin: 0 !important;
       text-align: center !important;
     }
@@ -90,6 +85,17 @@
       color: white;
     }
 
+    .nav-icon-box {
+      width: 30px;
+      height: 30px;
+      background-color: rgba(255, 255, 255, 0.2);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 10px;
+    }
+
     .table-cyan th {
       color: #000000ff !important;
       font-weight: 600;
@@ -108,6 +114,68 @@
 
     .btn-update:hover {
       background-color: #e9ecef;
+    }
+
+    /* Style notifikasi pop-up (diadopsi dari Event) */
+    .notification-container {
+      position: fixed;
+      top: 70px;
+      right: 20px;
+      z-index: 99999;
+      max-width: 350px;
+    }
+
+    .notification {
+      background: white;
+      border-radius: 10px;
+      padding: 15px 20px;
+      margin-bottom: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      border-left: 5px solid;
+      animation: slideIn 0.5s ease, fadeOut 0.5s ease 4.5s forwards;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .notification.success {
+      border-left-color: #28a745;
+      color: #155724;
+      background-color: #d4edda;
+    }
+
+    .notification.error {
+      border-left-color: #dc3545;
+      color: #721c24;
+      background-color: #f8d7da;
+    }
+
+    .notification.warning {
+      border-left-color: #ffc107;
+      color: #856404;
+      background-color: #fff3cd;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeOut {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(100%);
+        opacity: 0;
+      }
     }
   </style>
 </head>
@@ -134,8 +202,7 @@
         </li>
         <li class="nav-item">
           <a href="#" class="nav-link">
-            <i class="fas fa-users"></i> <span class="badge badge-danger">{{ $todayAttendance ?? 0 }}</span> Active
-            Today
+            <i class="fas fa-users"></i> <span class="badge badge-danger">{{ $todayAttendance ?? 0 }}</span> Active Today
           </a>
         </li>
         <li class="nav-item">
@@ -151,35 +218,29 @@
         </li>
       </ul>
     </nav>
-    <!-- /.navbar -->
 
     <!-- Sidebar -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
       <a href="{{ route('dashboard') }}" class="brand-link">
-        <img src="{{ asset('gambar/icontrasa.jpeg') }}"
-          alt="Logo"
-          class="brand-image img-circle elevation-3">
+        <img src="{{ asset('gambar/icontrasa.jpeg') }}" alt="Logo" class="brand-image img-circle elevation-3">
         <span class="brand-text">Trackingspace</span>
       </a>
       <div class="sidebar">
         <div class="user-panel mt-3 pb-3 mb-3">
           <div class="image">
             @if(Auth::user()->avatar)
-            <img src="{{ asset('storage/avatars/' . Auth::user()->avatar) }}"
-              class="img-circle elevation-2"
+            <img src="{{ asset('storage/avatars/' . Auth::user()->avatar) }}" class="img-circle elevation-2"
               alt="{{ Auth::user()->name }}">
             @else
-            <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name ?? 'Admin') }}&size=80&background=6C3FB5&color=fff"
-              class="img-circle elevation-2"
-              alt="User Image">
+            <img
+              src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name ?? 'Admin') }}&size=80&background=6C3FB5&color=fff"
+              class="img-circle elevation-2" alt="User Image">
             @endif
           </div>
           <div class="info">
-            <u style="color: white;">
-              <a href="#" class="d-block text-white font-weight-bold">
-                {{ Auth::user()->name ?? 'Admin' }}
-              </a>
-            </u>
+            <a href="#" class="d-block text-white font-weight-bold">
+              {{ Auth::user()->name ?? 'Admin' }}
+            </a>
           </div>
         </div>
         <nav class="mt-2">
@@ -190,12 +251,6 @@
                 <p>Dashboard</p>
               </a>
             </li>
-            <!-- <li class="nav-item">
-              <a href="#" class="nav-link">
-                <i class="nav-icon fas fa-tasks"></i>
-                <p>Priority Task</p>
-              </a>
-            </li> -->
             <li class="nav-item">
               <a href="{{ route('attendance.index') }}" class="nav-link">
                 <i class="nav-icon fas fa-clock"></i>
@@ -279,13 +334,8 @@
               </div>
             </div>
             <div class="card-body">
-              @if(session('success'))
-              <div class="alert alert-success alert-dismissible fade show">
-                {{ session('success') }}
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-              </div>
-              @endif
-
+              {{-- NOTIFIKASI ALERT LAMA DIHAPUS, DIGANTI POP-UP --}}
+              
               <p class="text-muted">Total {{ $operationalHours->count() }} items.</p>
 
               <div class="table-responsive">
@@ -328,9 +378,65 @@
     </footer>
   </div>
 
+  {{-- Container untuk notifikasi pop-up (diadopsi dari Event) --}}
+  <div class="notification-container" id="notificationContainer"></div>
+
+  {{-- Flash Messages Container (data attribute) --}}
+  <div id="flash-messages"
+       data-success="{{ session('success') }}"
+       data-error="{{ session('error') }}"
+       data-warning="{{ session('warning') }}">
+  </div>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/js/adminlte.min.js"></script>
+
+  <script>
+    // Fungsi notifikasi pop-up (sama dengan di Event)
+    function showNotification(message, type = 'success') {
+      const container = document.getElementById('notificationContainer');
+      if (!container) return;
+
+      const notification = document.createElement('div');
+      notification.className = `notification ${type}`;
+      notification.innerHTML = `
+        <div style="flex: 1;">
+          <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+            <strong>${type === 'success' ? 'Berhasil!' : type === 'error' ? 'Error!' : 'Perhatian!'}</strong>
+          </div>
+          <div style="margin: 0;">${message}</div>
+        </div>
+      `;
+
+      container.appendChild(notification);
+
+      setTimeout(() => {
+        if (notification.parentNode) {
+          notification.style.animation = 'fadeOut 0.5s ease forwards';
+          setTimeout(() => notification.remove(), 500);
+        }
+      }, 5000);
+
+      notification.addEventListener('click', () => {
+        notification.style.animation = 'fadeOut 0.5s ease forwards';
+        setTimeout(() => notification.remove(), 500);
+      });
+    }
+
+    $(document).ready(function() {
+      const flashMessages = document.getElementById('flash-messages');
+      if (flashMessages) {
+        const successMessage = flashMessages.dataset.success;
+        const errorMessage = flashMessages.dataset.error;
+        const warningMessage = flashMessages.dataset.warning;
+
+        if (successMessage) showNotification(successMessage, 'success');
+        if (errorMessage) showNotification(errorMessage, 'error');
+        if (warningMessage) showNotification(warningMessage, 'warning');
+      }
+    });
+  </script>
 </body>
 
 </html>

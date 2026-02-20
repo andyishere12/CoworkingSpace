@@ -72,4 +72,33 @@ class AttendanceController extends Controller
 
         return redirect()->back()->with('success', 'Check-out berhasil');
     }
+
+        public function print(Request $request)
+    {
+        $startDate = $request->input('start_date', now()->toDateString());
+        $endDate   = $request->input('end_date', now()->toDateString());
+
+        // Ambil semua data tanpa pagination, urutkan tanggal terbaru
+        $attendances = Hadir::with('member')
+            ->whereBetween('tanggal', [$startDate, $endDate])
+            ->orderBy('tanggal', 'desc')
+            ->orderBy('waktu_masuk', 'desc')
+            ->get();
+
+        // Format durasi (menit ke HH:MM)
+        foreach ($attendances as $attendance) {
+            if ($attendance->durasi !== null) {
+                $hours = floor($attendance->durasi / 60);
+                $minutes = $attendance->durasi % 60;
+                $attendance->formatted_durasi = sprintf('%02d:%02d', $hours, $minutes);
+            } else {
+                $attendance->formatted_durasi = '-';
+            }
+        }
+
+        // Flag untuk membedakan penggunaan asset() vs public_path() di view
+        $isPdf = false;
+
+        return view('attendance.print', compact('attendances', 'startDate', 'endDate', 'isPdf'));
+    }
 }

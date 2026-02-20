@@ -6,15 +6,41 @@
     <title>Laporan Ruangan</title>
 
     <style>
+        * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+        }
+
         @page {
             size: A4 portrait;
             margin: 20px 15px;
+        }
+
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+                background: white !important;
+            }
+
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            img {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                max-width: 100%;
+            }
         }
 
         body {
             font-family: DejaVu Sans, sans-serif;
             font-size: 9px;
             line-height: 1.2;
+            background: white;
         }
 
         thead {
@@ -30,24 +56,28 @@
             border-collapse: collapse;
             margin-top: 4px;
             table-layout: fixed;
+            border: 1px solid #000 !important;
         }
 
         th,
         td {
-            border: 1px solid #000;
+            border: 1px solid #000 !important;
             padding: 3px;
             word-wrap: break-word;
         }
 
         th {
-            background: #e0e0e0;
-            text-align: center;
+            background: #acacac !important; /* match member/event reports */
+            color: #000 !important;
+            text-align: center !important;
             font-size: 9px;
-            font-weight: bold;
+            font-weight: bold !important;
         }
 
         td {
             font-size: 8.5px;
+            background: white !important;
+            color: #000 !important;
         }
 
         h3 {
@@ -55,20 +85,32 @@
             margin-bottom: 3px;
             font-size: 11px;
             font-weight: bold;
-            color: #333;
+            color: #333 !important;
         }
 
         .header-table td {
-            border: none;
-            padding: 1px;
+            border: none !important;
+            padding: 1px !important;
+            background: white !important;
+        }
+
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: none !important;
+            border-spacing: 0 !important;
         }
 
         .logo-kiri {
             width: 55px;
+            height: auto;
+            border: none !important;
         }
 
         .logo-kanan {
             width: 80px;
+            height: auto;
+            border: none !important;
         }
 
         .title {
@@ -99,14 +141,24 @@
             page-break-before: always;
         }
 
+        hr {
+            border: none !important;
+            border-top: 1px solid #333 !important;
+            margin: 8px 0 !important;
+            padding: 0 !important;
+        }
+
+        /* footer placed at bottom of every page */
         footer {
             position: fixed;
-            bottom: -15px;
+            bottom: 0;
             left: 0;
             right: 0;
             text-align: center;
-            font-size: 8px;
-            color: #666;
+            font-size: 9px;
+            height: 20px;
+            line-height: 20px;
+            background-color: white;
         }
 
         .section-spacer {
@@ -150,6 +202,7 @@
         .col-deskripsi {
             width: 35%;
         }
+
     </style>
 </head>
 
@@ -159,7 +212,11 @@
     <table class="header-table">
         <tr>
             <td width="15%">
-                <img src="{{ public_path('gambar/logo_coworking.png') }}" class="logo-kiri">
+                @if(isset($isPdf) && $isPdf)
+                <img src="{{ public_path('gambar/logo_coworking.png') }}" class="logo-kiri" style="max-width: 55px; height: auto;">
+                @else
+                <img src="{{ asset('gambar/logo_coworking.png') }}" class="logo-kiri" style="max-width: 55px; height: auto;">
+                @endif
             </td>
 
             <td width="70%" class="title">
@@ -170,7 +227,11 @@
             </td>
 
             <td width="15%" align="right">
-                <img src="{{ public_path('gambar/logo_dinas.jpeg') }}" class="logo-kanan">
+                @if(isset($isPdf) && $isPdf)
+                <img src="{{ public_path('gambar/logo_dinas.jpeg') }}" class="logo-kanan" style="max-width: 80px; height: auto;">
+                @else
+                <img src="{{ asset('gambar/logo_dinas.jpeg') }}" class="logo-kanan" style="max-width: 80px; height: auto;">
+                @endif
             </td>
         </tr>
     </table>
@@ -308,7 +369,7 @@
                 <td class="center">{{ $room->capacity ?? 0 }}</td>
                 <td class="center">{{ $room->type ?? '-' }}</td>
                 <td class="center">{{ $room->status ?? '-' }}</td>
-            <td class="center">{{ $reservation->total_reservasi ?? 0 }}</td>
+                <td class="center">{{ $reservation->total_reservasi ?? 0 }}</td>
                 <td class="wrap-text">{{ $room->description ?? '-' }}</td>
             </tr>
             @empty

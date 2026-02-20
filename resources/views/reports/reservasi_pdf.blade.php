@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="utf-8">
-    <title>Laporan Member</title>
+    <title>Laporan Reservasi</title>
 
     <style>
         * {
@@ -14,13 +13,8 @@
 
         @page {
             size: A4 portrait;
-            margin: 25px 30px 40px 30px;
-            
+            margin: 25px 30px;
         }
-
-        @top-center, @bottom-center, @top-left, @top-right, @bottom-left, @bottom-right {
-                content: none;
-            }
 
         @media print {
             body {
@@ -28,12 +22,12 @@
                 padding: 0;
                 background: white !important;
             }
-
+            
             * {
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
-
+            
             img {
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
@@ -42,7 +36,6 @@
         }
 
         body {
-            margin-bottom: 30px;
             font-family: DejaVu Sans, sans-serif;
             font-size: 10px;
             background: white;
@@ -145,16 +138,11 @@
 
         footer {
             position: fixed;
-            bottom: 0;
+            bottom: -10px;
             left: 0;
             right: 0;
             text-align: center;
             font-size: 9px;
-            height: 20px;
-            /* tinggi footer */
-            line-height: 20px;
-            /* vertikal tengah */
-            background-color: white;
         }
     </style>
 </head>
@@ -166,9 +154,9 @@
         <tr>
             <td width="15%">
                 @if(isset($isPdf) && $isPdf)
-                <img src="{{ public_path('gambar/logo_coworking.png') }}" class="logo-kiri" style="max-width: 60px; height: auto;">
+                    <img src="{{ public_path('gambar/logo_coworking.png') }}" class="logo-kiri" style="max-width: 60px; height: auto;">
                 @else
-                <img src="{{ asset('gambar/logo_coworking.png') }}" class="logo-kiri" style="max-width: 60px; height: auto;">
+                    <img src="{{ asset('gambar/logo_coworking.png') }}" class="logo-kiri" style="max-width: 60px; height: auto;">
                 @endif
             </td>
 
@@ -181,9 +169,9 @@
 
             <td width="15%" align="right">
                 @if(isset($isPdf) && $isPdf)
-                <img src="{{ public_path('gambar/logo_dinas.jpeg') }}" class="logo-kanan" style="max-width: 85px; height: auto;">
+                    <img src="{{ public_path('gambar/logo_dinas.jpeg') }}" class="logo-kanan" style="max-width: 85px; height: auto;">
                 @else
-                <img src="{{ asset('gambar/logo_dinas.jpeg') }}" class="logo-kanan" style="max-width: 85px; height: auto;">
+                    <img src="{{ asset('gambar/logo_dinas.jpeg') }}" class="logo-kanan" style="max-width: 85px; height: auto;">
                 @endif
             </td>
         </tr>
@@ -192,98 +180,99 @@
     <hr>
 
     <span style="font-size:14px; font-weight:bold; text-align:center; display:block;" class="judul">
-        LAPORAN MEMBER
+        LAPORAN RESERVASI
     </span>
 
     {{-- ================= RINGKASAN ================= --}}
-    <h3>Ringkasan Member</h3>
+    <h3>Ringkasan Reservasi</h3>
 
     <table>
         <tr>
-            <th>Total Member</th>
-            <th>Member Aktif</th>
-            <th>Member Tidak Aktif</th>
+            <th>Total Reservasi</th>
+            <th>Pending</th>
+            <th>Approved</th>
+            <th>Rejected</th>
         </tr>
         <tr class="center">
-            <td>{{ $totalMember }}</td>
-            <td>{{ $aktif }}</td>
-            <td>{{ $nonAktif }}</td>
+            <td>{{ $totalReservasi }}</td>
+            <td>{{ $pending }}</td>
+            <td>{{ $approved }}</td>
+            <td>{{ $rejected }}</td>
         </tr>
     </table>
 
-    {{-- ================= TIPE ================= --}}
-    <h3>Tipe Member</h3>
+    {{-- ================= STATISTIK RUANGAN ================= --}}
+    <h3>Statistik Ruangan</h3>
 
     <table>
         <tr>
-            <th width="70%">Tipe Member</th>
-            <th width="30%">Jumlah</th>
+            <th width="70%">Ruangan</th>
+            <th width="30%">Jumlah Reservasi</th>
         </tr>
-        @foreach ($tipeMember as $t)
+        @foreach ($ruanganStats as $ruangan)
         <tr>
-            <td>{{ $t->type ?? '-' }}</td>
-            <td class="center">{{ $t->jumlah }}</td>
+            <td>{{ $ruangan->ruangan ?? '-' }}</td>
+            <td class="center">{{ $ruangan->jumlah }}</td>
         </tr>
         @endforeach
     </table>
 
-    {{-- ================= AKTIVITAS ================= --}}
-    <h3>Aktivitas Member</h3>
+    {{-- ================= STATISTIK STATUS ================= --}}
+    <h3>Statistik Status</h3>
 
     <table>
         <tr>
-            <th width="70%">Aktivitas</th>
+            <th width="70%">Status</th>
             <th width="30%">Jumlah</th>
         </tr>
-        @foreach ($aktivitasMember as $a)
+        @foreach ($statusStats as $status)
         <tr>
-            <td>{{ $a->aktivitas ?? '-' }}</td>
-            <td class="center">{{ $a->jumlah }}</td>
+            <td>{{ $status->status ?? '-' }}</td>
+            <td class="center">{{ $status->jumlah }}</td>
         </tr>
         @endforeach
     </table>
 
-    {{-- ================= PINDAH HALAMAN ================= --}}
-    <div class="page-break"></div>
-
-    {{-- ================= DETAIL ================= --}}
-    <h3>Detail Member</h3>
+    {{-- ================= DETAIL RESERVASI ================= --}}
+    <h3>Detail Reservasi</h3>
 
     <table>
         <thead>
             <tr>
                 <th width="3%">No</th>
-                <th width="13%">Nama</th>
-                <th width="18%">Email</th>
-                <th width="10%">Telepon</th>
-                <th width="7%">Tipe</th>
-                <th width="8%">Aktivitas</th>
-                <th width="9%">Institusi</th>
-                <th width="10%">Tanggal Lahir</th>
-                <th width="16%">Alamat</th>
-                <th width="6%">Tanggal Daftar</th>
+                <th width="12%">Nama Member</th>
+                <th width="12%">Ruangan</th>
+                <th width="10%">Tanggal</th>
+                <th width="8%">Jam Mulai</th>
+                <th width="8%">Jam Selesai</th>
+                <th width="10%">Status</th>
+                <th width="12%">Keterangan</th>
+                <th width="10%">Tanggal Daftar</th>
             </tr>
         </thead>
 
         <tbody>
-            @foreach($members as $i => $row)
+            @forelse($reservasi as $i => $res)
             <tr>
-                <td class="center">{{ $i+1 }}</td>
-                <td>{{ $row->nama }}</td>
-                <td>{{ $row->email }}</td>
-                <td class="center">{{ $row->no_hp }}</td>
-                <td class="center">{{ $row->type }}</td>
-                <td class="center">{{ $row->aktivitas }}</td>
-                <td class="center">{{ $row->institusi }}</td>
+                <td class="center">{{ $i + 1 }}</td>
+                <td>{{ $res->nama_member ?? '-' }}</td>
+                <td>{{ $res->ruangan ?? '-' }}</td>
                 <td class="center">
-                    {{ $row->tanggal_lahir ? \Carbon\Carbon::parse($row->tanggal_lahir)->format('d-m-Y') : '-' }}
+                    {{ $res->tanggal ? \Carbon\Carbon::parse($res->tanggal)->format('d-m-Y') : '-' }}
                 </td>
-                <td>{{ $row->alamat }}</td>
+                <td class="center">{{ $res->jam_mulai ?? '-' }}</td>
+                <td class="center">{{ $res->jam_selesai ?? '-' }}</td>
+                <td class="center">{{ $res->status ?? '-' }}</td>
+                <td>{{ $res->keterangan ?? '-' }}</td>
                 <td class="center">
-                    {{ $row->created_at ? \Carbon\Carbon::parse($row->created_at)->format('d-m-Y') : '-' }}
+                    {{ $res->created_at ? \Carbon\Carbon::parse($res->created_at)->format('d-m-Y') : '-' }}
                 </td>
             </tr>
-            @endforeach
+            @empty
+            <tr>
+                <td colspan="9" class="center">Tidak ada data reservasi</td>
+            </tr>
+            @endforelse
         </tbody>
     </table>
 

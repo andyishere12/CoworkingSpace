@@ -1,4 +1,4 @@
-<?php
+
 
 namespace App\Http\Controllers;
 
@@ -10,8 +10,6 @@ use App\Models\Reservasi;
 use App\Models\Event;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-
-// Icon AI responses 24 hours
 
 class AnalyticsController extends Controller
 {
@@ -25,7 +23,7 @@ class AnalyticsController extends Controller
             $activityDistribution = $this->getMemberActivityDistribution();
             $monthlyTrend = $this->getMonthlyTrendData();
 
-            // ✅ AI-Powered Recommendations Gemini
+            // AI-Powered Recommendations (Gemini FREE!)
             $recommendations = $this->generateGeminiRecommendations([
                 'peak_hours' => $peakHours,
                 'retention_rate' => $retentionRate,
@@ -59,30 +57,12 @@ class AnalyticsController extends Controller
     }
 
     /**
-     * ✅ GEMINI AI (FREE!) with CACHING for speed
+     *  GEMINI AI (FREE!) using Laravel HTTP Client
      */
     private function generateGeminiRecommendations($data)
     {
-        // Create cache key based on data
-        $cacheKey = 'analytics_ai_' . md5(json_encode([
-            'retention' => $data['retention_rate'],
-            'visit_index' => $data['visit_index'],
-            'peak_hours' => $data['peak_hours'],
-            'date' => date('Y-m-d') // Cache expires daily
-        ]));
-        
-        // Try to get from cache first (INSTANT!)
-        $cached = \Cache::get($cacheKey);
-        if ($cached) {
-            \Log::info('✅ Using cached AI recommendations (instant)');
-            return $cached;
-        }
-        
-        // If not cached, call Gemini API (slow)
-        \Log::info('⏳ Generating fresh AI recommendations (this may take 5-30s)...');
-        
         $maxRetries = 2;
-        $timeout = 30;
+        $timeout = 30; // Increased from 10 to 30 seconds
         
         for ($attempt = 1; $attempt <= $maxRetries; $attempt++) {
             try {
@@ -100,8 +80,17 @@ class AnalyticsController extends Controller
                 $response = Http::timeout($timeout)->post(
                     'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=' . $apiKey,
                     [
-                        'contents' => [['parts' => [['text' => $prompt]]]],
-                        'generationConfig' => ['temperature' => 0.7, 'maxOutputTokens' => 2000]
+                        'contents' => [
+                            [
+                                'parts' => [
+                                    ['text' => $prompt]
+                                ]
+                            ]
+                        ],
+                        'generationConfig' => [
+                            'temperature' => 0.7,
+                            'maxOutputTokens' => 2000,
+                        ]
                     ]
                 );
 
@@ -113,11 +102,6 @@ class AnalyticsController extends Controller
                     
                     if (!empty($recommendations)) {
                         \Log::info("✅ Gemini AI success on attempt {$attempt}");
-                        
-                        // Cache for 24 hours (86400 seconds)
-                        \Cache::put($cacheKey, $recommendations, 86400);
-                        \Log::info('💾 AI recommendations cached for 24 hours');
-                        
                         return $recommendations;
                     }
                 }
@@ -125,7 +109,7 @@ class AnalyticsController extends Controller
                 \Log::warning("Gemini API response invalid on attempt {$attempt}");
                 
                 if ($attempt < $maxRetries) {
-                    sleep(2);
+                    sleep(2); // Wait before retry
                     continue;
                 }
 
@@ -140,12 +124,7 @@ class AnalyticsController extends Controller
         }
         
         \Log::warning('Gemini API failed after all retries, falling back to rule-based');
-        $fallback = $this->fallbackRuleBasedRecommendations($data);
-        
-        // Cache fallback for 1 hour to prevent repeated failures
-        \Cache::put($cacheKey, $fallback, 3600);
-        
-        return $fallback;
+        return $this->fallbackRuleBasedRecommendations($data);
     }
 
     private function buildGeminiPrompt($data)

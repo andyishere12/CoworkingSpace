@@ -30,10 +30,5 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('manager123')
         ]);
 
-        User::factory()->create([
-            'name' => 'manager',
-            'email' => 'manager@trackingspace.com',
-            'password' =>Hash::make('manager123')
-        ]);
     }
 }

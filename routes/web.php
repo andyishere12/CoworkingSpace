@@ -14,6 +14,7 @@ use App\Http\Controllers\ScanController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\KursiController;
 
 // NEW: Import controllers untuk Manager
 use App\Http\Controllers\ManagerDashboardController;
@@ -132,8 +133,11 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     Route::get('/reports/event/excel', [ReportController::class, 'exportEventExcel']);
     Route::get('/reports/event/pdf', [ReportController::class, 'exportEventPdf']);
-});
 
+    });
+    // setting kursi
+    Route::get('/kursi', [KursiController::class, 'index']);
+    
 /*
 | ✅ NEW: Manager Routes (Protected)
 |--------------------------------------------------------------------------

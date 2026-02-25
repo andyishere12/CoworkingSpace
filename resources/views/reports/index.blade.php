@@ -37,7 +37,6 @@
       padding-left: 15px;
       padding-right: 15px;
       margin-left: 10px;
-
     }
 
     .user-panel .image {

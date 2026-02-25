@@ -393,7 +393,8 @@
     <div class="content-header">
       <div class="container-fluid">
         <div class="row mb-2">
-          <div class="col-sm-6">
+          <div class="col-sm-6">php artisan make:migration create_settings_kursi_table
+
             <h1 class="m-0 font-weight-bold">Attendance Management</h1>
           </div>
         </div>

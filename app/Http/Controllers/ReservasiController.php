@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Reservasi;
 use App\Models\DataMember;
+use App\Models\Room;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ReservasiExport;
@@ -20,7 +21,8 @@ class ReservasiController extends Controller
     public function create()
     {
         $members = DataMember::all();
-        return view('Reservasi.create', compact('members'));
+        $rooms = Room::all();
+        return view('Reservasi.create', compact('members', 'rooms'));
     }
 
     public function store(Request $request)
@@ -59,7 +61,8 @@ class ReservasiController extends Controller
     public function edit(Reservasi $reservasi)
     {
         $members = DataMember::all();
-        return view('Reservasi.edit', compact('reservasi', 'members'));
+        $rooms = Room::all();
+        return view('Reservasi.edit', compact('reservasi', 'members', 'rooms'));
     }
 
     public function update(Request $request, Reservasi $reservasi)
@@ -106,6 +109,17 @@ class ReservasiController extends Controller
         return redirect()->route('reservasi.index')->with('success', 'Reservasi dihapus!');
     }
 
+    public function reservasiPrint(Request $request)
+    {
+        $reservasi = Reservasi::all();
+        $isPdf = true;
+
+        // Menggunakan view 'reservasi.pdf' yang sudah ada
+        $pdf = Pdf::loadView('reservasi.pdf', compact('reservasi', 'isPdf'))
+                  ->setPaper('a4', 'landscape');
+        return $pdf->stream('DATA_RESERVASI.pdf');
+    }
+
     public function exportExcel()
     {
         return Excel::download(new ReservasiExport, 'DATA RESERVASI.xlsx');
@@ -114,8 +128,10 @@ class ReservasiController extends Controller
     public function exportPdf()
     {
         $reservasi = Reservasi::all();
-        $pdf = Pdf::loadView('reservasi.pdf', compact('reservasi'))
+        $isPdf = true;
+        $pdf = Pdf::loadView('reservasi.pdf', compact('reservasi', 'isPdf'))
                   ->setPaper('a4', 'landscape');
         return $pdf->download('DATA RESERVASI.pdf');
     }
+    
 }

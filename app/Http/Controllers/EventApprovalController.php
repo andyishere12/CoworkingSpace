@@ -113,7 +113,7 @@ class EventApprovalController extends Controller
             $event->status = 'rejected';
 
             // Alasan Penolakan
-            $event->rejection_reason = $request->rejection_reason;
+            //$event->rejection_reason = $request->rejection_reason;
 
             $event->save();
 

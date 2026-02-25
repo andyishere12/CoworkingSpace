@@ -33,7 +33,14 @@ class ScanController extends Controller
 
         // ================= AMBIL UPCOMING EVENTS =================
         $upcomingEvents = Event::where('start_date', '>=', Carbon::today())
-            ->where('status', 'active')
+            ->where(function($q) {
+                $q->where('status', 'active')
+                  ->orWhere('status', 'Active')
+                  ->orWhere('status', 'ACTIVE')
+                  ->orWhere('status', 'approved')
+                  ->orWhere('status', 'Approved')
+                  ->orWhere('status', 'APPROVED');
+            })
             ->orderBy('start_date', 'asc')
             ->take(3)
             ->get()

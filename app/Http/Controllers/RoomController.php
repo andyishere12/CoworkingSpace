@@ -86,13 +86,12 @@ class RoomController extends Controller
         // Ambil semua ruangan
         $rooms = Room::orderBy('name')->get();
 
-        // Flag untuk render HTML di browser
-        $isPdf = false;
+        $isPdf = true;
 
-        return view('room.pdf', compact(
-            'rooms',
-            'isPdf'
-        ));
+        $pdf = Pdf::loadView('room.pdf', compact('rooms', 'isPdf'))
+            ->setPaper('a4', 'landscape');
+
+        return $pdf->stream('DATA RUANGAN.pdf');
     }
 
     public function exportExcel()

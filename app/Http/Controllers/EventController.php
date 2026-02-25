@@ -85,6 +85,17 @@ class EventController extends Controller
         return redirect()->route('event.index')->with('success', 'Event dihapus!');
     }
 
+    public function eventPrint(Request $request)
+    {
+        $events = Event::with('member')->orderBy('created_at', 'desc')->get();
+        $isPdf = true;
+
+        $pdf = Pdf::loadView('event.pdf', compact('events', 'isPdf'))
+                  ->setPaper('a4', 'landscape');
+        return $pdf->stream('DATA EVENT.pdf');
+    }
+    
+
     public function exportExcel()
     {
         return Excel::download(new EventExport, 'DATA EVENT.xlsx');
@@ -92,9 +103,12 @@ class EventController extends Controller
 
     public function exportPdf()
     {
-        $events = Event::all();
-        $pdf = Pdf::loadView('event.pdf', compact('events'))
+        // Mengambil data dengan relasi member agar konsisten dengan eventPrint
+        $events = Event::with('member')->orderBy('created_at', 'desc')->get();
+        $isPdf = true; // Menambahkan flag isPdf untuk konsistensi view
+        $pdf = Pdf::loadView('event.pdf', compact('events', 'isPdf'))
                   ->setPaper('a4', 'landscape');
         return $pdf->download('DATA EVENT.pdf');
     }
+    
 }

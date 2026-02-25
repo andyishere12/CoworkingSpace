@@ -19,6 +19,7 @@ class EventExport implements FromCollection, WithHeadings, ShouldAutoSize, WithS
         return Event::select(
             'id',
             'title',
+            'organizer',
             'description',
             'start_date',
             'end_date',
@@ -47,6 +48,7 @@ class EventExport implements FromCollection, WithHeadings, ShouldAutoSize, WithS
             return [
                 $row->id,
                 $row->title,
+                $row->organizer,
                 $row->description,
                 $startDate,
                 $endDate,
@@ -60,6 +62,7 @@ class EventExport implements FromCollection, WithHeadings, ShouldAutoSize, WithS
         return [
             'No',
             'Nama Event',
+            'Organizer',
             'Keterangan',
             'Tanggal Mulai',
             'Tanggal Selesai',

@@ -188,14 +188,11 @@
                                                 id="ruangan" name="ruangan" required>
                                                 <option value="" disabled {{ old('ruangan') ? '' : 'selected' }}>Pilih
                                                     Room</option>
-                                                <option value="Room A" {{ old('ruangan') == 'Room A' ? 'selected' : '' }}>
-                                                    Room A</option>
-                                                <option value="Room B" {{ old('ruangan') == 'Room B' ? 'selected' : '' }}>
-                                                    Room B</option>
-                                                <option value="Room C" {{ old('ruangan') == 'Room C' ? 'selected' : '' }}>
-                                                    Room C</option>
-                                                <option value="Room D" {{ old('ruangan') == 'Room D' ? 'selected' : '' }}>
-                                                    Room D</option>
+                                                @foreach($rooms as $room)
+                                                    <option value="{{ $room->name }}" {{ old('ruangan') == $room->name ? 'selected' : '' }}>
+                                                        {{ $room->name }}
+                                                    </option>
+                                                @endforeach
                                             </select>
                                             @error('ruangan')
                                                 <div class="invalid-feedback">{{ $message }}</div>

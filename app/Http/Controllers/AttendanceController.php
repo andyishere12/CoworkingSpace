@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Hadir;
 use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class AttendanceController extends Controller
 {
@@ -96,9 +97,11 @@ class AttendanceController extends Controller
             }
         }
 
-        // Flag untuk membedakan penggunaan asset() vs public_path() di view
-        $isPdf = false;
+        $isPdf = true;
 
-        return view('attendance.print', compact('attendances', 'startDate', 'endDate', 'isPdf'));
+        $pdf = Pdf::loadView('attendance.print', compact('attendances', 'startDate', 'endDate', 'isPdf'))
+            ->setPaper('a4', 'landscape');
+
+        return $pdf->stream('LAPORAN KEHADIRAN.pdf');
     }
 }

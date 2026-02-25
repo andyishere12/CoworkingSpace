@@ -649,9 +649,6 @@
         </div>
       </section>
       
-      <!-- Hidden iframe for printing -->
-      <!-- Hidden iframe for printing -->
-      <iframe id="printFrame" style="display:none;"></iframe>
     </div>
 
     <footer class="main-footer">
@@ -1089,13 +1086,15 @@
     // Fungsi untuk cetak data member dengan PDF layout
     function cetakDataMember() {
       const printFrame = document.getElementById('printFrame');
-      printFrame.src = '/data-member/print';
+      printFrame.src = "{{ route('data-member.print') }}";
       printFrame.onload = function() {
         printFrame.contentWindow.print();
       };
     }
     
   </script>
+  <!-- Hidden iframe for printing -->
+  <iframe id="printFrame" style="display:none;"></iframe>
 
 </body>
 

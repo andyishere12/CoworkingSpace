@@ -531,7 +531,7 @@
       iframe.onload = function() {
         setTimeout(function() {
           iframe.contentWindow.print();
-        }, 500);
+        }, 1800);
       };
     }
   </script>

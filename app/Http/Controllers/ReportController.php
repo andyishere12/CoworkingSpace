@@ -103,18 +103,22 @@ class ReportController extends Controller
             ->groupBy('aktivitas')
             ->get();
 
-        // Flag untuk render HTML di browser
-        $isPdf = false;
+        // Render stream PDF agar logo dan layout konsisten saat cetak
+        $isPdf = true;
+        $exportOnlyDetail = false;
 
-        return view('reports.member_pdf', compact(
+        $pdf = Pdf::loadView('reports.member_pdf', compact(
             'members',
             'totalMember',
             'aktif',
             'nonAktif',
             'tipeMember',
             'aktivitasMember',
-            'isPdf'
-        ));
+            'isPdf',
+            'exportOnlyDetail'
+        ))->setPaper('a4', 'portrait');
+
+        return $pdf->stream('LAPORAN MEMBER.pdf');
     }
 
     // ==========================================
@@ -183,11 +187,13 @@ class ReportController extends Controller
             'active_events' => Event::whereBetween('start_date', [$startDate, $endDate])
                 ->where('status', 'active')->count(),
             'inactive_events' => Event::whereBetween('start_date', [$startDate, $endDate])
-                ->where('status', 'inactive')->count(),
+                ->where('status', '!=', 'active')->count(),
             'upcoming_events' => Event::where('start_date', '>', Carbon::now())
+                ->where('status', 'active')
                 ->whereBetween('start_date', [$startDate, $endDate])->count(),
             'ongoing_events' => Event::where('start_date', '<=', Carbon::now())
                 ->where('end_date', '>=', Carbon::now())
+                ->where('status', 'active')
                 ->whereBetween('start_date', [$startDate, $endDate])->count(),
             'completed_events' => Event::where('end_date', '<', Carbon::now())
                 ->whereBetween('start_date', [$startDate, $endDate])->count(),
@@ -242,6 +248,7 @@ class ReportController extends Controller
 
         // Flag untuk menggunakan public_path di PDF
         $isPdf = true;
+        $exportOnlyDetail = false;
 
         $pdf = Pdf::loadView('reports.member_pdf', compact(
             'members',
@@ -250,8 +257,9 @@ class ReportController extends Controller
             'nonAktif',
             'tipeMember',
             'aktivitasMember',
-            'isPdf'
-        ));
+            'isPdf',
+            'exportOnlyDetail'
+        ))->setPaper('a4', 'landscape');
 
         return $pdf->download('LAPORAN MEMBER.pdf');
     }
@@ -315,10 +323,11 @@ class ReportController extends Controller
             $reservationsCount[strtolower(trim($reservation->ruangan))] = $reservation->total_reservasi;
         }
 
-        // Flag untuk render HTML di browser
-        $isPdf = false;
+        // Render stream PDF agar logo dan layout konsisten saat cetak
+        $isPdf = true;
+        $exportOnlyDetail = false;
 
-        return view('reports.room_pdf', compact(
+        $pdf = Pdf::loadView('reports.room_pdf', compact(
             'rooms',
             'totalRooms',
             'availableRooms',
@@ -327,14 +336,31 @@ class ReportController extends Controller
             'reservationSummary',
             'statusStats',
             'reservationsCount',
-            'isPdf'
-        ));
+            'isPdf',
+            'exportOnlyDetail'
+        ))->setPaper('a4', 'portrait');
+
+        return $pdf->stream('LAPORAN RUANGAN.pdf');
     }
 
     public function exportRoomPdf(Request $request)
     {
         // Ambil semua ruangan
         $rooms = Room::orderBy('name')->get();
+        $type = $request->input('type', 'all');
+        $status = $request->input('status', 'all');
+
+        // Ambil ruangan sesuai filter, sama seperti roomPrint
+        $query = Room::query();
+
+        if ($type != 'all') {
+            $query->where('type', $type);
+        }
+
+        if ($status != 'all') {
+            $query->where('status', $status);
+        }
+        $rooms = $query->orderBy('name')->get();
 
         // Hitung statistik
         $totalRooms = Room::count();
@@ -369,8 +395,9 @@ class ReportController extends Controller
 
         // Flag untuk PDF generation
         $isPdf = true;
+        $exportOnlyDetail = false;
 
-        $pdf = PDF::loadView('reports.room_pdf', compact(
+        $pdf = Pdf::loadView('reports.room_pdf', compact(
             'rooms',
             'totalRooms',
             'availableRooms',
@@ -379,8 +406,9 @@ class ReportController extends Controller
             'reservationSummary',
             'statusStats',
             'reservationsCount', // Ganti dengan array yang lebih mudah digunakan
-            'isPdf'
-        ));
+            'isPdf',
+            'exportOnlyDetail'
+        ))->setPaper('a4', 'landscape');
 
         return $pdf->download('LAPORAN RUANGAN.pdf');
     }
@@ -416,21 +444,35 @@ class ReportController extends Controller
             'active_events' => Event::whereBetween('start_date', [$startDate, $endDate])
                 ->where('status', 'active')->count(),
             'inactive_events' => Event::whereBetween('start_date', [$startDate, $endDate])
-                ->where('status', 'inactive')->count(),
+                ->where('status', '!=', 'active')->count(),
             'upcoming_events' => Event::where('start_date', '>', Carbon::now())
+                ->where('status', 'active')
                 ->whereBetween('start_date', [$startDate, $endDate])->count(),
             'ongoing_events' => Event::where('start_date', '<=', Carbon::now())
                 ->where('end_date', '>=', Carbon::now())
+                ->where('status', 'active')
                 ->whereBetween('start_date', [$startDate, $endDate])->count(),
             'completed_events' => Event::where('end_date', '<', Carbon::now())
                 ->whereBetween('start_date', [$startDate, $endDate])->count(),
             'all_events_total' => Event::count(),
         ];
 
-        // Flag untuk render HTML di browser
-        $isPdf = false;
+        // Render stream PDF agar logo dan layout konsisten saat cetak
+        $isPdf = true;
+        $exportOnlyDetail = false;
+        $imagePath = public_path('gambar');
 
-        return view('reports.event_pdf', compact('events', 'statistics', 'startDate', 'endDate', 'isPdf'));
+        $pdf = Pdf::loadView('reports.event_pdf', compact(
+            'events',
+            'statistics',
+            'startDate',
+            'endDate',
+            'isPdf',
+            'imagePath',
+            'exportOnlyDetail'
+        ))->setPaper('a4', 'portrait');
+
+        return $pdf->stream('LAPORAN EVENT.pdf');
     }
 
     public function exportEventPdf(Request $request)
@@ -454,11 +496,13 @@ class ReportController extends Controller
             'active_events' => Event::whereBetween('start_date', [$startDate, $endDate])
                 ->where('status', 'active')->count(),
             'inactive_events' => Event::whereBetween('start_date', [$startDate, $endDate])
-                ->where('status', 'inactive')->count(),
+                ->where('status', '!=', 'active')->count(),
             'upcoming_events' => Event::where('start_date', '>', Carbon::now())
+                ->where('status', 'active')
                 ->whereBetween('start_date', [$startDate, $endDate])->count(),
             'ongoing_events' => Event::where('start_date', '<=', Carbon::now())
                 ->where('end_date', '>=', Carbon::now())
+                ->where('status', 'active')
                 ->whereBetween('start_date', [$startDate, $endDate])->count(),
             'completed_events' => Event::where('end_date', '<', Carbon::now())
                 ->whereBetween('start_date', [$startDate, $endDate])->count(),
@@ -470,18 +514,10 @@ class ReportController extends Controller
 
         // Flag untuk PDF generation
         $isPdf = true;
+        $exportOnlyDetail = false;
         $imagePath = public_path('gambar');
 
-        $pdf = PDF::loadView('reports.event_pdf', compact('events', 'statistics', 'startDate', 'endDate', 'imagePath', 'isPdf'));
-
-        // Optional: Atur opsi PDF
-        $pdf->setPaper('A4', 'portrait');
-        $pdf->setOptions([
-            'defaultFont' => 'sans-serif',
-            'isHtml5ParserEnabled' => true,
-            'isRemoteEnabled' => true,
-            'chroot' => public_path(),
-        ]);
+        $pdf = Pdf::loadView('reports.event_pdf', compact('events', 'statistics', 'startDate', 'endDate', 'imagePath', 'isPdf', 'exportOnlyDetail'))->setPaper('A4', 'portrait');
 
         return $pdf->download('LAPORAN EVENT   ' . date('d-m-Y') . '.pdf');
     }

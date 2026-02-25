@@ -92,6 +92,8 @@
             border: none !important;
             padding: 1px !important;
             background: white !important;
+        
+            vertical-align: top;
         }
 
         .header-table {
@@ -102,15 +104,15 @@
         }
 
         .logo-kiri {
-            width: 55px;
-            height: auto;
-            border: none !important;
+            height: 88px;
+            width: auto;
+            max-width: 100%;
         }
 
         .logo-kanan {
-            width: 80px;
-            height: auto;
-            border: none !important;
+            height: 82px;
+            width: auto;
+            max-width: 100%;
         }
 
         .title {
@@ -213,24 +215,26 @@
         <tr>
             <td width="15%">
                 @if(isset($isPdf) && $isPdf)
-                <img src="{{ public_path('gambar/logo_coworking.png') }}" class="logo-kiri" style="max-width: 55px; height: auto;">
+                <img src="{{ public_path('gambar/logo_coworking.png') }}" class="logo-kiri">
                 @else
-                <img src="{{ asset('gambar/logo_coworking.png') }}" class="logo-kiri" style="max-width: 55px; height: auto;">
+                <img src="{{ asset('gambar/logo_coworking.png') }}" class="logo-kiri">
                 @endif
             </td>
 
             <td width="70%" class="title">
-                <span style="font-size:14px; font-weight:bold;">
-                    DINAS KOPERASI, UKM & PERDAGANGAN<br>
-                    TRASA COWORKING SPACE
+                <span style="display:block; text-align:center; line-height:1.2;">
+                    <span style="display:block; font-weight:700; font-size:16px; letter-spacing:0.2px; color:#111827;">DINAS KOPERASI, UKM, DAN PERDAGANGAN</span>
+                    <span style="display:block; font-weight:700; font-size:14px; margin-top:2px; color:#1F2937;">TRASA COWORKING SPACE</span>
+                    <span style="display:block; font-size:9px; margin-top:4px; line-height:1.35; color:#374151;">Jl. Jenderal Ahmad Yani No. 7, Slawi, Kabupaten Tegal, Jawa Tengah 52411, Indonesia</span>
+                    <span style="display:block; font-size:9px; margin-top:2px; line-height:1.35; color:#374151;">Email: coworkingtegal@gmail.com</span>
                 </span>
             </td>
 
             <td width="15%" align="right">
                 @if(isset($isPdf) && $isPdf)
-                <img src="{{ public_path('gambar/logo_dinas.jpeg') }}" class="logo-kanan" style="max-width: 80px; height: auto;">
+                <img src="{{ public_path('gambar/logo_dinas.jpeg') }}" class="logo-kanan">
                 @else
-                <img src="{{ asset('gambar/logo_dinas.jpeg') }}" class="logo-kanan" style="max-width: 80px; height: auto;">
+                <img src="{{ asset('gambar/logo_dinas.jpeg') }}" class="logo-kanan">
                 @endif
             </td>
         </tr>
@@ -382,9 +386,16 @@
 
     {{-- ================= FOOTER ================= --}}
     <footer>
-        Dikelola oleh Trasa Coworking Space © {{ date('Y') }}
+        Dikelola oleh Trasa Coworking Space &copy; 2026
     </footer>
 
 </body>
 
 </html>
+
+
+
+
+
+
+

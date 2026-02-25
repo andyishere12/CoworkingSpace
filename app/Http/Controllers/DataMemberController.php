@@ -29,16 +29,15 @@ class DataMemberController extends Controller
             });
         }
 
-        // 🔥 INI YANG PENTING (baru → lama)
         $allmember = $query->orderBy('created_at', 'desc')->get();
 
         return view('data_member.index', compact('allmember'));
     }
+
     public function show($id)
     {
         $member = DataMember::findOrFail($id);
 
-        // Jika request ingin JSON (untuk AJAX)
         if (request()->wantsJson()) {
             return response()->json($member);
         }
@@ -53,7 +52,6 @@ class DataMemberController extends Controller
 
     public function update(Request $request, DataMember $data_member)
     {
-        // Validasi
         $request->validate([
             'nama' => 'required|max:100',
             'tanggal_lahir' => 'required',
@@ -67,14 +65,12 @@ class DataMemberController extends Controller
             'foto' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
         ]);
 
-        // Upload foto baru jika ada
         if ($request->hasFile('foto')) {
             $foto_name = time() . '.' . $request->foto->extension();
             $request->foto->move(public_path('uploads/foto'), $foto_name);
             $data_member->foto = $foto_name;
         }
 
-        // Update data
         $data_member->update([
             'nama' => $request->nama,
             'tanggal_lahir' => $request->tanggal_lahir,
@@ -132,7 +128,6 @@ class DataMemberController extends Controller
             ->with('success', 'Member berhasil ditambahkan!');
     }
 
-
     public function destroy(DataMember $data_member)
     {
         $data_member->delete();
@@ -155,10 +150,10 @@ class DataMemberController extends Controller
             return (object)['aktivitas' => $key ?: 'Tidak Diketahui', 'jumlah' => $group->count()];
         })->values();
 
-        $isPdf = false; // untuk tampilan web (print preview)
-        $exportOnlyDetail = false; // ✅ Tampilkan lengkap
+        $isPdf = true;
+        $exportOnlyDetail = false;
 
-        return view('data_member.pdf', compact(
+        $pdf = Pdf::loadView('data_member.pdf', compact(
             'members',
             'totalMember',
             'aktif',
@@ -167,7 +162,9 @@ class DataMemberController extends Controller
             'aktivitasMember',
             'isPdf',
             'exportOnlyDetail'
-        ));
+        ))->setPaper('a4', 'landscape');
+
+        return $pdf->stream('DATA MEMBER.pdf');
     }
 
     public function exportExcel()

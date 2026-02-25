@@ -65,6 +65,12 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/attendance/check-in', [AttendanceController::class, 'checkIn'])->name('attendance.checkin');
     Route::post('/attendance/check-out', [AttendanceController::class, 'checkOut'])->name('attendance.checkout');
 
+    // Print Routes (ditempatkan sebelum resource untuk prioritas)
+    Route::get('/data-member/print', [DataMemberController::class, 'memberPrint'])->name('data-member.print');
+    Route::get('/event/print', [EventController::class, 'eventPrint'])->name('event.print');
+    Route::get('/reservasi/print', [ReservasiController::class, 'reservasiPrint'])->name('reservasi.print');
+    Route::get('/room/print', [RoomController::class, 'roomPrint'])->name('room.print');
+
     // Resources
     Route::resource('data_member', DataMemberController::class);
     // resource routes with numeric id constraint to avoid collision with
@@ -128,12 +134,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         ->name('room.export.pdf');
     Route::get('/event/export/pdf', [EventController::class, 'exportPdf'])
         ->name('event.export.pdf');
-
-    // Print Routes untuk Management Pages
-    Route::get('/data-member/print', [DataMemberController::class, 'memberPrint'])->name('data-member.print');
-    Route::get('/event/print', [EventController::class, 'eventPrint'])->name('event.print');
-    Route::get('/reservasi/print', [ReservasiController::class, 'reservasiPrint'])->name('reservasi.print');
-    Route::get('/room/print', [RoomController::class, 'roomPrint'])->name('room.print');
 
     // Detailed Report Routes
     Route::get('/reports/member/excel', [ReportController::class, 'exportMembershipExcel']);

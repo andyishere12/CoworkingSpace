@@ -257,7 +257,7 @@
           <div class="mb-3">
             <a href="{{ route('event.create') }}" class="btn btn-info mr-2"><i class="fas fa-plus mr-1"></i> Create
               Event</a>
-            <button type="button" class="btn btn-success mr-2" onclick="window.print()"><i
+            <button type="button" class="btn btn-success mr-2" onclick="cetakDataEvent()"><i
                 class="fas fa-print mr-2"></i> Cetak Event</button>
             <a href="{{ route('event.export.excel') }}" class="btn btn-success btn-sm mr-1" title="Export Excel"
               style="padding:8px 10px;"><i class="fas fa-file-excel"></i></a>
@@ -289,7 +289,7 @@
                         <td>{{ $event->id }}</td>
                         <td>{{ $event->title ?? 'N/A' }}</td>
                         <td>{{ $event->organizer ?? '-' }}</td>
-                        <td>{{ Str::limit($event->description, 60) ?? '-' }}</td>
+                        <td>{{ \Illuminate\Support\Str::limit($event->description ?? '-', 60) }}</td>
                         <td>{{ $event->start_date ?? 'N/A' }}</td>
                         <td>{{ $event->end_date ?? 'N/A' }}</td>
                         <td>
@@ -335,11 +335,22 @@
   </div>
 
   <div class="notification-container" id="notificationContainer"></div>
+  <iframe id="printFrameEvent" style="display:none;"></iframe>
+  <input type="hidden" id="flashSuccess" value="{{ session('success') }}">
+  <input type="hidden" id="flashError" value="{{ session('error') }}">
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/js/adminlte.min.js"></script>
 
   <script>
+    function cetakDataEvent() {
+      const printFrame = document.getElementById('printFrameEvent');
+      printFrame.src = "{{ route('event.print') }}";
+      printFrame.onload = function() {
+        printFrame.contentWindow.print();
+      };
+    }
+
     function showNotification(message, type = 'success') {
       const container = document.getElementById('notificationContainer');
       if (!container) return;
@@ -352,14 +363,23 @@
     }
 
     $(document).ready(function () {
-      @if(session('success'))
-        showNotification('{{ session('success') }}', 'success');
-      @endif
-      @if(session('error'))
-        showNotification('{{ session('error') }}', 'error');
-      @endif
+      const successMessage = document.getElementById('flashSuccess')?.value || '';
+      const errorMessage = document.getElementById('flashError')?.value || '';
+
+      if (successMessage) {
+        showNotification(successMessage, 'success');
+      }
+
+      if (errorMessage) {
+        showNotification(errorMessage, 'error');
+      }
     });
   </script>
 </body>
 
 </html>
+
+
+
+
+

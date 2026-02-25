@@ -528,7 +528,6 @@
   </div>
   <!-- Iframe untuk cetak laporan kehadiran -->
   <iframe id="printFrameAttendance" style="display:none;"></iframe>
-
   <script>
     function cetakAttendance() {
       // Ambil nilai filter dari input yang ada
@@ -540,7 +539,6 @@
       iframe.src = url;
 
       iframe.onload = function() {
-        // Beri sedikit jeda agar iframe selesai rendering
         setTimeout(function() {
           iframe.contentWindow.print();
         }, 500);

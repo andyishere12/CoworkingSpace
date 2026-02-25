@@ -468,7 +468,7 @@
     // Fungsi untuk cetak data reservasi dengan PDF layout
     function cetakDataReservasi() {
       const printFrame = document.getElementById('printFrame');
-      printFrame.src = '/reservasi/print';
+      printFrame.src = "{{ route('reservasi.print') }}";
       printFrame.onload = function() {
         printFrame.contentWindow.print();
       };

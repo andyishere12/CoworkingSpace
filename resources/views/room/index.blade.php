@@ -467,7 +467,7 @@
     // Fungsi untuk cetak data room dengan PDF layout
     function cetakDataRoom() {
       const printFrame = document.getElementById('printFrame');
-      printFrame.src = '/room/print';
+      printFrame.src = "{{ route('room.print') }}";
       printFrame.onload = function() {
         printFrame.contentWindow.print();
       };

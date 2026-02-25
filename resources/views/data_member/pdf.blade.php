@@ -29,33 +29,44 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 15px;
+            table-layout: fixed;
         }
 
         th,
         td {
             border: 1px solid #000;
-            padding: 6px;
-            white-space: nowrap;
-
+            padding: 4px;
+            white-space: normal;
+            word-break: break-word;
+            overflow-wrap: anywhere;
         }
 
         th {
             background: #acacac;
             text-align: center;
+            font-size: 9px;
+        }
+
+        td {
+            font-size: 8.5px;
         }
 
         .header-table td {
             border: none;
+        
+            vertical-align: top;
         }
 
         .logo-kiri {
-            width: 70px;
-            height: auto;
+            height: 88px;
+            width: auto;
+            max-width: 100%;
         }
 
         .logo-kanan {
-            width: 100px;
-            height: 60px;
+            height: 82px;
+            width: auto;
+            max-width: 100%;
         }
 
         .title {
@@ -97,9 +108,11 @@
             </td>
 
             <td width="70%" class="title">
-                <span style="font-size:18px; font-weight:bold;">
-                    <b>DINAS KOPERASI, UKM & PERDAGANGAN</b><br>
-                    <b>TRASA COWORKING SPACE</b>
+                <span style="display:block; text-align:center; line-height:1.2;">
+                    <span style="display:block; font-weight:700; font-size:16px; letter-spacing:0.2px; color:#111827;">DINAS KOPERASI, UKM, DAN PERDAGANGAN</span>
+                    <span style="display:block; font-weight:700; font-size:14px; margin-top:2px; color:#1F2937;">TRASA COWORKING SPACE</span>
+                    <span style="display:block; font-size:9px; margin-top:4px; line-height:1.35; color:#374151;">Jl. Jenderal Ahmad Yani No. 7, Slawi, Kabupaten Tegal, Jawa Tengah 52411, Indonesia</span>
+                    <span style="display:block; font-size:9px; margin-top:2px; line-height:1.35; color:#374151;">Email: coworkingtegal@gmail.com</span>
                 </span>
             </td>
 
@@ -169,9 +182,17 @@
     </table>
 
     <footer>
-        <span>Dikelola oleh Trasa Coworking Space &copy; {{ date('Y') }}</span>
+        <span>Dikelola oleh Trasa Coworking Space &copy; 2026</span>
     </footer>
 
 </body>
 
 </html>
+
+
+
+
+
+
+
+

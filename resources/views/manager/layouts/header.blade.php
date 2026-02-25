@@ -180,12 +180,9 @@
 
                         <!-- Members -->
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="{{ route('manager.members.index') }}" class="nav-link">
                                 <i class="nav-icon fas fa-users"></i>
-                                <p>
-                                    Members
-                                    <span class="badge badge-secondary right">Soon</span>
-                                </p>
+                                <p>Members</p>
                             </a>
                         </li>
 
@@ -212,14 +209,12 @@
 
                         <!-- Users -->
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fas fa-user-cog"></i>
-                                <p>
-                                    Users
-                                    <span class="badge badge-info right">Soon</span>
-                                </p>
+                            <a href="{{ route('manager.users.index') }}"
+                                class="nav-link {{ request()->routeIs('manager.users.*') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-user"></i>
+                                <p>Users</p>
                             </a>
-                        </li>
+                            </li>
 
                         <!-- Settings -->
                         <li class="nav-item">

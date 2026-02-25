@@ -8,40 +8,99 @@ use App\Models\Reservasi;
 class ReservationApprovalController extends Controller
 {
     /**
-     * Display reservations pending approval
+     * Tampilkan halaman reservation approval
      */
     public function index()
     {
-        $reservations = Reservasi::with('member')
-            ->whereIn('status', ['pending', 'approved', 'rejected'])
-            ->orderBy('tanggal', 'desc')
-            ->orderBy('waktu_mulai', 'desc')
-            ->get();
+        try {
+            $pendingReservasi = Reservasi::where('status', 'Pending')
+                ->orderBy('tanggal', 'asc')
+                ->get();
 
-        return view('manager.reservation-approval', compact('reservations'));
+            $approvedReservasi = Reservasi::where('status', 'Approved')
+                ->orderBy('updated_at', 'desc')
+                ->get();
+
+            $rejectedReservasi = Reservasi::where('status', 'Rejected')
+                ->orderBy('updated_at', 'desc')
+                ->get();
+
+            $stats = [
+                'total_pending'  => Reservasi::where('status', 'Pending')->count(),
+                'total_approved' => Reservasi::where('status', 'Approved')->count(),
+                'total_rejected' => Reservasi::where('status', 'Rejected')->count(),
+                'total_all'      => Reservasi::count(),
+            ];
+
+            return view('manager.reservation-approval', compact(
+                'pendingReservasi',
+                'approvedReservasi',
+                'rejectedReservasi',
+                'stats'
+            ));
+
+        } catch (\Exception $e) {
+            \Log::error('Reservation Approval Error: ' . $e->getMessage());
+
+            return view('manager.reservation-approval', [
+                'pendingReservasi'  => collect(),
+                'approvedReservasi' => collect(),
+                'rejectedReservasi' => collect(),
+                'stats' => [
+                    'total_pending'  => 0,
+                    'total_approved' => 0,
+                    'total_rejected' => 0,
+                    'total_all'      => 0,
+                ],
+            ]);
+        }
     }
 
     /**
-     * Approve a reservation
+     * Approve reservasi
      */
     public function approve($id)
     {
-        $reservation = Reservasi::findOrFail($id);
-        $reservation->status = 'approved';
-        $reservation->save();
+        try {
+            $reservasi = Reservasi::findOrFail($id);
 
-        return redirect()->back()->with('success', 'Reservation has been approved successfully.');
+            if ($reservasi->status !== 'Pending') {
+                return redirect()->back()->with('error', 'Reservasi sudah diproses sebelumnya!');
+            }
+
+            $reservasi->status = 'Approved';
+            $reservasi->save();
+
+            return redirect()->route('manager.reservation-approval.index')
+                ->with('success', "Reservasi \"{$reservasi->nama_pemesanan}\" berhasil disetujui!");
+
+        } catch (\Exception $e) {
+            \Log::error('Approve Reservation Error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal menyetujui reservasi: ' . $e->getMessage());
+        }
     }
 
     /**
-     * Reject a reservation
+     * Reject reservasi
      */
-    public function reject($id)
+    public function reject(Request $request, $id)
     {
-        $reservation = Reservasi::findOrFail($id);
-        $reservation->status = 'rejected';
-        $reservation->save();
+        try {
+            $reservasi = Reservasi::findOrFail($id);
 
-        return redirect()->back()->with('success', 'Reservation has been rejected.');
+            if ($reservasi->status !== 'Pending') {
+                return redirect()->back()->with('error', 'Reservasi sudah diproses sebelumnya!');
+            }
+
+            $reservasi->status = 'Rejected';
+            $reservasi->save();
+
+            return redirect()->route('manager.reservation-approval.index')
+                ->with('success', "Reservasi \"{$reservasi->nama_pemesanan}\" berhasil ditolak!");
+
+        } catch (\Exception $e) {
+            \Log::error('Reject Reservation Error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal menolak reservasi: ' . $e->getMessage());
+        }
     }
 }

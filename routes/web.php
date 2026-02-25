@@ -62,14 +62,26 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     // Attendance
     Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
+    Route::get('/attendance/print', [AttendanceController::class, 'print'])->name('attendance.print');
     Route::post('/attendance/check-in', [AttendanceController::class, 'checkIn'])->name('attendance.checkin');
     Route::post('/attendance/check-out', [AttendanceController::class, 'checkOut'])->name('attendance.checkout');
 
+    // Print Routes (ditempatkan sebelum resource untuk prioritas)
+    Route::get('/data-member/print', [DataMemberController::class, 'memberPrint'])->name('data-member.print');
+    Route::get('/event/print', [EventController::class, 'eventPrint'])->name('event.print');
+    Route::get('/reservasi/print', [ReservasiController::class, 'reservasiPrint'])->name('reservasi.print');
+    Route::get('/room/print', [RoomController::class, 'roomPrint'])->name('room.print');
+
     // Resources
     Route::resource('data_member', DataMemberController::class);
-    Route::resource('reservasi', ReservasiController::class);
-    Route::resource('room', RoomController::class);
-    Route::resource('event', EventController::class);
+    // resource routes with numeric id constraint to avoid collision with
+    // custom paths like /event/print, /room/print, /reservasi/print
+    Route::resource('reservasi', ReservasiController::class)
+        ->where(['reservasi' => '[0-9]+']);
+    Route::resource('room', RoomController::class)
+        ->where(['room' => '[0-9]+']);
+    Route::resource('event', EventController::class)
+        ->where(['event' => '[0-9]+']);
 
     // Scan
     Route::get('/scanner', [ScanController::class, 'index'])->name('scanner');
@@ -127,12 +139,19 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     // Detailed Report Routes
     Route::get('/reports/member/excel', [ReportController::class, 'exportMembershipExcel']);
     Route::get('/reports/member/pdf', [ReportController::class, 'memberPdf']);
+    Route::get('/reports/member/print', [ReportController::class, 'membershipPrint'])->name('reports.member.print');
 
     Route::get('/reports/room/excel', [ReportController::class, 'exportRoomExcel']);
     Route::get('/reports/room/pdf', [ReportController::class, 'exportRoomPdf']);
+    Route::get('/reports/room/print', [ReportController::class, 'roomPrint'])->name('reports.room.print');
 
     Route::get('/reports/event/excel', [ReportController::class, 'exportEventExcel']);
     Route::get('/reports/event/pdf', [ReportController::class, 'exportEventPdf']);
+<<<<<<< HEAD
+=======
+    Route::get('/reports/event/print', [ReportController::class, 'eventPrint'])->name('reports.event.print');
+});
+>>>>>>> e5d421d1b67d2d458bba348e8da8d878cd5174a4
 
     });
     // setting kursi
@@ -189,3 +208,61 @@ Route::middleware('auth')->post('/logout', function () {
     request()->session()->regenerateToken();
     return redirect()->route('login');
 })->name('logout');
+
+// Debug route untuk tes API Gemini (HANYA UNTUK PENGEMBANGAN, HAPUS SAAT DEPLOY)
+
+Route::get('/debug-gemini-raw', function() {
+    $apiKey = config('services.gemini.api_key');
+    
+    if (!$apiKey) {
+        return 'ERROR: API key tidak ada!';
+    }
+    
+    $prompt = "Output ONLY JSON. NO explanation.
+
+[{\"title\":\"Test\",\"description\":\"Test\",\"icon\":\"users\",\"color\":\"info\",\"priority\":\"medium\",\"suggestions\":[\"A1\",\"A2\"]}]
+
+Give 2 recommendations. JSON only, start with [";
+    
+    $response = \Illuminate\Support\Facades\Http::timeout(10)->post(
+        'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' . $apiKey,
+        [
+            'contents' => [['parts' => [['text' => $prompt]]]],
+            'generationConfig' => ['temperature' => 0.3, 'maxOutputTokens' => 1000]
+        ]
+    );
+    
+    if ($response->successful()) {
+        $result = $response->json();
+        $rawText = $result['candidates'][0]['content']['parts'][0]['text'] ?? 'NO TEXT';
+        
+        echo "<h2>✅ SUCCESS! RAW:</h2>";
+        echo "<pre style='background:#f4f4f4; padding:20px;'>" . htmlspecialchars($rawText) . "</pre>";
+        
+        $cleaned = preg_replace('/```(?:json)?\s*|\s*```/', '', $rawText);
+        $cleaned = str_replace('```', '', $cleaned);
+        $cleaned = trim($cleaned);
+        
+        echo "<h2>CLEANED:</h2>";
+        echo "<pre style='background:#e8f4f8; padding:20px;'>" . htmlspecialchars($cleaned) . "</pre>";
+        
+        if (preg_match('/\[.*\]/s', $cleaned, $matches)) {
+            echo "<h2>EXTRACTED:</h2>";
+            echo "<pre style='background:#e8f8e8; padding:20px;'>" . htmlspecialchars($matches[0]) . "</pre>";
+            
+            $decoded = json_decode($matches[0], true);
+            if ($decoded) {
+                echo "<h2>✅ DECODED!</h2>";
+                echo "<pre style='background:#d4edda; padding:20px;'>";
+                print_r($decoded);
+                echo "</pre>";
+            } else {
+                echo "<h2>❌ FAILED: " . json_last_error_msg() . "</h2>";
+            }
+        }
+        
+    } else {
+        echo "<h2>❌ FAILED: " . $response->status() . "</h2>";
+        echo "<pre>" . $response->body() . "</pre>";
+    }
+});

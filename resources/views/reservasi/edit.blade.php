@@ -140,10 +140,9 @@
                                         <label for="ruangan">Room <span class="text-danger">*</span></label>
                                         <select class="form-control @error('ruangan') is-invalid @enderror" id="ruangan" name="ruangan" required>
                                             <option value="" disabled {{ old('ruangan', $reservasi->ruangan) ? '' : 'selected' }}>Pilih Room</option>
-                                            <option value="Room A" {{ old('ruangan', $reservasi->ruangan) == 'Room A' ? 'selected' : '' }}>Room A</option>
-                                            <option value="Room B" {{ old('ruangan', $reservasi->ruangan) == 'Room B' ? 'selected' : '' }}>Room B</option>
-                                            <option value="Room C" {{ old('ruangan', $reservasi->ruangan) == 'Room C' ? 'selected' : '' }}>Room C</option>
-                                            <option value="Room D" {{ old('ruangan', $reservasi->ruangan) == 'Room D' ? 'selected' : '' }}>Room D</option>
+                                            @foreach($rooms as $room)
+                                                <option value="{{ $room->name }}" {{ old('ruangan', $reservasi->ruangan) == $room->name ? 'selected' : '' }}>{{ $room->name }}</option>
+                                            @endforeach
                                         </select>
                                         @error('ruangan') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                     </div>
@@ -218,13 +217,16 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="status">Status <span class="text-danger">*</span></label>
-                                        <select class="form-control @error('status') is-invalid @enderror" id="status" name="status" required>
-                                            <option value="Pending" {{ old('status', $reservasi->status) == 'Pending' ? 'selected' : '' }}>Pending</option>
-                                            <option value="Approved" {{ old('status', $reservasi->status) == 'Approved' ? 'selected' : '' }}>Approved</option>
-                                            <option value="Rejected" {{ old('status', $reservasi->status) == 'Rejected' ? 'selected' : '' }}>Rejected</option>
-                                        </select>
-                                        @error('status') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                        <label>Status Saat Ini</label>
+                                        <div class="form-control" style="background:#f8f9fa; cursor:default;">
+                                            <span class="badge px-2 py-1
+                                                @if($reservasi->status == 'Approved') badge-success
+                                                @elseif($reservasi->status == 'Rejected') badge-danger
+                                                @else badge-warning @endif">
+                                                {{ $reservasi->status }}
+                                            </span>
+                                        </div>
+                                        <small class="text-muted">Status diubah oleh Manager melalui Reservation Approval.</small>
                                     </div>
                                 </div>
                             </div>

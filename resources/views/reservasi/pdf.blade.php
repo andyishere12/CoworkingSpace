@@ -6,6 +6,18 @@
     <title>Data Reservasi</title>
 
     <style>
+        /* print-friendly and landscape */
+        * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+        }
+
+        @page {
+            size: A4 landscape;
+            margin: 30px;
+        }
+
         body {
             font-family: DejaVu Sans;
             font-size: 11px;
@@ -17,34 +29,53 @@
             border-collapse: collapse;
             margin-top: 12px;
             font-size: 9px;
+            table-layout: fixed;
         }
 
         th,
         td {
             border: 1px solid #000;
-            padding: 4px;
+            padding: 3px;
             white-space: normal;
             word-wrap: break-word;
             line-height: 1.3;
+            overflow-wrap: anywhere;
         }
 
         th {
             background: #acacac;
             text-align: center;
             font-weight: bold;
+            font-size: 8.5px;
+        }
+
+        td {
+            font-size: 8px;
         }
 
         .header-table td {
             border: none;
             padding: 2px;
+        
+            vertical-align: top;
         }
 
         .logo-kiri {
-            width: 65px;
+            height: 88px;
+            width: auto;
+            max-width: 100%;
         }
 
         .logo-kanan {
-            width: 90px;
+            height: 82px;
+            width: auto;
+            max-width: 100%;
+        }
+
+        img {
+            max-width: 100%;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
         }
 
         .title {
@@ -54,11 +85,14 @@
 
         footer {
             position: fixed;
-            bottom: -20px;
+            bottom: 0;
             left: 0;
             right: 0;
             text-align: center;
             font-size: 9px;
+            height: 20px;
+            line-height: 20px;
+            background-color: white;
         }
     </style>
 </head>
@@ -69,18 +103,28 @@
     <table class="header-table">
         <tr>
             <td width="15%">
-                <img src="{{ public_path('gambar/logo_coworking.png') }}" class="logo-kiri">
+                @if(isset($isPdf) && $isPdf)
+                    <img src="{{ public_path('gambar/logo_coworking.png') }}" class="logo-kiri">
+                @else
+                    <img src="{{ asset('gambar/logo_coworking.png') }}" class="logo-kiri">
+                @endif
             </td>
 
             <td width="70%" class="title">
-                <span style="font-size:16px; font-weight:bold;">
-                    DINAS KOPERASI, UKM & PERDAGANGAN<br>
-                    TRASA COWORKING SPACE
+                <span style="display:block; text-align:center; line-height:1.2;">
+                    <span style="display:block; font-weight:700; font-size:16px; letter-spacing:0.2px; color:#111827;">DINAS KOPERASI, UKM, DAN PERDAGANGAN</span>
+                    <span style="display:block; font-weight:700; font-size:14px; margin-top:2px; color:#1F2937;">TRASA COWORKING SPACE</span>
+                    <span style="display:block; font-size:9px; margin-top:4px; line-height:1.35; color:#374151;">Jl. Jenderal Ahmad Yani No. 7, Slawi, Kabupaten Tegal, Jawa Tengah 52411, Indonesia</span>
+                    <span style="display:block; font-size:9px; margin-top:2px; line-height:1.35; color:#374151;">Email: coworkingtegal@gmail.com</span>
                 </span>
             </td>
 
             <td width="15%" align="right">
-                <img src="{{ public_path('gambar/logo_dinas.jpeg') }}" class="logo-kanan">
+                @if(isset($isPdf) && $isPdf)
+                    <img src="{{ public_path('gambar/logo_dinas.jpeg') }}" class="logo-kanan">
+                @else
+                    <img src="{{ asset('gambar/logo_dinas.jpeg') }}" class="logo-kanan">
+                @endif
             </td>
         </tr>
     </table>
@@ -148,9 +192,17 @@
     </table>
 
     <footer>
-        Dikelola oleh Trasa Coworking Space © {{ date('Y') }}
+        Dikelola oleh Trasa Coworking Space &copy; 2026
     </footer>
 
 </body>
 
 </html>
+
+
+
+
+
+
+
+

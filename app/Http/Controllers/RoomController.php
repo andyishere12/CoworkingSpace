@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Room;
+use App\Models\Reservasi;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\RoomExport;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
 
 class RoomController extends Controller
 {
@@ -78,6 +80,20 @@ class RoomController extends Controller
         $room->delete();
         return redirect()->route('room.index')->with('success', 'Room dihapus!');
     }
+
+    public function roomPrint(Request $request)
+    {
+        // Ambil semua ruangan
+        $rooms = Room::orderBy('name')->get();
+
+        $isPdf = true;
+
+        $pdf = Pdf::loadView('room.pdf', compact('rooms', 'isPdf'))
+            ->setPaper('a4', 'landscape');
+
+        return $pdf->stream('DATA RUANGAN.pdf');
+    }
+
     public function exportExcel()
     {
         return Excel::download(new RoomExport, 'DATA RUANGAN.xlsx');
@@ -85,8 +101,9 @@ class RoomController extends Controller
     public function exportPdf()
     {
         $rooms = Room::all();
+        $isPdf = true;
 
-        $pdf = Pdf::loadView('room.pdf', compact('rooms'))
+        $pdf = Pdf::loadView('room.pdf', compact('rooms', 'isPdf'))
             ->setPaper('a4', 'landscape');
 
         return $pdf->download('DATA RUANGAN.pdf');

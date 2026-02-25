@@ -323,8 +323,7 @@
                         <a href="{{ route('reports.room') }}" class="btn btn-secondary">
                           <i class="fas fa-redo"></i> Reset
                         </a>
-                        <button type="button" class="btn btn-success btn-print shadow-sm ml-auto"
-                          onclick="window.print()">
+                        <button type="button" class="btn btn-success btn-print shadow-sm ml-auto" onclick="cetakRoom()">
                           <i class="fas fa-print mr-2"></i> Cetak Laporan Ruangan
                         </button>
                         <!-- Export icons: Excel and PDF (icon-only, keep same routes) -->
@@ -460,6 +459,9 @@
       </section>
     </div>
 
+    <!-- Hidden iframe untuk print -->
+    <iframe id="printFrame" style="display:none;"></iframe>
+
     <footer class="main-footer">
       <strong>Copyright &copy; 2025 <a href="#">Trackingspace</a>.</strong> All rights reserved.
       <div class="float-right d-none d-sm-inline-block">
@@ -482,6 +484,20 @@
         }
       });
     });
+
+    // Function untuk cetak room dengan tampilan dari file PDF
+    function cetakRoom() {
+      // Load konten PDF ke dalam iframe
+      const iframe = document.getElementById('printFrame');
+      iframe.src = '{{ url("/reports/room/print") }}?type={{ $type }}&status={{ $status }}';
+      
+      // Tunggu iframe selesai loading, baru trigger print
+      iframe.onload = function() {
+        setTimeout(function() {
+          iframe.contentWindow.print();
+        }, 1800);
+      };
+    }
   </script>
 </body>
 

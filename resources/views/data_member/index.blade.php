@@ -563,7 +563,7 @@
                   <a href="{{ route('data_member.create') }}" class="btn btn-info mr-2">
                     <i class="fas fa-plus mr-1"></i> Create Member
                   </a>
-                  <button type="button" class="btn btn-success btn-print shadow-sm ml- mr-2" onclick="window.print()">
+                  <button type="button" class="btn btn-success btn-print shadow-sm ml- mr-2" onclick="cetakDataMember()">
                     <i class="fas fa-print mr-2"></i> Cetak Data Member
                   </button>
 
@@ -648,6 +648,7 @@
           </div>
         </div>
       </section>
+      
     </div>
 
     <footer class="main-footer">
@@ -1081,7 +1082,19 @@
         showNotification(successMessage, 'success');
       }
     });
+
+    // Fungsi untuk cetak data member dengan PDF layout
+    function cetakDataMember() {
+      const printFrame = document.getElementById('printFrame');
+      printFrame.src = "{{ route('data-member.print') }}";
+      printFrame.onload = function() {
+        printFrame.contentWindow.print();
+      };
+    }
+    
   </script>
+  <!-- Hidden iframe for printing -->
+  <iframe id="printFrame" style="display:none;"></iframe>
 
 </body>
 

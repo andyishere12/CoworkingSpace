@@ -6,15 +6,41 @@
     <title>Laporan Ruangan</title>
 
     <style>
+        * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+        }
+
         @page {
             size: A4 portrait;
             margin: 20px 15px;
+        }
+
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+                background: white !important;
+            }
+
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            img {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                max-width: 100%;
+            }
         }
 
         body {
             font-family: DejaVu Sans, sans-serif;
             font-size: 9px;
             line-height: 1.2;
+            background: white;
         }
 
         thead {
@@ -30,24 +56,28 @@
             border-collapse: collapse;
             margin-top: 4px;
             table-layout: fixed;
+            border: 1px solid #000 !important;
         }
 
         th,
         td {
-            border: 1px solid #000;
+            border: 1px solid #000 !important;
             padding: 3px;
             word-wrap: break-word;
         }
 
         th {
-            background: #e0e0e0;
-            text-align: center;
+            background: #acacac !important; /* match member/event reports */
+            color: #000 !important;
+            text-align: center !important;
             font-size: 9px;
-            font-weight: bold;
+            font-weight: bold !important;
         }
 
         td {
             font-size: 8.5px;
+            background: white !important;
+            color: #000 !important;
         }
 
         h3 {
@@ -55,20 +85,34 @@
             margin-bottom: 3px;
             font-size: 11px;
             font-weight: bold;
-            color: #333;
+            color: #333 !important;
         }
 
         .header-table td {
-            border: none;
-            padding: 1px;
+            border: none !important;
+            padding: 1px !important;
+            background: white !important;
+        
+            vertical-align: top;
+        }
+
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: none !important;
+            border-spacing: 0 !important;
         }
 
         .logo-kiri {
-            width: 55px;
+            height: 88px;
+            width: auto;
+            max-width: 100%;
         }
 
         .logo-kanan {
-            width: 80px;
+            height: 82px;
+            width: auto;
+            max-width: 100%;
         }
 
         .title {
@@ -99,14 +143,24 @@
             page-break-before: always;
         }
 
+        hr {
+            border: none !important;
+            border-top: 1px solid #333 !important;
+            margin: 8px 0 !important;
+            padding: 0 !important;
+        }
+
+        /* footer placed at bottom of every page */
         footer {
             position: fixed;
-            bottom: -15px;
+            bottom: 0;
             left: 0;
             right: 0;
             text-align: center;
-            font-size: 8px;
-            color: #666;
+            font-size: 9px;
+            height: 20px;
+            line-height: 20px;
+            background-color: white;
         }
 
         .section-spacer {
@@ -150,6 +204,7 @@
         .col-deskripsi {
             width: 35%;
         }
+
     </style>
 </head>
 
@@ -159,18 +214,28 @@
     <table class="header-table">
         <tr>
             <td width="15%">
+                @if(isset($isPdf) && $isPdf)
                 <img src="{{ public_path('gambar/logo_coworking.png') }}" class="logo-kiri">
+                @else
+                <img src="{{ asset('gambar/logo_coworking.png') }}" class="logo-kiri">
+                @endif
             </td>
 
             <td width="70%" class="title">
-                <span style="font-size:14px; font-weight:bold;">
-                    DINAS KOPERASI, UKM & PERDAGANGAN<br>
-                    TRASA COWORKING SPACE
+                <span style="display:block; text-align:center; line-height:1.2;">
+                    <span style="display:block; font-weight:700; font-size:16px; letter-spacing:0.2px; color:#111827;">DINAS KOPERASI, UKM, DAN PERDAGANGAN</span>
+                    <span style="display:block; font-weight:700; font-size:14px; margin-top:2px; color:#1F2937;">TRASA COWORKING SPACE</span>
+                    <span style="display:block; font-size:9px; margin-top:4px; line-height:1.35; color:#374151;">Jl. Jenderal Ahmad Yani No. 7, Slawi, Kabupaten Tegal, Jawa Tengah 52411, Indonesia</span>
+                    <span style="display:block; font-size:9px; margin-top:2px; line-height:1.35; color:#374151;">Email: coworkingtegal@gmail.com</span>
                 </span>
             </td>
 
             <td width="15%" align="right">
+                @if(isset($isPdf) && $isPdf)
                 <img src="{{ public_path('gambar/logo_dinas.jpeg') }}" class="logo-kanan">
+                @else
+                <img src="{{ asset('gambar/logo_dinas.jpeg') }}" class="logo-kanan">
+                @endif
             </td>
         </tr>
     </table>
@@ -308,7 +373,7 @@
                 <td class="center">{{ $room->capacity ?? 0 }}</td>
                 <td class="center">{{ $room->type ?? '-' }}</td>
                 <td class="center">{{ $room->status ?? '-' }}</td>
-            <td class="center">{{ $reservation->total_reservasi ?? 0 }}</td>
+                <td class="center">{{ $reservation->total_reservasi ?? 0 }}</td>
                 <td class="wrap-text">{{ $room->description ?? '-' }}</td>
             </tr>
             @empty
@@ -321,9 +386,16 @@
 
     {{-- ================= FOOTER ================= --}}
     <footer>
-        Dikelola oleh Trasa Coworking Space © {{ date('Y') }}
+        Dikelola oleh Trasa Coworking Space &copy; 2026
     </footer>
 
 </body>
 
 </html>
+
+
+
+
+
+
+

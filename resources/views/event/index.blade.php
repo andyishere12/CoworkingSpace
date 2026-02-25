@@ -10,7 +10,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/css/adminlte.min.css">
   <link rel="stylesheet" href="{{ asset('css/stylemodal.css') }}">
-  <link rel="stylesheet" href="adminlte.min.css">
 
   <style>
     body {
@@ -20,7 +19,6 @@
 
     .main-sidebar {
       background: linear-gradient(180deg, #6C3FB5 0%, #8B5FD6 100%) !important;
-      padding-right: 15px;
     }
 
     .brand-link {
@@ -87,23 +85,11 @@
       color: white;
     }
 
-    .nav-icon-box {
-      width: 30px;
-      height: 30px;
-      background-color: rgba(255, 255, 255, 0.2);
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 10px;
-    }
-
     .btn-gap {
       display: flex;
       gap: 8px;
     }
 
-    /* Style untuk notifikasi pop-up - konsisten dengan reservasi */
     .notification-container {
       position: fixed;
       top: 70px;
@@ -120,8 +106,6 @@
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
       border-left: 5px solid;
       animation: slideIn 0.5s ease, fadeOut 0.5s ease 4.5s forwards;
-      position: relative;
-      overflow: hidden;
       cursor: pointer;
     }
 
@@ -137,17 +121,12 @@
       background-color: #f8d7da;
     }
 
-    .notification.warning {
-      border-left-color: #ffc107;
-      color: #856404;
-      background-color: #fff3cd;
-    }
-
     @keyframes slideIn {
       from {
         transform: translateX(100%);
         opacity: 0;
       }
+
       to {
         transform: translateX(0);
         opacity: 1;
@@ -159,6 +138,7 @@
         transform: translateX(0);
         opacity: 1;
       }
+
       to {
         transform: translateX(100%);
         opacity: 0;
@@ -169,44 +149,28 @@
 
 <body class="hold-transition sidebar-mini layout-fixed">
   <div class="wrapper">
-    <!-- Navbar -->
     <nav class="main-header navbar navbar-expand navbar-light">
       <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
-        </li>
+        <li class="nav-item"><a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a></li>
       </ul>
       <ul class="navbar-nav ml-auto">
+        <li class="nav-item"><a href="{{ route('scan') }}" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+        <li class="nav-item"><a href="{{ route('dashboard') }}" class="nav-link"><i class="fas fa-chart-line"></i>
+            Dashboard</a></li>
         <li class="nav-item">
-          <a href="{{ route('scan') }}" class="nav-link">
-            <i class="fas fa-home"></i> Home
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="{{ route('dashboard') }}" class="nav-link active">
-            <i class="fas fa-chart-line"></i> Dashboard
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="#" class="nav-link">
-            <i class="fas fa-users"></i> <span class="badge badge-danger">{{ $todayAttendance ?? 0 }}</span> Active Today
-          </a>
+          <a href="#" class="nav-link"><i class="fas fa-users"></i> <span
+              class="badge badge-danger">{{ $todayAttendance ?? 0 }}</span> Active Today</a>
         </li>
         <li class="nav-item">
           <form action="{{ route('logout') }}" method="POST" class="m-0">
             @csrf
-            <button type="submit" class="nav-link btn btn-link text-danger w-100 text-start">
-              <div class="nav-icon-box d-inline-block me-2">
-                <i class="fas fa-sign-out-alt"></i>
-              </div>
-              Logout (admin)
-            </button>
+            <button type="submit" class="nav-link btn btn-link text-danger"><i class="fas fa-sign-out-alt"></i> Logout
+              (admin)</button>
           </form>
         </li>
       </ul>
     </nav>
 
-    <!-- Sidebar -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
       <a href="{{ route('dashboard') }}" class="brand-link">
         <img src="{{ asset('gambar/icontrasa.jpeg') }}" alt="Logo" class="brand-image img-circle elevation-3">
@@ -216,82 +180,61 @@
         <div class="user-panel mt-3 pb-3 mb-3">
           <div class="image">
             @if(Auth::user()->avatar)
-            <img src="{{ asset('storage/avatars/' . Auth::user()->avatar) }}" class="img-circle elevation-2"
-              alt="{{ Auth::user()->name }}">
+              <img src="{{ asset('storage/avatars/' . Auth::user()->avatar) }}" class="img-circle elevation-2"
+                alt="{{ Auth::user()->name }}">
             @else
-            <img
-              src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name ?? 'Admin') }}&size=80&background=6C3FB5&color=fff"
-              class="img-circle elevation-2" alt="User Image">
+              <img
+                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name ?? 'Admin') }}&size=80&background=6C3FB5&color=fff"
+                class="img-circle elevation-2" alt="User Image">
             @endif
           </div>
           <div class="info">
-            <a href="#" class="d-block text-white font-weight-bold">
-              {{ Auth::user()->name ?? 'Admin' }}
-            </a>
+            <a href="#" class="d-block text-white font-weight-bold">{{ Auth::user()->name ?? 'Admin' }}</a>
           </div>
         </div>
         <nav class="mt-2">
           <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
-            <li class="nav-item">
-              <a href="{{ route('dashboard') }}" class="nav-link">
-                <i class="nav-icon fas fa-tachometer-alt"></i>
+            <li class="nav-item"><a href="{{ route('dashboard') }}" class="nav-link"><i
+                  class="nav-icon fas fa-tachometer-alt"></i>
                 <p>Dashboard</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="{{ route('attendance.index') }}" class="nav-link">
-                <i class="nav-icon fas fa-clock"></i>
+              </a></li>
+            <li class="nav-item"><a href="{{ route('attendance.index') }}" class="nav-link"><i
+                  class="nav-icon fas fa-clock"></i>
                 <p>Attendance</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="{{ route('data_member.index') }}" class="nav-link">
-                <i class="nav-icon fas fa-users"></i>
+              </a></li>
+            <li class="nav-item"><a href="{{ route('data_member.index') }}" class="nav-link"><i
+                  class="nav-icon fas fa-users"></i>
                 <p>Members</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="{{ route('reservasi.index') }}" class="nav-link">
-                <i class="nav-icon fas fa-bookmark"></i>
+              </a></li>
+            <li class="nav-item"><a href="{{ route('reservasi.index') }}" class="nav-link"><i
+                  class="nav-icon fas fa-bookmark"></i>
                 <p>Reservations</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="{{ route('room.index') }}" class="nav-link">
-                <i class="nav-icon fas fa-door-open"></i>
+              </a></li>
+            <li class="nav-item"><a href="{{ route('room.index') }}" class="nav-link"><i
+                  class="nav-icon fas fa-door-open"></i>
                 <p>Rooms</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="{{ route('event.index') }}" class="nav-link active">
-                <i class="nav-icon fas fa-calendar"></i>
+              </a></li>
+            <li class="nav-item"><a href="{{ route('event.index') }}" class="nav-link active"><i
+                  class="nav-icon fas fa-calendar"></i>
                 <p>Events</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="{{ route('operational-hours.index') }}" class="nav-link">
-                <i class="nav-icon fas fa-clock"></i>
+              </a></li>
+            <li class="nav-item"><a href="{{ route('operational-hours.index') }}" class="nav-link"><i
+                  class="nav-icon fas fa-clock"></i>
                 <p>Open Hours</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="{{ route('reports.index') }}" class="nav-link">
-                <i class="nav-icon fas fa-chart-bar"></i>
+              </a></li>
+            <li class="nav-item"><a href="{{ route('reports.index') }}" class="nav-link"><i
+                  class="nav-icon fas fa-chart-bar"></i>
                 <p>Reports</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="{{ route('profile.index') }}" class="nav-link">
-                <i class="nav-icon fas fa-user"></i>
+              </a></li>
+            <li class="nav-item"><a href="{{ route('profile.index') }}" class="nav-link"><i
+                  class="nav-icon fas fa-user"></i>
                 <p>Profile</p>
-              </a>
-            </li>
+              </a></li>
           </ul>
         </nav>
       </div>
     </aside>
 
-    <!-- Content Wrapper -->
     <div class="content-wrapper">
       <div class="content-header">
         <div class="container-fluid">
@@ -311,155 +254,132 @@
 
       <section class="content">
         <div class="container-fluid">
-
-          {{-- Tombol aksi --}}
-          <div class="d-flex gap-2 mb-3">
-            <a href="{{ route('event.create') }}" class="btn btn-info mr-2">
-              <i class="fas fa-plus mr-1"></i> Create Event
-            </a>
-            <button type="button" class="btn btn-success btn-print shadow-sm mr-2" onclick="window.print()">
-              <i class="fas fa-print mr-2"></i> Cetak Event
-            </button>
-
-            <!-- Export icons: Excel and PDF -->
-            <a href="{{ route('event.export.excel') }}" class="btn btn-success btn-sm" title="Export Excel" aria-label="Export Excel" style="padding:8px 10px;">
-              <i class="fas fa-file-excel"></i>
-            </a>
-            <a href="{{ route('event.export.pdf') }}" class="btn btn-danger btn-sm ml-2" title="Export PDF" aria-label="Export PDF" style="padding:8px 10px;">
-              <i class="fas fa-file-pdf"></i>
-            </a>
+          <div class="mb-3">
+            <a href="{{ route('event.create') }}" class="btn btn-info mr-2"><i class="fas fa-plus mr-1"></i> Create
+              Event</a>
+            <button type="button" class="btn btn-success mr-2" onclick="cetakDataEvent()"><i
+                class="fas fa-print mr-2"></i> Cetak Event</button>
+            <a href="{{ route('event.export.excel') }}" class="btn btn-success btn-sm mr-1" title="Export Excel"
+              style="padding:8px 10px;"><i class="fas fa-file-excel"></i></a>
+            <a href="{{ route('event.export.pdf') }}" class="btn btn-danger btn-sm" title="Export PDF"
+              style="padding:8px 10px;"><i class="fas fa-file-pdf"></i></a>
           </div>
 
-          {{-- Card tabel --}}
           <div class="card shadow-sm">
             <div class="card-body">
-              <p class="text-muted mb-3">
-                Menampilkan {{ count($events ?? []) }} item
-              </p>
+              <p class="text-muted mb-3">Menampilkan {{ count($events ?? []) }} item</p>
 
               <div class="table-responsive">
-                <table class="table table-hover" style="width: 100%;">
+                <table class="table table-hover" style="width:100%;">
                   <thead class="table-cyan">
                     <tr>
-                      <th style="width: 5%;">ID</th>
-                      <th style="width: 20%;">Title</th>
-                      <th style="width: 25%;">Description</th>
-                      <th style="width: 15%;">Start Date</th>
-                      <th style="width: 15%;">End Date</th>
-                      <th style="width: 10%;">Status</th>
-                      <th style="width: 10%;" class="text-center">Actions</th>
+                      <th style="width:4%;">ID</th>
+                      <th style="width:18%;">Title</th>
+                      <th style="width:15%;">Organizer</th>
+                      <th style="width:20%;">Description</th>
+                      <th style="width:12%;">Start Date</th>
+                      <th style="width:12%;">End Date</th>
+                      <th style="width:9%;">Status</th>
+                      <th style="width:10%;" class="text-center">Actions</th>
                     </tr>
                   </thead>
-
                   <tbody>
                     @forelse ($events as $event)
-                    <tr>
-                      <td>{{ $event->id ?? 'N/A' }}</td>
-                      <td>{{ $event->title ?? 'N/A' }}</td>
-                      <td>{{ $event->description ?? 'N/A' }}</td>
-                      <td>{{ $event->start_date ?? 'N/A' }}</td>
-                      <td>{{ $event->end_date ?? 'N/A' }}</td>
-                      <td>
-                        <span class="badge px-2 py-1 
-                          @if($event->status == 'active') badge-success
-                          @elseif($event->status == 'inactive') badge-secondary
-                          @else badge-secondary @endif">
-                          {{ $event->status ?? 'N/A' }}
-                        </span>
-                      </td>
-                      <td>
-                        <div class="btn-gap justify-content-center">
-                          {{-- Show --}}
-                          <a href="{{ route('event.show', $event->id) }}" class="btn btn-sm btn-info">
-                            Show
-                          </a>
-                          {{-- Edit --}}
-                          <a href="{{ route('event.edit', $event->id) }}" class="btn btn-sm btn-warning">
-                            Edit
-                          </a>
-                          {{-- Hapus --}}
-                          <form action="{{ route('event.destroy', $event->id) }}" method="POST"
-                            onsubmit="return confirm('Hapus data?')" style="display: inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button class="btn btn-sm btn-danger" type="submit">
-                              Hapus
-                            </button>
-                          </form>
-                        </div>
-                      </td>
-                    </tr>
+                      <tr>
+                        <td>{{ $event->id }}</td>
+                        <td>{{ $event->title ?? 'N/A' }}</td>
+                        <td>{{ $event->organizer ?? '-' }}</td>
+                        <td>{{ \Illuminate\Support\Str::limit($event->description ?? '-', 60) }}</td>
+                        <td>{{ $event->start_date ?? 'N/A' }}</td>
+                        <td>{{ $event->end_date ?? 'N/A' }}</td>
+                        <td>
+                          <span class="badge px-2 py-1
+                              @if($event->status == 'approved') badge-success
+                              @elseif($event->status == 'rejected') badge-danger
+                              @elseif($event->status == 'pending') badge-warning
+                              @else badge-secondary @endif">
+                            {{ ucfirst($event->status ?? 'N/A') }}
+                          </span>
+                        </td>
+                        <td>
+                          <div class="btn-gap justify-content-center">
+                            <a href="{{ route('event.show', $event->id) }}" class="btn btn-sm btn-info">Show</a>
+                            <a href="{{ route('event.edit', $event->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                            <form action="{{ route('event.destroy', $event->id) }}" method="POST"
+                              onsubmit="return confirm('Hapus data?')" style="display:inline;">
+                              @csrf
+                              @method('DELETE')
+                              <button class="btn btn-sm btn-danger" type="submit">Hapus</button>
+                            </form>
+                          </div>
+                        </td>
+                      </tr>
                     @empty
-                    <tr>
-                      <td colspan="7" class="text-center">
-                        Tidak ada data event.
-                      </td>
-                    </tr>
+                      <tr>
+                        <td colspan="8" class="text-center">Tidak ada data event.</td>
+                      </tr>
                     @endforelse
                   </tbody>
                 </table>
               </div>
-
             </div>
           </div>
-
         </div>
       </section>
     </div>
 
     <footer class="main-footer">
       <strong>Copyright &copy; 2025 <a href="#">Trackingspace</a>.</strong> All rights reserved.
-      <div class="float-right d-none d-sm-inline-block">
-        <b>Version</b> 1.0.0
-      </div>
+      <div class="float-right d-none d-sm-inline-block"><b>Version</b> 1.0.0</div>
     </footer>
   </div>
 
-  {{-- Container untuk notifikasi pop-up --}}
-  <div class="notification-container" id="notificationContainer" data-success-message="{{ session('success') }}"></div>
+  <div class="notification-container" id="notificationContainer"></div>
+  <iframe id="printFrameEvent" style="display:none;"></iframe>
+  <input type="hidden" id="flashSuccess" value="{{ session('success') }}">
+  <input type="hidden" id="flashError" value="{{ session('error') }}">
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/js/adminlte.min.js"></script>
-  <script src="bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
 
   <script>
+    function cetakDataEvent() {
+      const printFrame = document.getElementById('printFrameEvent');
+      printFrame.src = "{{ route('event.print') }}";
+      printFrame.onload = function() {
+        printFrame.contentWindow.print();
+      };
+    }
+
     function showNotification(message, type = 'success') {
       const container = document.getElementById('notificationContainer');
       if (!container) return;
-
-      const notification = document.createElement('div');
-      notification.className = `notification ${type}`;
-      notification.innerHTML = `
-            <div style="flex: 1;">
-                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
-                    <strong>${type === 'success' ? 'Berhasil!' : type === 'error' ? 'Error!' : 'Perhatian!'}</strong>
-                </div>
-                <div style="margin: 0;">${message}</div>
-            </div>
-        `;
-
-      container.appendChild(notification);
-
-      setTimeout(() => {
-        if (notification.parentNode) {
-          notification.style.animation = 'fadeOut 0.5s ease forwards';
-          setTimeout(() => notification.remove(), 500);
-        }
-      }, 5000);
-
-      notification.addEventListener('click', () => {
-        notification.style.animation = 'fadeOut 0.5s ease forwards';
-        setTimeout(() => notification.remove(), 500);
-      });
+      const n = document.createElement('div');
+      n.className = `notification ${type}`;
+      n.innerHTML = `<div><strong>${type === 'success' ? 'Berhasil!' : 'Error!'}</strong><div>${message}</div></div>`;
+      container.appendChild(n);
+      setTimeout(() => { if (n.parentNode) { n.style.animation = 'fadeOut 0.5s ease forwards'; setTimeout(() => n.remove(), 500); } }, 5000);
+      n.addEventListener('click', () => { n.style.animation = 'fadeOut 0.5s ease forwards'; setTimeout(() => n.remove(), 500); });
     }
 
-    $(document).ready(function() {
-      const successMessage = $('#notificationContainer').data('success-message');
+    $(document).ready(function () {
+      const successMessage = document.getElementById('flashSuccess')?.value || '';
+      const errorMessage = document.getElementById('flashError')?.value || '';
+
       if (successMessage) {
         showNotification(successMessage, 'success');
+      }
+
+      if (errorMessage) {
+        showNotification(errorMessage, 'error');
       }
     });
   </script>
 </body>
 
 </html>
+
+
+
+
+

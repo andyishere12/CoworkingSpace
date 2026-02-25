@@ -319,7 +319,7 @@
             <a href="{{ route('reservasi.create') }}" class="btn btn-info mr-2">
               <i class="fas fa-plus mr-1"></i> Create Reservasi
             </a>
-            <button type="button" class="btn btn-success btn-print shadow-sm mr-2" onclick="window.print()">
+            <button type="button" class="btn btn-success btn-print shadow-sm mr-2" onclick="cetakDataReservasi()">
               <i class="fas fa-print mr-2"></i> Cetak Reservasi
             </button>
 
@@ -408,6 +408,9 @@
           </div>
 
         </div>
+      
+      <!-- Hidden iframe for printing -->
+      <iframe id="printFrame" style="display:none;"></iframe>
       </section>
     </div>
 
@@ -461,6 +464,15 @@
         showNotification(successMessage, 'success');
       }
     });
+
+    // Fungsi untuk cetak data reservasi dengan PDF layout
+    function cetakDataReservasi() {
+      const printFrame = document.getElementById('printFrame');
+      printFrame.src = "{{ route('reservasi.print') }}";
+      printFrame.onload = function() {
+        printFrame.contentWindow.print();
+      };
+    }
   </script>
 </body>
 

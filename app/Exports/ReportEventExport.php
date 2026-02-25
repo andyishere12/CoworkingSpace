@@ -58,6 +58,7 @@ class ReportEventExport implements FromArray, WithStyles, WithEvents, WithColumn
         $upcomingEvents = DB::table('events')
             ->where('start_date', '>', $tanggalSekarang)
             ->orderBy('start_date', 'asc')
+            ->where('status', 'active')
             ->get();
 
         $rows[] = ['EVENT YANG AKAN DATANG'];
@@ -87,6 +88,7 @@ class ReportEventExport implements FromArray, WithStyles, WithEvents, WithColumn
         $ongoingEvents = DB::table('events')
             ->where('start_date', '<=', $tanggalSekarang)
             ->where('end_date', '>=', $tanggalSekarang)
+            ->where('status', 'active')
             ->orderBy('start_date', 'asc')
             ->get();
 

@@ -6,14 +6,46 @@
     <title>Laporan Member</title>
 
     <style>
+        * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+        }
+
         @page {
             size: A4 portrait;
-            margin: 25px 30px;
+            margin: 25px 30px 40px 30px;
+            
+        }
+
+        @top-center, @bottom-center, @top-left, @top-right, @bottom-left, @bottom-right {
+                content: none;
+            }
+
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+                background: white !important;
+            }
+
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            img {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                max-width: 100%;
+            }
         }
 
         body {
+            margin-bottom: 30px;
             font-family: DejaVu Sans, sans-serif;
             font-size: 10px;
+            background: white;
         }
 
         thead {
@@ -28,42 +60,64 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 6px;
+            border: 1px solid #000 !important;
         }
 
         th,
         td {
-            border: 1px solid #000;
+            border: 1px solid #000 !important;
             padding: 4px;
             white-space: nowrap;
         }
 
         th {
-            background: #acacac;
-            text-align: center;
+            background: #acacac !important;
+            color: #000 !important;
+            text-align: center !important;
             font-size: 10px;
+            font-weight: bold !important;
         }
 
         td {
             font-size: 9.5px;
+            background: white !important;
+            color: #000 !important;
         }
 
         h3 {
             margin-top: 14px;
             margin-bottom: 4px;
             font-size: 12px;
+            font-weight: bold;
+            color: #333 !important;
         }
 
         .header-table td {
-            border: none;
-            padding: 2px;
+            border: none !important;
+            padding: 2px !important;
+            background: white !important;
+        
+            vertical-align: top;
+        }
+
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+            border: none !important;
+            border-spacing: 0 !important;
         }
 
         .logo-kiri {
-            width: 60px;
+            height: 88px;
+            width: auto;
+            max-width: 100%;
         }
 
         .logo-kanan {
-            width: 85px;
+            height: 82px;
+            width: auto;
+            max-width: 100%;
         }
 
         .title {
@@ -84,13 +138,25 @@
             page-break-before: always;
         }
 
+        hr {
+            border: none !important;
+            border-top: 1px solid #333 !important;
+            margin: 8px 0 !important;
+            padding: 0 !important;
+        }
+
         footer {
             position: fixed;
-            bottom: -10px;
+            bottom: 0;
             left: 0;
             right: 0;
             text-align: center;
             font-size: 9px;
+            height: 20px;
+            /* tinggi footer */
+            line-height: 20px;
+            /* vertikal tengah */
+            background-color: white;
         }
     </style>
 </head>
@@ -101,18 +167,28 @@
     <table class="header-table">
         <tr>
             <td width="15%">
+                @if(isset($isPdf) && $isPdf)
                 <img src="{{ public_path('gambar/logo_coworking.png') }}" class="logo-kiri">
+                @else
+                <img src="{{ asset('gambar/logo_coworking.png') }}" class="logo-kiri">
+                @endif
             </td>
 
             <td width="70%" class="title">
-                <span style="font-size:15px; font-weight:bold;">
-                    DINAS KOPERASI, UKM & PERDAGANGAN<br>
-                    TRASA COWORKING SPACE
+                <span style="display:block; text-align:center; line-height:1.2;">
+                    <span style="display:block; font-weight:700; font-size:16px; letter-spacing:0.2px; color:#111827;">DINAS KOPERASI, UKM, DAN PERDAGANGAN</span>
+                    <span style="display:block; font-weight:700; font-size:14px; margin-top:2px; color:#1F2937;">TRASA COWORKING SPACE</span>
+                    <span style="display:block; font-size:9px; margin-top:4px; line-height:1.35; color:#374151;">Jl. Jenderal Ahmad Yani No. 7, Slawi, Kabupaten Tegal, Jawa Tengah 52411, Indonesia</span>
+                    <span style="display:block; font-size:9px; margin-top:2px; line-height:1.35; color:#374151;">Email: coworkingtegal@gmail.com</span>
                 </span>
             </td>
 
             <td width="15%" align="right">
+                @if(isset($isPdf) && $isPdf)
                 <img src="{{ public_path('gambar/logo_dinas.jpeg') }}" class="logo-kanan">
+                @else
+                <img src="{{ asset('gambar/logo_dinas.jpeg') }}" class="logo-kanan">
+                @endif
             </td>
         </tr>
     </table>
@@ -216,9 +292,16 @@
     </table>
 
     <footer>
-        Dikelola oleh Trasa Coworking Space © {{ date('Y') }}
+        Dikelola oleh Trasa Coworking Space &copy; 2026
     </footer>
 
 </body>
 
 </html>
+
+
+
+
+
+
+

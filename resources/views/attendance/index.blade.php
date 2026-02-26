@@ -348,7 +348,6 @@
                 <i class="nav-icon fas fa-tachometer-alt"></i>
                 <p>Dashboard</p>
               </a>
-              <<<<<<< HEAD </li> -->
             <li class="nav-item">
               <a href="{{ route('attendance.index') }}" class="nav-link active">
                 <i class="nav-icon fas fa-clock"></i>
@@ -406,77 +405,10 @@
       <div class="content-header">
         <div class="container-fluid">
           <div class="row mb-2">
-            <div class="col-sm-6">php artisan make:migration create_settings_kursi_table
-
+            <div class="col-sm-6">
               <h1 class="m-0 font-weight-bold">Attendance Management</h1>
             </div>
           </div>
-          
-          </li>
-          <li class="nav-item">
-            <a href="{{ route('attendance.index') }}" class="nav-link active">
-              <i class="nav-icon fas fa-clock"></i>
-              <p>Attendance</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="{{ route('data_member.index') }}" class="nav-link">
-              <i class="nav-icon fas fa-users"></i>
-              <p>Members</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="{{ route('reservasi.index') }}" class="nav-link">
-              <i class="nav-icon fas fa-bookmark"></i>
-              <p>Reservations</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="{{ route('room.index') }}" class="nav-link">
-              <i class="nav-icon fas fa-door-open"></i>
-              <p>Rooms</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="{{ route('event.index') }}" class="nav-link">
-              <i class="nav-icon fas fa-calendar"></i>
-              <p>Events</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="{{ route('operational-hours.index') }}" class="nav-link">
-              <i class="nav-icon fas fa-clock"></i>
-              <p>Open Hours</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="{{ route('reports.index') }}" class="nav-link">
-              <i class="nav-icon fas fa-chart-bar"></i>
-              <p>Reports</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="{{ route('profile.index') }}" class="nav-link">
-              <i class="nav-icon fas fa-user"></i>
-              <p>Profile</p>
-            </a>
-          </li>
-          </ul>
-          </nav>
-        </div>
-        </aside>
-
-        <div class="content-wrapper">
-          <div class="content-header">
-            <div class="container-fluid">
-              <div class="row mb-2">
-                <div class="col-sm-6">
-                  <h1 class="m-0 font-weight-bold">Attendance Management</h1>
-                </div>
-              </div>
-            </div>
-          </div>
-
           <section class="content">
             <div class="container-fluid">
 
@@ -593,26 +525,27 @@
       </div>
       <!-- Iframe untuk cetak laporan kehadiran -->
       <iframe id="printFrameAttendance" style="display:none;"></iframe>
-      <script>
-        function cetakAttendance() {
-          // Ambil nilai filter dari input yang ada
-          var startDate = document.querySelector('input[name="start_date"]').value;
-          var endDate = document.querySelector('input[name="end_date"]').value;
-          var url = "{{ route('attendance.print') }}?start_date=" + encodeURIComponent(startDate) + "&end_date=" + encodeURIComponent(endDate);
+    </div>
+    <script>
+      function cetakAttendance() {
+        // Ambil nilai filter dari input yang ada
+        var startDate = document.querySelector('input[name="start_date"]').value;
+        var endDate = document.querySelector('input[name="end_date"]').value;
+        var url = "{{ route('attendance.print') }}?start_date=" + encodeURIComponent(startDate) + "&end_date=" + encodeURIComponent(endDate);
 
-          var iframe = document.getElementById('printFrameAttendance');
-          iframe.src = url;
+        var iframe = document.getElementById('printFrameAttendance');
+        iframe.src = url;
 
-          iframe.onload = function () {
-            setTimeout(function () {
-              iframe.contentWindow.print();
-            }, 500);
-          };
-        }
-      </script>
-      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-      <script src="bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/js/adminlte.min.js"></script>
+        iframe.onload = function () {
+          setTimeout(function () {
+            iframe.contentWindow.print();
+          }, 500);
+        };
+      }
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/js/adminlte.min.js"></script>
 
 </body>
 

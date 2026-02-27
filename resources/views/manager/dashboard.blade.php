@@ -296,8 +296,7 @@
                                 </div>
 
                                 <div class="col-lg-2 col-6 mb-2">
-                                    <a href="#" class="btn btn-app bg-secondary w-100">
-                                        <span class="badge bg-gray">Soon</span>
+                                    <a href="{{ route('manager.settings') }}" class="btn btn-app bg-secondary w-100">
                                         <i class="fas fa-cog"></i>
                                         Settings
                                     </a>

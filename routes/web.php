@@ -21,6 +21,7 @@ use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\EventApprovalController;
 use App\Http\Controllers\ReservationApprovalController;
 use App\Http\Controllers\UserManagementController;
+use App\Http\Controllers\ManagerSettingsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -158,7 +159,7 @@ Route::middleware(['auth', 'role:manager'])->prefix('manager')->name('manager.')
     // Manager Dashboard
     Route::get('/dashboard', [ManagerDashboardController::class, 'index'])->name('dashboard');
 
-     // Analytics dengan AI insights
+    // Analytics dengan AI insights
     Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics');
 
     // Members - Read Only
@@ -178,10 +179,12 @@ Route::middleware(['auth', 'role:manager'])->prefix('manager')->name('manager.')
     // User Management
     Route::resource('users', UserManagementController::class);
 
-    // Settings
-    Route::get('/settings', function () {
-        return view('manager.settings');
-    })->name('settings');
+    // NEW - Settings (Separated from Profile)
+    Route::get('/settings', [ManagerSettingsController::class, 'index'])->name('settings');
+    Route::post('/settings/notifications', [ManagerSettingsController::class, 'updateNotifications'])->name('settings.notifications');
+    Route::post('/settings/ai', [ManagerSettingsController::class, 'updateAI'])->name('settings.ai');
+    Route::post('/settings/dashboard', [ManagerSettingsController::class, 'updateDashboard'])->name('settings.dashboard');
+
 
     // Profile
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
@@ -203,58 +206,57 @@ Route::middleware('auth')->post('/logout', function () {
 
 // Debug route untuk tes API Gemini (HANYA UNTUK PENGEMBANGAN, HAPUS SAAT DEPLOY)
 
-Route::get('/debug-gemini-raw', function() {
-    $apiKey = config('services.gemini.api_key');
-    
-    if (!$apiKey) {
-        return 'ERROR: API key tidak ada!';
-    }
-    
-    $prompt = "Output ONLY JSON. NO explanation.
+// Route::get('/debug-gemini-raw', function () {
+//     $apiKey = config('services.gemini.api_key');
 
-[{\"title\":\"Test\",\"description\":\"Test\",\"icon\":\"users\",\"color\":\"info\",\"priority\":\"medium\",\"suggestions\":[\"A1\",\"A2\"]}]
+//     if (!$apiKey) {
+//         return 'ERROR: API key tidak ada!';
+//     }
 
-Give 2 recommendations. JSON only, start with [";
-    
-    $response = \Illuminate\Support\Facades\Http::timeout(10)->post(
-        'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' . $apiKey,
-        [
-            'contents' => [['parts' => [['text' => $prompt]]]],
-            'generationConfig' => ['temperature' => 0.3, 'maxOutputTokens' => 1000]
-        ]
-    );
-    
-    if ($response->successful()) {
-        $result = $response->json();
-        $rawText = $result['candidates'][0]['content']['parts'][0]['text'] ?? 'NO TEXT';
-        
-        echo "<h2>✅ SUCCESS! RAW:</h2>";
-        echo "<pre style='background:#f4f4f4; padding:20px;'>" . htmlspecialchars($rawText) . "</pre>";
-        
-        $cleaned = preg_replace('/```(?:json)?\s*|\s*```/', '', $rawText);
-        $cleaned = str_replace('```', '', $cleaned);
-        $cleaned = trim($cleaned);
-        
-        echo "<h2>CLEANED:</h2>";
-        echo "<pre style='background:#e8f4f8; padding:20px;'>" . htmlspecialchars($cleaned) . "</pre>";
-        
-        if (preg_match('/\[.*\]/s', $cleaned, $matches)) {
-            echo "<h2>EXTRACTED:</h2>";
-            echo "<pre style='background:#e8f8e8; padding:20px;'>" . htmlspecialchars($matches[0]) . "</pre>";
-            
-            $decoded = json_decode($matches[0], true);
-            if ($decoded) {
-                echo "<h2>✅ DECODED!</h2>";
-                echo "<pre style='background:#d4edda; padding:20px;'>";
-                print_r($decoded);
-                echo "</pre>";
-            } else {
-                echo "<h2>❌ FAILED: " . json_last_error_msg() . "</h2>";
-            }
-        }
-        
-    } else {
-        echo "<h2>❌ FAILED: " . $response->status() . "</h2>";
-        echo "<pre>" . $response->body() . "</pre>";
-    }
-});
+//     $prompt = "Output ONLY JSON. NO explanation.
+
+// [{\"title\":\"Test\",\"description\":\"Test\",\"icon\":\"users\",\"color\":\"info\",\"priority\":\"medium\",\"suggestions\":[\"A1\",\"A2\"]}]
+
+// Give 2 recommendations. JSON only, start with [";
+
+//     $response = \Illuminate\Support\Facades\Http::timeout(10)->post(
+//         'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' . $apiKey,
+//         [
+//             'contents' => [['parts' => [['text' => $prompt]]]],
+//             'generationConfig' => ['temperature' => 0.3, 'maxOutputTokens' => 1000]
+//         ]
+//     );
+
+//     if ($response->successful()) {
+//         $result = $response->json();
+//         $rawText = $result['candidates'][0]['content']['parts'][0]['text'] ?? 'NO TEXT';
+
+//         echo "<h2>✅ SUCCESS! RAW:</h2>";
+//         echo "<pre style='background:#f4f4f4; padding:20px;'>" . htmlspecialchars($rawText) . "</pre>";
+
+//         $cleaned = preg_replace('/```(?:json)?\s*|\s*```/', '', $rawText);
+//         $cleaned = str_replace('```', '', $cleaned);
+//         $cleaned = trim($cleaned);
+
+//         echo "<h2>CLEANED:</h2>";
+//         echo "<pre style='background:#e8f4f8; padding:20px;'>" . htmlspecialchars($cleaned) . "</pre>";
+
+//         if (preg_match('/\[.*\]/s', $cleaned, $matches)) {
+//             echo "<h2>EXTRACTED:</h2>";
+//             echo "<pre style='background:#e8f8e8; padding:20px;'>" . htmlspecialchars($matches[0]) . "</pre>";
+
+//             $decoded = json_decode($matches[0], true);
+//             if ($decoded) {
+//                 echo "<h2>✅ DECODED!</h2>";
+//                 echo "<pre style='background:#d4edda; padding:20px;'>";
+//                 print_r($decoded);
+//                 echo "</pre>";
+//             } else {
+//                 echo "<h2>❌ FAILED: " . json_last_error_msg() . "</h2>";
+//             }
+//         }
+//     } else {
+//         echo "<h2>❌ FAILED: " . $response->status() . "</h2>";
+//         echo "<pre>" . $response->body() . "</pre>";
+//     }
+// });
